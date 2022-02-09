@@ -6,7 +6,7 @@
 import scrapy
 
 
-class SpiderItem(scrapy.Item):
+class CveBotItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass

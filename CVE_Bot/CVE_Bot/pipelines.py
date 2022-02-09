@@ -8,6 +8,6 @@
 from itemadapter import ItemAdapter
 
 
-class SpiderPipeline:
+class CveBotPipeline:
     def process_item(self, item, spider):
         return item
