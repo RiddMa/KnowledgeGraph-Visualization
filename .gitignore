@@ -127,4 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-./CVE_Bot/SourceData/
+/CVE_Bot/source_data/
