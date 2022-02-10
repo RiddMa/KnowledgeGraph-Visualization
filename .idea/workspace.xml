@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/quotes_spider.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CVE_Bot/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/csv_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/csv_parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/example.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/cve_detail.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/xml_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/xml_parser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="24vCj2FMM30ndjgUBxWiO8hmoGk" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="" />
+      <created>1644501810237</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1644501810237</updated>
+      <workItem from="1644501811375" duration="645000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -1,7 +1,7 @@
 # from pathlib import Path
 import pandas as pd
 
-from CVE_Bot.bot_root_dir import get_bot_root_dir
+from CVE_Bot.bot_root_dir import get_source_data_dir
 
 
 def data_dir_exist(data_dir) -> bool:
@@ -28,12 +28,12 @@ def cve_all_csv_exist(data_dir) -> bool:
 
 
 def parse_cve_all_csv():
-    data_dir = get_bot_root_dir().joinpath("source_data")
+    data_dir = get_source_data_dir()
     in_file = data_dir.joinpath("cve_all.csv")
     if not cve_all_csv_exist(in_file):  # 检查输入文件是否存在
         return
 
-    # 分块迭代读取文件，每次读入chunksize行
+    # 分块迭代读取文件，每次读入chunk-size行
     csv_iterator = pd.read_csv(in_file, encoding='utf-8', iterator=True, chunksize=10000,
                                skiprows=lambda x: x in [0, 1, 3, 4, 5, 6, 7, 8, 9], header=0, index_col=0)
     out_file = data_dir.joinpath("cve_all_clean.csv")  # 输出文件名，与输入文件同路径
