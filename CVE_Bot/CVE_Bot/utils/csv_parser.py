@@ -1,30 +1,33 @@
 # from pathlib import Path
+from pathlib import Path
+
 import pandas as pd
 
-from CVE_Bot.bot_root_dir import get_source_data_dir
-
-
-def data_dir_exist(data_dir) -> bool:
-    # 检查data路径是否存在
-    if not data_dir.exists():
-        print("Data directory don't exist. Created directory.")
-        data_dir.mkdir(parents=True)
-        return False
-    else:
-        print("Data directory exist.")
+from bot_root_dir import get_source_data_dir
 
 
 def cve_all_csv_exist(data_dir) -> bool:
-    # data路径不存在则return False
-    if not data_dir_exist(data_dir):
-        return False
     # 检查csv文件是否存在
     if not data_dir.joinpath("cve_all.csv").exists():
         print("'cve_all.csv' don't exist.")
         return False
     else:
         print("'cve_all.csv' exist.")
-    return True
+        return True
+
+
+def cve_all_clean_csv_exist(data_dir) -> bool:
+    # 检查csv文件是否存在
+    if not data_dir.joinpath("cve_all_clean.csv").exists():
+        print("'cve_all_clean.csv' don't exist.")
+        return False
+    else:
+        print("'cve_all_clean.csv' exist.")
+        return True
+
+
+def get_clean_csv_path() -> Path:
+    return get_source_data_dir().joinpath("cve_all_clean.csv")
 
 
 def parse_cve_all_csv():
