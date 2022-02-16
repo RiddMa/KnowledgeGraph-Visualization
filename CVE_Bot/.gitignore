@@ -131,3 +131,5 @@ dmypy.json
 /source_data/
 
 ../周常/
+
+/logs/

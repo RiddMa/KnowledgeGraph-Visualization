@@ -30,14 +30,14 @@ class CveBotItem(scrapy.Item):
     pass
 
 
-class AffectedProduct:
-    type = ''
-    vendor = ''
-    name = ''
-    version = ''
-
-    def __init__(self, _type, _vendor, _name, _version):
-        self.type = _type
-        self.vendor = _vendor
-        self.name = _name
-        self.version = _version
+# class AffectedProduct:
+#     type = ''
+#     vendor = ''
+#     name = ''
+#     version = ''
+#
+#     def __init__(self, _type, _vendor, _name, _version):
+#         self.type = _type
+#         self.vendor = _vendor
+#         self.name = _name
+#         self.version = _version
