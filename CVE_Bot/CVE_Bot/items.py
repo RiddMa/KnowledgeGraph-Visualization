@@ -23,6 +23,7 @@ class CveBotItem(scrapy.Item):
     vulnerability_types = scrapy.Field()
     cwe_id = scrapy.Field()
     affected_products = scrapy.Field()
+    references = scrapy.Field()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

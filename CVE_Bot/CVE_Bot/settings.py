@@ -6,6 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+
 from bot_root_dir import get_log_dir
 
 BOT_NAME = 'CVE_Bot'
@@ -14,7 +15,8 @@ SPIDER_MODULES = ['CVE_Bot.spiders']
 NEWSPIDER_MODULE = 'CVE_Bot.spiders'
 
 LOG_LEVEL = 'INFO'
-LOG_FORMAT = '%(levelname)s: %(message)s'
+LOG_FORMAT = "%(asctime)s, %(levelname)s: %(message)s"
+# LOG_FORMAT = "%(asctime)s, %(name)s %(levelname)s: %(message)s"
 LOG_FILE = get_log_dir().joinpath('log_new.txt')
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
