@@ -2,7 +2,7 @@ from py2neo import Node, Relationship, Graph, NodeMatcher, RelationshipMatcher
 import secret
 
 
-def load_data(graph):
+def load_data(g):
     AFewGoodMen = Node("Movie", title="A Few Good Men", released=1992,
                        tagline="In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.")
     ALeagueofTheirOwn = Node("Movie", title='A League of Their Own', released=1992,
@@ -651,7 +651,7 @@ def load_data(graph):
     TomHCloudAtlas['roles'] = [
         'Zachry', 'Dr. Henry Goose', 'Isaac Sachs', 'Dermot Hoggins']
 
-    tx = graph.begin()
+    tx = g.begin()
     tx.create(AFewGoodMen)
     tx.create(ALeagueofTheirOwn)
     tx.create(AaronS)
@@ -1071,6 +1071,6 @@ if __name__ == "__main__":
     # a = node_matcher.match("Movie").where('_.released >= 1990', '_.released < 2000').all()
     # print(a)
 
-    tom = graph.nodes.match(name="Tom Hanks").first()
-    b = graph.match(nodes=[tom], r_type="ACTED_IN").all()
-    print(b)
+    # tom = graph.nodes.match(name="Tom Hanks").first()
+    # b = graph.match(nodes=[tom], r_type="ACTED_IN").all()
+    # print(b)
