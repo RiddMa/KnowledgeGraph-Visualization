@@ -1,7 +1,21 @@
 class Vulnerability:
-    def __init__(self, cve_id, vuln_desc, publish_date, last_update_date, cvss_score, cvss_severity, vuln_types,
-                 access_complexity, authentication, availability_impact, confidentiality_impact, gained_access,
-                 integrity_impact, references):
+    def __init__(
+        self,
+        cve_id,
+        vuln_desc,
+        publish_date,
+        last_update_date,
+        cvss_score,
+        cvss_severity,
+        vuln_types,
+        access_complexity,
+        authentication,
+        availability_impact,
+        confidentiality_impact,
+        gained_access,
+        integrity_impact,
+        references,
+    ):
         self.cve_id = cve_id
         self.vuln_desc = vuln_desc
         self.publish_date = publish_date
@@ -19,24 +33,28 @@ class Vulnerability:
 
 
 class Asset:
-    pass
-
-
-class ASoftware(Asset):
-    def __init__(self, name):
-        self.type = "software"
+    def __init__(self, asset_type, vendor, name, version):
+        self.asset_type = asset_type
+        self.vendor = vendor
         self.name = name
+        self.version = version
 
 
-class AOS(Asset):
-    def __init__(self, name):
-        self.type = "os"
-        self.name = name
+# class ASoftware(Asset):
+#     def __init__(self, name):
+#         self.type = "software"
+#         self.name = name
+#
+#
+# class AOS(Asset):
+#     def __init__(self, name):
+#         self.type = "os"
+#         self.name = name
 
 
 class Attack:
-    def __init__(self, name, cwe_id):
-        self.name = name
+    def __init__(self, cwe_id):
+        # TODO self.name = name
         self.cwe_id = cwe_id
 
 
