@@ -1,43 +1,88 @@
+import collections
+
+from py2neo import Node, Relationship, NodeMatcher
+
+from utils.db import neo, find_dict_one
+
+
+def split_properties(cve_item):
+    # vuln_props = collections.OrderedDict()
+    vuln_props = {
+        "cve_id": cve_item["cve_id"],
+        "vuln_desc": cve_item["vuln_desc"],
+        "publish_date": cve_item["publish_date"],
+        "last_update_date": cve_item["last_update_date"],
+        "cvss_score": cve_item["cvss_score"],
+        "cvss_severity": cve_item["cvss_severity"],
+        "access_complexity": cve_item["access_complexity"]["text"],
+        "authentication": cve_item["authentication"]["text"],
+        "availability_impact": cve_item["availability_impact"]["text"],
+        "confidentiality_impact": cve_item["confidentiality_impact"]["text"],
+        "gained_access": cve_item["gained_access"],
+        "integrity_impact": cve_item["integrity_impact"]["text"],
+        "cwe_id": cve_item["cwe_id"],
+        # "references": cve_item["references"]
+    }
+
+    attack_props = {"vulnerability_types": cve_item["vulnerability_types"]}
+
+    asset_props = []
+    for a in cve_item["affected_products"]:
+        asset_props.append({
+            "type": a["type"],
+            "vendor": a["vendor"],
+            "name": a["name"],
+            "version": a["version"]
+        })
+
+    return {
+        "vuln_props": vuln_props,
+        "attack_props": attack_props,
+        "asset_props": asset_props
+    }
+
+
 class Vulnerability:
-    def __init__(
-        self,
-        cve_id,
-        vuln_desc,
-        publish_date,
-        last_update_date,
-        cvss_score,
-        cvss_severity,
-        vuln_types,
-        access_complexity,
-        authentication,
-        availability_impact,
-        confidentiality_impact,
-        gained_access,
-        integrity_impact,
-        references,
-    ):
-        self.cve_id = cve_id
-        self.vuln_desc = vuln_desc
-        self.publish_date = publish_date
-        self.last_update_date = last_update_date
-        self.cvss_score = cvss_score
-        self.cvss_severity = cvss_severity
-        self.vuln_types = vuln_types
-        self.access_complexity = access_complexity
-        self.authentication = authentication
-        self.availability_impact = availability_impact
-        self.confidentiality_impact = confidentiality_impact
-        self.gained_access = gained_access
-        self.integrity_impact = integrity_impact
-        self.references = references
+
+    def __init__(self, props):
+        self.props = props
+        self.node = self.get_node() or self.add_node()
+
+    def get_node(self):
+        node = NodeMatcher(neo.graph).match(
+            "Asset",
+            type=self.props["type"],
+            vendor=self.props["vendor"],
+            name=self.props["name"],
+            version=self.props["version"]).first()
+        return node
+
+    def add_node(self):
+        labels = ["Vulnerability"]
+        self.node = neo.add_node(labels, self.props)
 
 
 class Asset:
-    def __init__(self, asset_type, vendor, name, version):
-        self.asset_type = asset_type
-        self.vendor = vendor
-        self.name = name
-        self.version = version
+    """
+    self.props has a["type"], a["vendor"], a["name"], a["version"]
+    """
+
+    def __init__(self, props):
+        self.props = props
+        self.node = self.get_node() or self.add_node()
+
+    def get_node(self):
+        node = NodeMatcher(neo.graph).match(
+            "Asset",
+            type=self.props["type"],
+            vendor=self.props["vendor"],
+            name=self.props["name"],
+            version=self.props["version"]).first()
+        return node
+
+    def add_node(self):
+        labels = ["Asset", self.props["type"]]
+        self.node = neo.add_node(labels, self.props)
 
 
 # class ASoftware(Asset):
@@ -53,13 +98,22 @@ class Asset:
 
 
 class Attack:
-    def __init__(self, cwe_id):
-        # TODO self.name = name
-        self.cwe_id = cwe_id
+
+    def __init__(self, props):
+        self.props = props
+        self.node = self.get_node() or self.add_node()
+
+    def add_node(self):
+        labels = ["Attack"]
+        self.node = neo.add_node(labels, self.props)
 
 
 class VulnEntity:
-    def __init__(self, vuln, assets, attack):
+
+    def __init__(self, vuln, attack, assets):
         self.vuln = vuln
         self.assets = assets
         self.attack = attack
+
+    def add_relationship(self):
+        pass

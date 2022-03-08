@@ -1077,7 +1077,7 @@ def load_data(g):
 
 
 if __name__ == "__main__":
-    graph = Graph(secret.uri, auth=(secret.username, secret.password))
+    graph = Graph(secret.neo_uri, auth=(secret.neo_username, secret.neo_password))
     # load_data(graph)
     # node_matcher = NodeMatcher(graph)
     # a = node_matcher.match("Movie").where('_.released >= 1990', '_.released < 2000').all()
