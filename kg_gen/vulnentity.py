@@ -50,11 +50,7 @@ class Vulnerability:
 
     def get_node(self):
         node = NodeMatcher(neo.graph).match(
-            "Asset",
-            type=self.props["type"],
-            vendor=self.props["vendor"],
-            name=self.props["name"],
-            version=self.props["version"]).first()
+            "Vulnerability", cve_id=self.props["cve_id"]).first()
         return node
 
     def add_node(self):
@@ -71,7 +67,7 @@ class Asset:
         self.props = props
         self.node = self.get_node() or self.add_node()
 
-    def get_node(self):
+    def get_node(self):  # it's bad!
         node = NodeMatcher(neo.graph).match(
             "Asset",
             type=self.props["type"],
@@ -98,10 +94,19 @@ class Asset:
 
 
 class Attack:
+    """
+    self.props has a["type"], a["vendor"], a["name"], a["version"]
+    """
 
     def __init__(self, props):
         self.props = props
         self.node = self.get_node() or self.add_node()
+
+    def get_node(self):
+        node = NodeMatcher(neo.graph).match(
+            "Attack",
+            vulnerability_types=self.props["vulnerability_types"]).first()
+        return node
 
     def add_node(self):
         labels = ["Attack"]
@@ -116,4 +121,8 @@ class VulnEntity:
         self.attack = attack
 
     def add_relationship(self):
-        pass
+        tx = neo.graph.begin()
+        for a in self.assets:
+            tx.create(Relationship(a.node, "HAS", self.vuln.node))
+        tx.create(Relationship(self.vuln.node, "CAUSE", self.attack.node))
+        tx.commit()

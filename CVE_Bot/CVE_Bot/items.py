@@ -28,7 +28,10 @@ class CveBotItem(scrapy.Item):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    pass
+
+class GzFileItem(scrapy.Item):
+    file_url = scrapy.Field()
+    file = scrapy.Field()
 
 
 # class AffectedProduct:

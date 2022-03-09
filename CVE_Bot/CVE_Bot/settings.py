@@ -17,7 +17,8 @@ NEWSPIDER_MODULE = 'CVE_Bot.spiders'
 LOG_LEVEL = 'INFO'
 LOG_FORMAT = "%(asctime)s, %(levelname)s: %(message)s"
 # LOG_FORMAT = "%(asctime)s, %(name)s %(levelname)s: %(message)s"
-LOG_FILE = get_log_dir().joinpath('log_new.txt')
+# LOG_FILE = get_log_dir().joinpath('log_new.txt')
+LOG_FILE = get_log_dir().joinpath('log_cpe.txt')
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'CVE_Bot (+http://www.yourdomain.com)'
@@ -68,9 +69,11 @@ CONCURRENT_REQUESTS_PER_IP = 16
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    'CVE_Bot.pipelines.CveBotPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#     'CVE_Bot.pipelines.CveBotPipeline': 300,
+#     'CVE_Bot.pipelines.files.FilesPipeline': 1
+# }
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

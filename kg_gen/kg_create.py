@@ -21,5 +21,5 @@ if __name__ == "__main__":
             a.add_node()
             assets.append(a)
         vuln_entity = VulnEntity(vuln, attack, assets)
-        # vuln_entity.add_relationship()
+        vuln_entity.add_relationship()
         print("1")

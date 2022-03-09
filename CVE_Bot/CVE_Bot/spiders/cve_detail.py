@@ -10,10 +10,14 @@ from CVE_Bot.utils.db import MongoInstance
 from bot_root_dir import get_source_data_dir
 
 
-# noinspection PyBroadException
 class CVEDetailSpider(scrapy.Spider):
     name = 'CVEDetail'
     allowed_domains = ['cvedetails.com']
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            'CVE_Bot.pipelines.CveDetailPipeline': 300,
+        }
+    }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

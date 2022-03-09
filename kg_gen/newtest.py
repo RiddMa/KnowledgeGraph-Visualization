@@ -17,3 +17,4 @@ if __name__ == "__main__":
             tmp = a.get_node()
             assets.append(a)
         vuln_entity = VulnEntity(vuln, attack, assets)
+        vuln_entity.add_relationship()
