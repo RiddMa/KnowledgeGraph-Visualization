@@ -1,51 +1,21 @@
 <template>
   <v-app>
-    <!--    <v-app-bar app color="primary" dark>-->
-    <!--      <div class="d-flex align-center">-->
-    <!--        <v-img-->
-    <!--          alt="Vuetify Logo"-->
-    <!--          class="shrink mr-2"-->
-    <!--          contain-->
-    <!--          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"-->
-    <!--          transition="scale-transition"-->
-    <!--          width="40"-->
-    <!--        />-->
-
-    <!--        <v-img-->
-    <!--          alt="Vuetify Name"-->
-    <!--          class="shrink mt-1 hidden-sm-and-down"-->
-    <!--          contain-->
-    <!--          min-width="100"-->
-    <!--          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"-->
-    <!--          width="100"-->
-    <!--        />-->
-    <!--      </div>-->
-
-    <!--      <v-spacer></v-spacer>-->
-
-    <!--      <v-btn-->
-    <!--        href="https://github.com/vuetifyjs/vuetify/releases/latest"-->
-    <!--        target="_blank"-->
-    <!--        text-->
-    <!--      >-->
-    <!--        <span class="mr-2">Latest Release</span>-->
-    <!--        <v-icon>mdi-open-in-new</v-icon>-->
-    <!--      </v-btn>-->
-    <!--    </v-app-bar>-->
     <v-system-bar app> </v-system-bar>
 
     <v-navigation-drawer app>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="text-h6"> Application </v-list-item-title>
-          <v-list-item-subtitle> subtext </v-list-item-subtitle>
+          <v-list-item-title class="text-h6">
+            Cyber Security<br />Knowledge Graph
+          </v-list-item-title>
+          <v-list-item-subtitle>Visualization</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
 
       <v-list dense nav>
-        <v-list-item v-for="item in items" :key="item.title" link>
+        <v-list-item v-for="item in items" :key="item.title" :to="item.route">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -71,11 +41,14 @@ export default {
 
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-view-dashboard" },
-      { title: "Photos", icon: "mdi-image" },
-      { title: "About", icon: "mdi-help-box" },
+      { title: "Dashboard", icon: "mdi-view-dashboard", route: "/dashboard" },
+      { title: "Search", icon: "mdi-database-search", route: "/search" },
+      { title: "About", icon: "mdi-information", route: "/about" },
     ],
     right: null,
   }),
+  mounted() {
+    // this.$store.dispatch("fetchGraphData", 20);
+  },
 };
 </script>

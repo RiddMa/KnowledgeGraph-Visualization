@@ -6,7 +6,6 @@ from utils.db import neo, find_dict_one
 
 
 def split_properties(cve_item):
-    # vuln_props = collections.OrderedDict()
     vuln_props = {
         "cve_id": cve_item["cve_id"],
         "vuln_desc": cve_item["vuln_desc"],
@@ -55,7 +54,7 @@ class Vulnerability:
 
     def add_node(self):
         labels = ["Vulnerability"]
-        self.node = neo.add_node(labels, self.props)
+        return neo.add_node(labels, self.props)
 
 
 class Asset:
@@ -78,7 +77,7 @@ class Asset:
 
     def add_node(self):
         labels = ["Asset", self.props["type"]]
-        self.node = neo.add_node(labels, self.props)
+        return neo.add_node(labels, self.props)
 
 
 # class ASoftware(Asset):
@@ -110,7 +109,7 @@ class Attack:
 
     def add_node(self):
         labels = ["Attack"]
-        self.node = neo.add_node(labels, self.props)
+        return neo.add_node(labels, self.props)
 
 
 class VulnEntity:

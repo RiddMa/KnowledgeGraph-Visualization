@@ -50,7 +50,6 @@ class CVEDetailSpider(scrapy.Spider):
         finally:
             item['cve_id'] = cve_id
             self.logger.info('Parsing ' + cve_id)
-
         # # save html to disk
         # html_out_path = get_cve_data_dir().joinpath(item['cve_id'] + '.html')
         # try:

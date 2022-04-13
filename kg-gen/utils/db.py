@@ -1,4 +1,6 @@
 import logging
+from uuid import uuid1
+
 import pymongo
 from py2neo import Node, Relationship, Graph
 from py2neo.cypher import cypher_escape
@@ -6,7 +8,7 @@ from py2neo.cypher import cypher_escape
 import secret
 
 
-class MG:
+class MONGO:
 
     def __init__(self):
         self.client = pymongo.MongoClient(secret.mongo_uri)
@@ -26,7 +28,7 @@ class MG:
         return cursor
 
 
-mongo = MG()
+mongo = MONGO()
 
 
 class NEO:
@@ -37,6 +39,7 @@ class NEO:
                            auth=(secret.neo_username, secret.neo_password))
 
     def add_node(self, labels, props):
+        props['eid'] = str(uuid1())  # add unique identification for entity
         node = Node(*labels, **props)
         tx = self.graph.begin()
         tx.create(node)
