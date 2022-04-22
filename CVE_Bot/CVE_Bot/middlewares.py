@@ -53,7 +53,7 @@ class CveBotSpiderMiddleware:
             yield r
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.mylogger.info('Spider opened: %s' % spider.name)
 
 
 class CveBotDownloaderMiddleware:
@@ -100,4 +100,4 @@ class CveBotDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.mylogger.info('Spider opened: %s' % spider.name)

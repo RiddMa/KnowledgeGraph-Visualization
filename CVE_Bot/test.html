@@ -1,0 +1,621 @@
+
+<!DOCTYPE html>
+<HTML lang="en">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
+<TITLE>CXBugtraq Site 1 - cxsecurity.com</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<META name="keywords" content="bugtraq, sec list, database, poc, exploit, bug, issue, CVEMAP, dorks, fuzzing, shellcode, CWE, Common Weakness Enumeration, hack, papers">
+<META name="description" content="Site 1 of World Laboratory of Bugtraq 2 (WLB2) is a huge collection of information on data communications safety. Its main objective is to inform about errors in various applications. ">
+<META name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<META name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json?b">
+<LINK rel="Icon" href="https://cert.cx/cxstatic/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="https://cert.cx/cxstatic/js/m-jq.js?T"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script type="text/javascript" src="https://cert.cx/cxstatic/js/m.js?V"></script>
+<link href="https://cert.cx/cxstatic/css/b.css?G" rel="stylesheet" type='text/css'/>
+</HEAD>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-39628967-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script><BODY ng-app="ui.bootstrap.demo">
+<div class="navbar navbar-default navbar-fixed-top" id="frezz">
+<div class="container"><div class="navbar-header"><a class="navbar-brand" href="https://cxsecurity.com/"><IMG SRC="https://cert.cx/cxstatic/images/12018/cxseci.png" width="150" height="20" ALT="Home Page"></a><button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div><div class="navbar-collapse collapse" id="navbar-main" ><ul class="nav navbar-nav">
+          <li><a href="https://cxsecurity.com/">Home</a></li><li class="active">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Bugtraq<span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li><a href="https://cxsecurity.com/wlb/">Full List</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/bugs/">Only Bugs</a></li>
+<li><a href="https://cxsecurity.com/tricks/">Only Tricks</a></li>
+<li><a href="https://cxsecurity.com/exploit/">Only Exploits</a></li>
+<li><a href="https://cxsecurity.com/dorks/">Only Dorks</a></li>
+<li><a href="https://cxsecurity.com/cvelist/">Only CVE</a></li>
+<li><a href="https://cxsecurity.com/cwelist/">Only CWE</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/bogus/">Fake Notes</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/best/1/">Ranking</a></li>
+
+</ul></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">CVEMAP<span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li><a href="https://cxsecurity.com/cvemap/">Full List</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/cvevendors/">Show Vendors</a></li>
+<li><a href="https://cxsecurity.com/cveproducts/">Show Products</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/allcwe/">CWE Dictionary</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/cve/">Check CVE Id </a></li>
+<li><a href="https://cxsecurity.com/cwe/">Check CWE Id</a></li>
+</ul></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Search<span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li><a href="https://cxsecurity.com/search/">Bugtraq</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/search/cve/">CVEMAP</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/search/author/">By author</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/cve/">CVE Id</a></li>
+<li><a href="https://cxsecurity.com/cwe/">CWE Id</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/cvevendors/">By vendors</a></li>
+<li><a href="https://cxsecurity.com/cveproducts/">By products</a></li>
+</ul></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">RSS<span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li><a href="https://cxsecurity.com/wlb/rss/all/">Bugtraq</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/cverss/fullmap/">CVEMAP</a></li>
+<li><a href="https://cxsecurity.com/cveproducts/">CVE Products</a></li>
+    <li class="divider"></li>
+<li><a href="https://cxsecurity.com/wlb/rss/vulnerabilities/">Bugs</a></li>
+<li><a href="https://cxsecurity.com/wlb/rss/exploit/">Exploits</a></li>
+<li><a href="https://cxsecurity.com/wlb/rss/dorks/">Dorks</a></li>
+</ul></li>
+<li class="dropdown">
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">More<span class="caret"></span></a>
+<ul class="dropdown-menu" role="menu">
+<li><a href="http://cifrex.org/">cIFrex</a></li>
+<li class="divider"></li>
+<li><a href="https://www.facebook.com/cxsec">Facebook</a></li>
+<li><a href="https://twitter.com/cxsecurity">Twitter</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/donate/">Donate</a></li>
+<li class="divider"></li>
+<li><a href="https://cxsecurity.com/wlb/about/">About</a></li>
+</ul></li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li><a href="https://cxsecurity.com/wlb/add/">Submit</a></li>
+</ul></div></div></div>
+<div id="general"><TABLE width="100%"><TR><TD width="6%"></TD><TD id="boki"></TD><TD id='glowna'><CENTER>
+<div ng-app ng-app="ui.bootstrap.demo">
+<CENTER>
+<IMG SRC="https://cxsecurity.com/images/podkat/wabout.png" width="70%" Title="Bugtraq"><BR>
+<TABLE width="70%"><TR><TD>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5074670963595353"
+     data-ad-slot="8913971230"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</TD></TR></TABLE>
+
+</CENTER>
+<!-- krec -->
+<script type="text/javascript">
+!function(t,e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):t.Spinner=e()}(this,function(){"use strict";function t(t,e){var i,o=document.createElement(t||"div");for(i in e)o[i]=e[i];return o}function e(t){for(var e=1,i=arguments.length;i>e;e++)t.appendChild(arguments[e]);return t}function i(t,e,i,o){var n=["opacity",e,~~(100*t),i,o].join("-"),r=.01+i/o*100,s=Math.max(1-(1-t)/e*(100-r),t),a=c.substring(0,c.indexOf("Animation")).toLowerCase(),l=a&&"-"+a+"-"||"";return p[n]||(u.insertRule("@"+l+"keyframes "+n+"{0%{opacity:"+s+"}"+r+"%{opacity:"+t+"}"+(r+.01)+"%{opacity:1}"+(r+e)%100+"%{opacity:"+t+"}100%{opacity:"+s+"}}",u.cssRules.length),p[n]=1),n}function o(t,e){var i,o,n=t.style;for(e=e.charAt(0).toUpperCase()+e.slice(1),o=0;o<d.length;o++)if(i=d[o]+e,void 0!==n[i])return i;return void 0!==n[e]?e:void 0}function n(t,e){for(var i in e)t.style[o(t,i)||i]=e[i];return t}function r(t){for(var e=1;e<arguments.length;e++){var i=arguments[e];for(var o in i)void 0===t[o]&&(t[o]=i[o])}return t}function s(t,e){return"string"==typeof t?t:t[e%t.length]}function a(t){this.opts=r(t||{},a.defaults,f)}function l(){function i(e,i){return t("<"+e+' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">',i)}u.addRule(".spin-vml","behavior:url(#default#VML)"),a.prototype.lines=function(t,o){function r(){return n(i("group",{coordsize:d+" "+d,coordorigin:-c+" "+-c}),{width:d,height:d})}function a(t,a,l){e(u,e(n(r(),{rotation:360/o.lines*t+"deg",left:~~a}),e(n(i("roundrect",{arcsize:o.corners}),{width:c,height:o.width,left:o.radius,top:-o.width>>1,filter:l}),i("fill",{color:s(o.color,t),opacity:o.opacity}),i("stroke",{opacity:0}))))}var l,c=o.length+o.width,d=2*c,p=2*-(o.width+o.length)+"px",u=n(r(),{position:"absolute",top:p,left:p});if(o.shadow)for(l=1;l<=o.lines;l++)a(l,-2,"progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)");for(l=1;l<=o.lines;l++)a(l);return e(t,u)},a.prototype.opacity=function(t,e,i,o){var n=t.firstChild;o=o.shadow&&o.lines||0,n&&e+o<n.childNodes.length&&(n=n.childNodes[e+o],n=n&&n.firstChild,n=n&&n.firstChild,n&&(n.opacity=i))}}var c,d=["webkit","Moz","ms","O"],p={},u=function(){var i=t("style",{type:"text/css"});return e(document.getElementsByTagName("head")[0],i),i.sheet||i.styleSheet}(),f={lines:12,length:7,width:5,radius:10,rotate:0,corners:1,color:"#000",direction:1,speed:1,trail:100,opacity:.25,fps:20,zIndex:2e9,className:"spinner",top:"50%",left:"50%",position:"absolute"};a.defaults={},r(a.prototype,{spin:function(e){this.stop();{var i=this,o=i.opts,r=i.el=n(t(0,{className:o.className}),{position:o.position,width:0,zIndex:o.zIndex});o.radius+o.length+o.width}if(n(r,{left:o.left,top:o.top}),e&&e.insertBefore(r,e.firstChild||null),r.setAttribute("role","progressbar"),i.lines(r,i.opts),!c){var s,a=0,l=(o.lines-1)*(1-o.direction)/2,d=o.fps,p=d/o.speed,u=(1-o.opacity)/(p*o.trail/100),f=p/o.lines;!function h(){a++;for(var t=0;t<o.lines;t++)s=Math.max(1-(a+(o.lines-t)*f)%p*u,o.opacity),i.opacity(r,t*o.direction+l,s,o);i.timeout=i.el&&setTimeout(h,~~(1e3/d))}()}return i},stop:function(){var t=this.el;return t&&(clearTimeout(this.timeout),t.parentNode&&t.parentNode.removeChild(t),this.el=void 0),this},lines:function(o,r){function a(e,i){return n(t(),{position:"absolute",width:r.length+r.width+"px",height:r.width+"px",background:e,boxShadow:i,transformOrigin:"left",transform:"rotate("+~~(360/r.lines*d+r.rotate)+"deg) translate("+r.radius+"px,0)",borderRadius:(r.corners*r.width>>1)+"px"})}for(var l,d=0,p=(r.lines-1)*(1-r.direction)/2;d<r.lines;d++)l=n(t(),{position:"absolute",top:1+~(r.width/2)+"px",transform:r.hwaccel?"translate3d(0,0,0)":"",opacity:r.opacity,animation:c&&i(r.opacity,r.trail,p+d*r.direction,r.lines)+" "+1/r.speed+"s linear infinite"}),r.shadow&&e(l,n(a("#000","0 0 4px #000"),{top:"2px"})),e(o,e(l,a(s(r.color,d),"0 0 1px rgba(0,0,0,.1)")));return o},opacity:function(t,e,i){e<t.childNodes.length&&(t.childNodes[e].style.opacity=i)}});var h=n(t("group"),{behavior:"url(#default#VML)"});return!o(h,"transform")&&h.adj?l():c=o(h,"animation"),a});
+</script>
+<script type="text/javascript">
+angular.module('ui.bootstrap.demo').controller('PagIt', function ($scope, $log) {
+  $scope.totalItems = 6520;
+  $scope.currentPage = 1;
+  $scope.maxSize = 9;
+  $scope.perPage = 60;
+
+  $scope.pageChanged = function() {
+
+  var opts = {
+  lines: 16,
+  length: 50,
+  width: 10,
+  radius: 60,
+  corners: 1,
+  rotate: 0,
+  direction: 1,
+  color: '#FFFFFF',
+  speed: 2.2,
+  trail: 60,
+  shadow: true,
+  hwaccel: false,
+  className: 'spinner',
+  zIndex: 2e9,
+  top: '500%',
+  left: '50%'
+  };
+
+	$("#general").hide();
+	var target = document.getElementById('frezz');
+	var spinner = new Spinner(opts).spin(target);
+	window.location.href = "https://cxsecurity.com/wlb/"+$scope.currentPage+"";
+  };
+});
+</script>
+
+	<div ng-controller="PagIt">
+    <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" class="pagination" boundary-links="true" max-size="maxSize" direction-links="true"></pagination>
+	</div>
+<div ng-non-bindable>
+	<TABLE WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+	<TR>
+		<TD width="1%" class="transgreen"></TD>
+		<TD width="30%" class="transgreen"><b><h6><FONT COLOR="#CDCDCD"><U>Sort by:</U> Updated/</FONT><A HREF="https://cxsecurity.com/wlb/published/1" TITLE="Sort by published date"><B><FONT COLOR="#FFFFFF">Published</FONT></B></A></h6></b><TD>
+
+		<TD width="38%" class="transgreen"><center><h4>Full List of Bugtraq</h4></center></TD>
+		<TD width="30%" class="transgreen"></TD>
+		<TD width="1%" class="transgreen"></TD>
+
+	</TR>
+	</TABLE>
+	<TABLE WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse;" class="table table-striped table-hover ">
+	<thead>
+    <tr>
+      <th>Risk</th>
+      <th>Topic & Details</th>
+    </tr>
+  </thead>
+  <tbody>
+
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-22</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040087" title="7-Zip 16 DLL Hijacking">7-Zip 16 DLL Hijacking</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Eduardo+Braun+Prado/1/">Eduardo Braun Prado</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040086" title="USR IOT 4G LTE Industrial Cellular VPN Router 1.0.36 Remote Root Backdoor">USR IOT 4G LTE Industrial Cellular VPN Router 1.0.36 Remote Root Backdoor</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/LiquidWorm/1/">LiquidWorm</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040085" title="Razer Sila - Command Injection (py)">Razer Sila - Command Injection (py)</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/0xProfessional/1/">0xProfessional</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040084" title="Trojan.Win32.TScash.c / Insecure Permissions">Trojan.Win32.TScash.c / Insecure Permissions</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040083" title="Backdoor.Win32.Loselove / Denial of Service">Backdoor.Win32.Loselove / Denial of Service</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040082" title="Backdoor.Win32.GateHell.21 / Port Bounce Scan">Backdoor.Win32.GateHell.21 / Port Bounce Scan</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040081" title="Torrent Video Cutter V1.93 Build 114 Denial of Service Exploit">Torrent Video Cutter V1.93 Build 114 Denial of Service Exploit</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Achilles/1/">Achilles</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-19</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040080" title="Linux watch_queue Filter Out-Of-Bounds Write">Linux watch_queue Filter Out-Of-Bounds Write</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Jann+Horn/1/">Jann Horn</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040079" title="ManageEngine ADSelfService Plus 6.1 User Enumeration">ManageEngine ADSelfService Plus 6.1 User Enumeration</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Metin+Yunus+Kandemir/1/">Metin Yunus Kandemir</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040078" title="Zyxel NWA-1100-NH Command Injection">Zyxel NWA-1100-NH Command Injection</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Ahmed+Alroky/1/">Ahmed Alroky</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040077" title="Backdoor.Win32.GateHell.21 / Authentication Bypass">Backdoor.Win32.GateHell.21 / Authentication Bypass</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040076" title="Backdoor.Win32.Delf.zn / Insecure Credential Storage ">Backdoor.Win32.Delf.zn / Insecure Credential Storage </A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040075" title="Backdoor.Win32.Hupigon.haqj / Insecure Service Path">Backdoor.Win32.Hupigon.haqj / Insecure Service Path</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040074" title="HackTool.Win32.Delf.vs / Insecure Credential Storage">HackTool.Win32.Delf.vs / Insecure Credential Storage</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040073" title="Backdoor.Win32.Psychward.03.a / Weak Hardcoded Password">Backdoor.Win32.Psychward.03.a / Weak Hardcoded Password</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040072" title="7-Zip 21.07 Code Execution / Privilege Escalation">7-Zip 21.07 Code Execution / Privilege Escalation</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Kagan+Capar/1/">Kagan Capar</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040071" title="PKP Open Journals System 3.3 Cross Site Scripting">PKP Open Journals System 3.3 Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Hemant+Kashyap/1/">Hemant Kashyap</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040070" title="EaseUS Data Recovery 15.1.0.0 Unquoted Service Path">EaseUS Data Recovery 15.1.0.0 Unquoted Service Path</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/bios/1/">bios</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040069" title="WordPress Elementor 3.6.2 Shell Upload">WordPress Elementor 3.6.2 Shell Upload</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/AkuCyberSec/1/">AkuCyberSec</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040068" title="Scriptcase 9.7 Shell Upload">Scriptcase 9.7 Shell Upload</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/luckyt0mat0/1/">luckyt0mat0</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-17</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040067" title="Delta Controls enteliTOUCH 3.40.3935 Cookie User Password Disclosure">Delta Controls enteliTOUCH 3.40.3935 Cookie User Password Disclosure</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/LiquidWorm/1/">LiquidWorm</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040066" title="WordPress Elementor 3.6.2 Remote Code Execution">WordPress Elementor 3.6.2 Remote Code Execution</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Ramuel+Gall/1/">Ramuel Gall</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040065" title="Delta Controls enteliTOUCH 3.40.3935 Cross Site Scripting">Delta Controls enteliTOUCH 3.40.3935 Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/LiquidWorm/1/">LiquidWorm</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040064" title="Siemens A8000 CP-8050/CP-8031 SICAM WEB Missing File Download / Missing Authentication">Siemens A8000 CP-8050/CP-8031 SICAM WEB Missing File Download / Missing Authentication</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/T.+Weber/1/">T. Weber</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040063" title="Backdoor.Win32.MotivFTP.12 / Authentication Bypass ">Backdoor.Win32.MotivFTP.12 / Authentication Bypass </A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040062" title="Telegram Android v8.4.4 - Denial of Service">Telegram Android v8.4.4 - Denial of Service</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/h4shur/1/">h4shur</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-15</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040061" title="Easy!Appointments Information Disclosure">Easy!Appointments Information Disclosure</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Alexandre+Zanni/1/">Alexandre Zanni</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040060" title=" Backdoor.Win32.NinjaSpy.c / Authentication Bypass"> Backdoor.Win32.NinjaSpy.c / Authentication Bypass</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040059" title="jsharp Technology - Sql Injection Vulnerability">jsharp Technology - Sql Injection Vulnerability</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/behrouz+mansoori/1/">behrouz mansoori</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040058" title="Signature Software - Sql Injection Vulnerability">Signature Software - Sql Injection Vulnerability</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/behrouz+mansoori/1/">behrouz mansoori</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040057" title="Miracle Hunt Services - Sql Injection Vulnerability">Miracle Hunt Services - Sql Injection Vulnerability</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/behrouz+mansoori/1/">behrouz mansoori</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040056" title="HackTool.Win32.IpcScan.c / Local Stack Buffer Overflow">HackTool.Win32.IpcScan.c / Local Stack Buffer Overflow</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040055" title="Email-Worm.Win32.Pluto.b / Insecure Permissions">Email-Worm.Win32.Pluto.b / Insecure Permissions</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040054" title="Backdoor.Win32.Prorat.cwx / Insecure Permissions">Backdoor.Win32.Prorat.cwx / Insecure Permissions</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040053" title="Backdoor.Win32.NetSpy.10 / Unauthenticated Remote Command Execution">Backdoor.Win32.NetSpy.10 / Unauthenticated Remote Command Execution</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040052" title="Backdoor.Win32.Psychward.03.a / Weak Hardcoded Password">Backdoor.Win32.Psychward.03.a / Weak Hardcoded Password</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040051" title="Backdoor.Win32.Kilo.016 / Denial of Service (UDP Datagram)">Backdoor.Win32.Kilo.016 / Denial of Service (UDP Datagram)</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040050" title="Backdoor.Win32.NetCat32.10  / Unauthenticated Remote Command Execution">Backdoor.Win32.NetCat32.10  / Unauthenticated Remote Command Execution</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-13</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040049" title="Windows User Profile Service Privlege Escalation">Windows User Profile Service Privlege Escalation</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Grant+Willcox/1/">Grant Willcox</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040048" title="Explore CMS 1.0 SQL Injection">Explore CMS 1.0 SQL Injection</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Sajibe+Kanti/1/">Sajibe Kanti</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040047" title="Verizon 4G LTE Network Extender 0.4.038.2131 Weak Credential Algorithm">Verizon 4G LTE Network Extender 0.4.038.2131 Weak Credential Algorithm</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/LiquidWorm/1/">LiquidWorm</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-11</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040046" title="ICT Protege GX/WX 2.08 Stored Cross-Site Scripting (XSS)">ICT Protege GX/WX 2.08 Stored Cross-Site Scripting (XSS)</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/LiquidWorm/1/">LiquidWorm</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040045" title="WordPress Anti-Malware Security And Brute-Force Firewall Cross Site Scripting">WordPress Anti-Malware Security And Brute-Force Firewall Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Taurus+Omar/1/">Taurus Omar</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040044" title="Razer Sila 2.0.418 Command Injection">Razer Sila 2.0.418 Command Injection</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Kevin+Randall/1/">Kevin Randall</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040043" title="Razer Sila 2.0.418 Local File Inclusion">Razer Sila 2.0.418 Local File Inclusion</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Kevin+Randall/1/">Kevin Randall</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040042" title="Telesquare TLR-2855KS6 Arbitrary File Deletion">Telesquare TLR-2855KS6 Arbitrary File Deletion</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Momen+Eldawakhly/1/">Momen Eldawakhly</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040041" title="Franklin Fueling Systems Colibri Controller Module 1.8.19.8580 Local File Inclusion">Franklin Fueling Systems Colibri Controller Module 1.8.19.8580 Local File Inclusion</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Momen+Eldawakhly/1/">Momen Eldawakhly</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040040" title="SAM SUNNY TRIPOWER 5.0 Insecure Direct Object Reference">SAM SUNNY TRIPOWER 5.0 Insecure Direct Object Reference</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Momen+Eldawakhly/1/">Momen Eldawakhly</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-08</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040039" title="Backdoor.Win32.Xingdoor / Denial of Service">Backdoor.Win32.Xingdoor / Denial of Service</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040038" title="Backdoor.Win32.Xingdoor / Denial of Service">Backdoor.Win32.Xingdoor / Denial of Service</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/malvuln/1/">malvuln</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040037" title="AeroCMS 0.0.1 Shell Upload">AeroCMS 0.0.1 Shell Upload</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/D4rkP0w4r/1/">D4rkP0w4r</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040036" title="AeroCMS 0.0.1 Cross Site Scripting">AeroCMS 0.0.1 Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/D4rkP0w4r/1/">D4rkP0w4r</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040035" title="Reprise License Manager 14.2 Cross Site Scripting / Information Disclosure">Reprise License Manager 14.2 Cross Site Scripting / Information Disclosure</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Giulia+Melotti+Garibaldi/1/">Giulia Melotti Garibal...</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040034" title="Social Codia SMS 1 Cross Site Scripting">Social Codia SMS 1 Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/D4rkP0w4r/1/">D4rkP0w4r</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-warning">Med.</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040033" title="School Club Application System 1.0 Local File Inclusion">School Club Application System 1.0 Local File Inclusion</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Hejap+Zairy/1/">Hejap Zairy</a></span></h6>
+    </div></div></TD>
+	</TR>
+			<thead>
+			<TR>
+			<Th colspan='2'><center><U><h6><b><font color='#e1d1e1'>2022-04-07</font></h6></U></b></center></Th>
+			</TR>
+			</thead>
+			<TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040032" title="minewebcms 1.15.2 Cross Site Scripting">minewebcms 1.15.2 Cross Site Scripting</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Chetanya+Sharma/1/">Chetanya Sharma</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040031" title="binutils 2.37 Objdump Segmentation Fault">binutils 2.37 Objdump Segmentation Fault</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Local</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/p3tryx/1/">p3tryx</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040030" title="Tiny File Manager 2.4.6 Remote Code Execution (RCE)">Tiny File Manager 2.4.6 Remote Code Execution (RCE)</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/FEBIN+MON+SAJI/1/">FEBIN MON SAJI</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-success">Low</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040029" title="qdPM 9.2 Cross Site Request Forgery">qdPM 9.2 Cross Site Request Forgery</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-default">CVE</span>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Chetanya+Sharma/1/">Chetanya Sharma</a></span></h6>
+    </div></div></TD>
+	</TR><TR><TD width="5%" style="vertical-align:middle;"><CENTER><h6>
+<span class="label label-danger">High</span></h6></CENTER></TD>
+		<TD width="95%"><div class="row">
+        <div class="col-md-7"><h6><A href="https://cxsecurity.com/issue/WLB-2022040028" title="Small HTTP Server 3.06 Remote Buffer Overflow">Small HTTP Server 3.06 Remote Buffer Overflow</A></h6></div><div class="col-md-5" align="right">
+	<h6>&nbsp;<span class="label label-info">CWE</span>&nbsp;<span class="label label-primary">Remote</span>&nbsp;<span class="label label-default"><A HREF="https://cxsecurity.com/author/Yehia+Elghaly/1/">Yehia Elghaly</a></span></h6>
+    </div></div></TD>
+	</TR>
+	</TABLE></dIV>
+
+	<div ng-controller="PagIt">
+    <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" class="pagination" boundary-links="true" max-size="maxSize" direction-links="true"></pagination>
+	</div>
+    </div>
+<HR>
+<TABLE width="70%"><TR><TD>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-5074670963595353"
+     data-ad-slot="1390704430"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</TD></TR></TABLE>
+<HR>
+Copyright <b>2022</b>, cxsecurity.com<P>&nbsp;
+    </TD>
+    <TD id='boki'></TD>
+    <TD width="6%"></TD>
+	</TR>
+</TABLE>
+<a href="#" class="back-to-top">Back to Top</a>
+    </DIV>
+    </DIV>
+</BODY>
+</HTML>

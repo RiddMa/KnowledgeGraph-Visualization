@@ -34,6 +34,10 @@ class GzFileItem(scrapy.Item):
     file = scrapy.Field()
 
 
+class NvdItem(scrapy.Item):
+    cve_id = scrapy.Field()
+    cve_data_timestamp = scrapy.Field()
+
 # class AffectedProduct:
 #     type = ''
 #     vendor = ''

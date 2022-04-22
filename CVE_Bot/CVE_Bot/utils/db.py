@@ -1,43 +1,96 @@
 import logging
-
 import pymongo
-from bs4 import BeautifulSoup
 
 
 class Mongo:
     def __init__(self):
         self.client = pymongo.MongoClient('mongodb://localhost:27017/')
         if 'cve_bot' not in self.client.list_database_names():
-            logging.info('cve_bot db does not exist. Insert content to create.')
+            logging.getLogger().info('cve_bot db does not exist. Insert content to create.')
         self.db = self.client['cve_bot']
         self.html = self.db['html']
         self.json = self.db['json']
+        self.nvd_json_src = self.db['nvd_json_src']
+        self.nvd_json = self.db['nvd_json']
+        self.cxsecurity_index = self.db['cxsecurity_index']
+        self.cxsecurity_html = self.db['cxsecurity_html']
+        self.cxsecurity_json = self.db['cxsecurity_json']
 
-    def save_html(self, cve_id, content):
+    def save_cvedetails_html(self, cve_id, content):
         doc = {
             'cve_id': cve_id,
             'content': content
         }
         # doc_id = self.html.insert_one(doc).inserted_id
         self.html.update_one({'cve_id': cve_id}, {"$set": doc}, upsert=True)
-        logging.info(cve_id + '.html saved to MongoDB.')
+        logging.getLogger('CveDetails').info(cve_id + '.html saved to MongoDB cvedetails_html')
 
-    def save_json(self, cve_id, content):
+    def get_cvedetails_html(self, cve_id) -> str:
+        content = self.html.find_one({'cve_id': cve_id})['content']
+        return content
+
+    def save_cvedetails_json(self, cve_id, content):
         doc = {
             'cve_id': cve_id,
             'content': content
         }
         # doc_id = self.json.insert_one(doc).inserted_id
         self.json.update_one({'cve_id': cve_id}, {"$set": doc}, upsert=True)
-        logging.info(cve_id + '.json saved to MongoDB.')
+        logging.getLogger('CveDetails').info(cve_id + '.json saved to MongoDB cvedetails_json')
 
-    def get_html(self, cve_id) -> str:
-        content = self.html.find_one({'cve_id': cve_id})['content']
+    def save_nvd_json_src(self, cve_id, content):
+        doc = {
+            'cve_id': cve_id,
+            'content': content
+        }
+        self.nvd_json_src.update_one({'cve_id': cve_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('Nvd').info(cve_id + '.json saved to MongoDB nvd_json_src')
+
+    def get_nvd_json_src(self, cve_id=None):
+        if cve_id is None:
+            content = self.nvd_json_src.find()
+        else:
+            content = self.nvd_json_src.find_one({'cve_id': cve_id})['content']
         return content
 
+    def save_nvd_json(self, cve_id, content):
+        doc = {
+            'cve_id': cve_id,
+            'content': content
+        }
+        self.nvd_json.update_one({'cve_id': cve_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('Nvd').info(cve_id + '.json saved to MongoDB nvd_json')
 
-MongoInstance = Mongo()
+    def get_nvd_json(self, cve_id=None):
+        if cve_id is None:
+            content = self.nvd_json.find()
+        else:
+            content = self.nvd_json.find_one({'cve_id': cve_id})
+        return content
 
-if __name__ == "__main__":
-    tmp_doc = MongoInstance.get_html('CVE-2011-0001')
-    soup = BeautifulSoup(tmp_doc, 'html.parser')
+    def save_cxsecurity_index(self, exploit_id, content):
+        doc = {
+            'exploit_id': exploit_id,
+            'content': content
+        }
+        self.cxsecurity_index.update_one({'exploit_id': exploit_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('CxSecurity').info(exploit_id + ' index saved to MongoDB cxsecurity_index')
+
+    def save_cxsecurity_html(self, exploit_id, content):
+        doc = {
+            'exploit_id': exploit_id,
+            'content': content
+        }
+        self.cxsecurity_html.update_one({'exploit_id': exploit_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('CxSecurity').info(exploit_id + '.html saved to MongoDB cxsecurity_html')
+
+    def save_cxsecurity_json(self, exploit_id, content):
+        doc = {
+            'exploit_id': exploit_id,
+            'content': content
+        }
+        self.cxsecurity_json.update_one({'exploit_id': exploit_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('CxSecurity').info(exploit_id + '.json saved to MongoDB cxsecurity_json')
+
+
+mongo = Mongo()

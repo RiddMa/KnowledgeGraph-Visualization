@@ -1,0 +1,8 @@
+###
+GET https://services.nvd.nist.gov/rest/json/cves/1.0/
+
+###
+GET https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-2021-44228?apiKey=f661150d-d292-41a6-b672-22dd335cbf1a
+
+###
+GET https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-2021-44228?apiKey=f661150d-d292-41a6-b672-22dd335cbf1a&addOns=dictionaryCpes

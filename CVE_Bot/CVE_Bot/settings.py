@@ -6,6 +6,7 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+from scrapy.utils.log import configure_logging
 
 from bot_root_dir import get_log_dir
 
@@ -14,14 +15,18 @@ BOT_NAME = 'CVE_Bot'
 SPIDER_MODULES = ['CVE_Bot.spiders']
 NEWSPIDER_MODULE = 'CVE_Bot.spiders'
 
-LOG_LEVEL = 'INFO'
-LOG_FORMAT = "%(asctime)s, %(levelname)s: %(message)s"
-# LOG_FORMAT = "%(asctime)s, %(name)s %(levelname)s: %(message)s"
-# LOG_FILE = get_log_dir().joinpath('log_new.txt')
-LOG_FILE = get_log_dir().joinpath('log_cpe.txt')
+# LOG_ENABLED = False
+# configure_logging(install_root_handler=False)
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'CVE_Bot (+http://www.yourdomain.com)'
+FAKEUSERAGENT_PROVIDERS = [
+    'scrapy_fake_useragent.providers.FakeUserAgentProvider',  # this is the first provider we'll try
+    'scrapy_fake_useragent.providers.FakerProvider',
+    # if FakeUserAgentProvider fails, we'll use faker to generate a user-agent string for us
+    'scrapy_fake_useragent.providers.FixedUserAgentProvider',  # fall back to USER_AGENT value
+]
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -34,8 +39,6 @@ ROBOTSTXT_OBEY = False
 # See also autothrottle settings and docs
 # DOWNLOAD_DELAY = 2
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 16
-CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
 # COOKIES_ENABLED = False
@@ -57,9 +60,10 @@ CONCURRENT_REQUESTS_PER_IP = 16
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'CVE_Bot.middlewares.CveBotDownloaderMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_fake_useragent.middleware.RandomUserAgentMiddleware': 400,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -79,12 +83,12 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 AUTOTHROTTLE_ENABLED = True
 # The initial download delay
-# AUTOTHROTTLE_START_DELAY = 1
+AUTOTHROTTLE_START_DELAY = 1
 # The maximum download delay to be set in case of high latencies
 AUTOTHROTTLE_MAX_DELAY = 60
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
-AUTOTHROTTLE_TARGET_CONCURRENCY = 7.5
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1
 # Enable showing throttling stats for every response received:
 AUTOTHROTTLE_DEBUG = True
 

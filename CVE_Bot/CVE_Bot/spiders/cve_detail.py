@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from CVE_Bot.items import CveBotItem
 from CVE_Bot.utils.csv_parser import cve_all_clean_csv_exist, get_cve_all_clean_csv_path
-from CVE_Bot.utils.db import MongoInstance
+from CVE_Bot.utils.db import mongo
 from bot_root_dir import get_source_data_dir
 
 
@@ -59,7 +59,7 @@ class CVEDetailSpider(scrapy.Spider):
         # finally:
         #     pass
         try:
-            MongoInstance.save_html(item['cve_id'], repr(response.body))
+            mongo.save_cvedetails_html(item['cve_id'], repr(response.body))
         except Exception:
             self.logger.error('Save html to Mongo failed!')
         finally:

@@ -20,9 +20,10 @@ class NEO:
         logging.info("NEO run init query")
 
     def get_session(self):
+        if self.session is None:
+            self.session = self.driver.session(database=secret.neo_db)
+            logging.info("NEO created session")
         return self.session
-        # logging.info("NEO created session")
-        # return self.driver.session(database=secret.neo_db)
 
     def get_movie(self):
         def work(tx):

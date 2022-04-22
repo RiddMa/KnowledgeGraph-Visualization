@@ -7,38 +7,34 @@ from db import neo
 bp = Blueprint('graph', __name__, url_prefix='/api/graph')
 
 
-def assemble_graph_data(assets=None, vulns=None, exploits=None, rels=None):
+def assemble_graph_data(assets=(), vulns=(), exploits=(), rels=()):
     nodes, links = [], []
 
-    if assets is not None:
-        asset_map = {d["eid"]: d for d in assets}
-        nodes.extend([{
-            "id": t[0],
-            "name": t[1]["vendor"] + " " + t[1]["name"] + " " + t[1]["version"],
-            "data": t[1],
-            "type": "asset"
-        } for t in asset_map.items()])
+    asset_map = {d["eid"]: d for d in assets}
+    nodes.extend([{
+        "id": t[0],
+        "name": t[1]["vendor"] + " " + t[1]["name"] + " " + t[1]["version"],
+        "data": t[1],
+        "type": "asset"
+    } for t in asset_map.items()])
 
-    if vulns is not None:
-        vuln_map = {d["eid"]: d for d in vulns}
-        nodes.extend([{
-            "id": t[0],
-            "name": t[1]["cve_id"],
-            "data": t[1],
-            "type": "vuln"
-        } for t in vuln_map.items()])
+    vuln_map = {d["eid"]: d for d in vulns}
+    nodes.extend([{
+        "id": t[0],
+        "name": t[1]["cve_id"],
+        "data": t[1],
+        "type": "vuln"
+    } for t in vuln_map.items()])
 
-    if exploits is not None:
-        exploit_map = {d["eid"]: d for d in exploits}
-        nodes.extend([{
-            "id": t[0],
-            "name": t[1]["vulnerability_types"],
-            "data": t[1],
-            "type": "exploit"
-        } for t in exploit_map.items()])
+    exploit_map = {d["eid"]: d for d in exploits}
+    nodes.extend([{
+        "id": t[0],
+        "name": t[1]["vulnerability_types"],
+        "data": t[1],
+        "type": "exploit"
+    } for t in exploit_map.items()])
 
-    if rels is not None:
-        links = [{"source": l[0]["eid"], "target": l[2]["eid"], "name": l[1]} for l in rels]
+    links = [{"source": l[0]["eid"], "target": l[2]["eid"], "name": l[1]} for l in rels]
 
     return {"nodes": nodes, "links": links}
 
@@ -62,7 +58,7 @@ def retrieve_graph_stats():
                   "os_count": tx.run(cql_os).data()[0]["os_count"]}
         return result
 
-    res = get_neo().read_transaction(work)
+    res = neo.get_session().read_transaction(work)
     # res = neo.get_movie()
     print("time elapsed:" + str(time.time() - t0))
     return res
@@ -72,23 +68,25 @@ def retrieve_graph_stats():
 # returned Node: id, labels, items()
 def retrieve_graph(limit):
     def work(tx, limit_):
-        cql1 = "match (vuln:Vulnerability) return vuln.eid limit " + str(limit_)
-        result = tx.run(cql1).data()
+        cql_vuln = "match (vuln:Vulnerability) return vuln.eid limit " + str(limit_)
+        result = tx.run(cql_vuln).data()
         eid_list = []
         for item in result:
             eid_list.append(item["vuln.eid"])
-        cql2 = "match (asset)-[r]->(vuln:Vulnerability) where vuln.eid in " + str(
+
+        cql_get_asset = "match (asset)-[r]->(vuln:Vulnerability) where vuln.eid in " + str(
             eid_list) + " return asset, r, vuln"
-        cql3 = "match (vuln:Vulnerability)-[r]->(exploit:Attack) where vuln.eid in " + str(
+        cql_get_exploit = "match (vuln:Vulnerability)-[r]->(exploit:Attack) where vuln.eid in " + str(
             eid_list) + "return exploit,r,vuln"
-        result = tx.run(cql2).data()
         nodes, links = [], []
+
+        result = tx.run(cql_get_asset).data()
         graph_data = assemble_graph_data(assets=[d["asset"] for d in result], vulns=[d["vuln"] for d in result],
                                          rels=[d["r"] for d in result])
         nodes.extend(graph_data["nodes"])
         links.extend(graph_data["links"])
 
-        result = tx.run(cql3).data()
+        result = tx.run(cql_get_exploit).data()
         graph_data = assemble_graph_data(exploits=[d["exploit"] for d in result], rels=[d["r"] for d in result])
         nodes.extend(graph_data["nodes"])
         links.extend(graph_data["links"])
@@ -108,5 +106,5 @@ def search_graph(keyword):
         result = tx.run(cql1).data()
         return assemble_graph_data(result)
 
-    res = get_neo().read_transaction(work, keyword)
+    res = neo.get_session().read_transaction(work, keyword)
     return res
