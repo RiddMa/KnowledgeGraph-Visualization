@@ -133,7 +133,6 @@ dmypy.json
 
 ../周常/
 
-*/nvd_api_key.py
-
-
 /logs/
+
+nvd_api_key.py
