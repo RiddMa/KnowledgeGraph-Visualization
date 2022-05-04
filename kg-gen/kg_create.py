@@ -1,18 +1,18 @@
 import pprint
 
-from utils.db import mongo
+from utils.db import mg
 
-from vulnentity import Vulnerability, Asset, Attack, split_properties, VulnEntity
+from vulnentity import Vulnerability, Asset, Exploit, split_properties, VulnEntity
 
 if __name__ == "__main__":
-    docs = mongo.get_all_cve()
+    docs = mg.get_all_cve()
     for doc in docs.limit(1):
         # pprint.pprint(doc['content'])
         cve_item = doc["content"]
         props = split_properties(cve_item)
         vuln = Vulnerability(props["vuln_props"])
         vuln.add_node()
-        attack = Attack(props["attack_props"])
+        attack = Exploit(props["attack_props"])
         attack.add_node()
         asset_props = props["asset_props"]
         assets = []

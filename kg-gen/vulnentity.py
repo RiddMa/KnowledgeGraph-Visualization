@@ -92,9 +92,9 @@ class Asset:
 #         self.name = name
 
 
-class Attack:
+class Exploit:
     """
-    self.props has a["type"], a["vendor"], a["name"], a["version"]
+    self.props has
     """
 
     def __init__(self, props):

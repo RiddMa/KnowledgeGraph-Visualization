@@ -2,19 +2,19 @@ import logging
 from pprint import pprint
 
 from CVE_Bot.pipelines import NvdPipeline
-from CVE_Bot.utils.db import mongo
+from CVE_Bot.utils.db import mg
 from custom_logger import mylogger
 
 if __name__ == "__main__":
     pipeline = NvdPipeline()
     cve_map = {}
-    cursor = mongo.get_nvd_json()
+    cursor = mg.get_nvd_json()
     mylogger.info("Creating map for existing nvd entry.")
     for doc in cursor:
         cve_map[doc['cve_id']] = True
     mylogger.info("Created map for existing nvd entry.")
 
-    cursor = mongo.get_nvd_json_src()
+    cursor = mg.get_nvd_json_src()
     cnt_skip, cnt_done = 0, 0
     mylogger.info("Converting nvd_json_src to nvd_json.")
     for doc in cursor:
@@ -24,7 +24,7 @@ if __name__ == "__main__":
             cnt_skip += 1
             continue
         entry = pipeline.process_item(doc['content'])
-        mongo.save_nvd_json(entry['vuln']['cve_id'], entry)
+        mg.save_nvd_json(entry['vuln']['cve_id'], entry)
         cnt_done += 1
 
     mylogger.info('Converted nvd_json_src to nvd_json, ' + str(cnt_done) + ' done, ' + str(cnt_skip) + ' skipped.')

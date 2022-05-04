@@ -15,6 +15,9 @@ class Mongo:
         self.cxsecurity_index = self.db['cxsecurity_index']
         self.cxsecurity_html = self.db['cxsecurity_html']
         self.cxsecurity_json = self.db['cxsecurity_json']
+        self.edb_html = self.db['edb_html']
+        self.edb_json = self.db['edb_json']
+        self.cpe = self.db['cpe']
 
     def save_cvedetails_html(self, cve_id, content):
         doc = {
@@ -92,5 +95,32 @@ class Mongo:
         self.cxsecurity_json.update_one({'exploit_id': exploit_id}, {"$set": doc}, upsert=True)
         logging.getLogger('CxSecurity').info(exploit_id + '.json saved to MongoDB cxsecurity_json')
 
+    def save_edb_html(self, edb_id, content):
+        doc = {
+            'edb_id': edb_id,
+            'content': content
+        }
+        self.edb_html.update_one({'edb_id': edb_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('edb').info(edb_id + '.html saved to MongoDB edb_html')
 
-mongo = Mongo()
+    def save_edb_json(self, edb_id, content):
+        doc = {
+            'edb_id': edb_id,
+            'content': content
+        }
+        self.edb_json.update_one({'edb_id': edb_id}, {"$set": doc}, upsert=True)
+        logging.getLogger('edb').info(edb_id + '.json saved to MongoDB edb_json')
+
+    def get_edb_json(self, edb_id=None):
+        if edb_id is None:
+            content = self.edb_json.find()
+        else:
+            content = self.edb_json.find_one({'edb_id': edb_id})
+        return content
+
+    def save_cpe(self, cpe23uri, content):
+        self.cpe.update_one({'cpe23uri': cpe23uri}, {"$set": content}, upsert=True)
+        # logging.getLogger('cpe').info(cpe23uri + '.json saved to MongoDB cpe')
+
+
+mg = Mongo()

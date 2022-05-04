@@ -19,4 +19,7 @@ def setup_logger(name, log_filename, level_file=logging.INFO, level_stdout=loggi
     logger.addHandler(file_handler)
     logger.addHandler(stdout_handler)
 
+    logger.setLevel(logging.DEBUG)
+    logger.info(
+        f'Logger {name} logging to {log_filename} with log_file level {level_file} and log_stdout level {level_stdout}.')
     return logger

@@ -8,7 +8,7 @@ from py2neo.cypher import cypher_escape
 import secret
 
 
-class MONGO:
+class MyMongo:
 
     def __init__(self):
         self.client = pymongo.MongoClient(secret.mongo_uri)
@@ -28,10 +28,10 @@ class MONGO:
         return cursor
 
 
-mongo = MONGO()
+mg = MyMongo()
 
 
-class NEO:
+class MyNeo:
 
     def __init__(self):
         self.graph = Graph(secret.neo_uri,
@@ -50,7 +50,7 @@ class NEO:
         r = Relationship
 
 
-neo = NEO()
+neo = MyNeo()
 
 
 def find_dict(graph, label, key_value=None, limit=None):

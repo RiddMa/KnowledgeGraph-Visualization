@@ -1,4 +1,5 @@
 import gzip
+import logging
 
 
 def un_gz(filename):
@@ -11,3 +12,5 @@ def un_gz(filename):
     # gzip对象用read()打开后，写入open()建立的文件里。
     g_file.close()
     # 关闭gzip对象
+    logging.getLogger("cpe").info("Un_gz complete.")
+    return f_name

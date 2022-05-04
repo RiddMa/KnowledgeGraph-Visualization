@@ -1,4 +1,6 @@
+import json
 import time
+from pprint import pprint
 
 from flask import Blueprint
 
@@ -68,7 +70,7 @@ def retrieve_graph_stats():
 # returned Node: id, labels, items()
 def retrieve_graph(limit):
     def work(tx, limit_):
-        cql_vuln = "match (vuln:Vulnerability) return vuln.eid limit " + str(limit_)
+        cql_vuln = "match (vuln:Vulnerability) return vuln.eid limit $limit_"
         result = tx.run(cql_vuln).data()
         eid_list = []
         for item in result:
@@ -96,6 +98,18 @@ def retrieve_graph(limit):
     limit = min(100, int(limit))
     res = neo.get_session().read_transaction(work, limit)
     return res
+
+
+@bp.route('/test/<limit>')
+def test(limit):
+    def work(tx, _limit):
+        cql_vuln = "match (vuln:Vulnerability) return vuln limit $limit"
+        result = tx.run(cql_vuln, limit=_limit).data()
+        return result
+
+    res = neo.get_session().read_transaction(work, int(limit))
+    pprint(json.dumps(res))
+    return json.dumps(res)
 
 
 @bp.route('/search/<keyword>')

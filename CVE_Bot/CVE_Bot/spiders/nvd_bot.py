@@ -5,7 +5,7 @@ import scrapy
 
 from CVE_Bot.items import NvdItem
 from CVE_Bot.utils.csv_parser import cve_all_clean_csv_exist, get_cve_all_clean_csv_path
-from CVE_Bot.utils.db import mongo
+from CVE_Bot.utils.db import mg
 from bot_root_dir import get_source_data_dir
 from nvd_api_key import api_key
 
@@ -45,7 +45,7 @@ class NvdBot(scrapy.Spider):
 
         # noinspection PyBroadException
         try:
-            mongo.save_nvd_json_src(item['cve_id'], res_json)
+            mg.save_nvd_json_src(item['cve_id'], res_json)
         except BaseException:
             self.logger.error('Save nvd_json_src to Mongo failed!')
         finally:

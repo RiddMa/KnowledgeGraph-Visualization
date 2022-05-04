@@ -5,12 +5,10 @@ import logging
 import sys
 from datetime import datetime
 
-import simplejson
-
 import scrapy
 from bs4 import BeautifulSoup
 
-from CVE_Bot.utils.db import mongo
+from CVE_Bot.utils.db import mg
 from bot_root_dir import get_log_dir
 from custom_logger import setup_logger
 from playwright.async_api import async_playwright
@@ -67,7 +65,7 @@ class CxSecurityBot(scrapy.Spider):
                 '#glowna > center > div > div:nth-child(5) > table.table.table-striped.table-hover')
             links = [tr.select('td')[1].a['href'] for tr in table.find_all('tr') if tr.select('td') != []]
             for link in links:
-                mongo.save_cxsecurity_index(link.strip('https://cxsecurity.com/issue/'), link)
+                mg.save_cxsecurity_index(link.strip('https://cxsecurity.com/issue/'), link)
                 # self.mylogger.info('Start issue request ' + link)
                 # yield scrapy.Request(link)
 
@@ -81,7 +79,7 @@ class CxSecurityBot(scrapy.Spider):
         if response.url.startswith('https://cxsecurity.com/issue/'):
             exploit_id = response.url.strip('https://cxsecurity.com/issue/')
             self.mylogger.info('Parsing ' + exploit_id)
-            mongo.save_cxsecurity_html(exploit_id, json.dumps(response.text))
+            mg.save_cxsecurity_html(exploit_id, json.dumps(response.text))
             try:
                 info = soup.find('div', class_='panel-body')
                 exploit = {
@@ -101,7 +99,7 @@ class CxSecurityBot(scrapy.Spider):
                     # get exploit code
                     'code': json.dumps(soup.find('div', class_="well well-sm premex").text)
                 }
-                mongo.save_cxsecurity_json(exploit_id, exploit)
+                mg.save_cxsecurity_json(exploit_id, exploit)
             except BaseException as err:
                 self.mylogger.error(exploit_id + ': ' + str(err))
             finally:

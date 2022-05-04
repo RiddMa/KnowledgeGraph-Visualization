@@ -14,7 +14,7 @@ from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 from scrapy.pipelines.files import FilesPipeline
 
-from CVE_Bot.utils.db import mongo
+from CVE_Bot.utils.db import mg
 
 
 # import cve_searchsploit as cs
@@ -32,11 +32,11 @@ from CVE_Bot.utils.db import mongo
 class CveDetailPipeline:
 
     def __init__(self):
-        self.mongo = mongo
+        self.mongo = mg
 
     def process_item(self, item, spider):
         spider.mylogger.info('Processing ' + item['cve_id'])
-        mongo.save_cvedetails_json(item['cve_id'], ItemAdapter(item).asdict())
+        mg.save_cvedetails_json(item['cve_id'], ItemAdapter(item).asdict())
         # # dump json string
         # with open(get_cve_data_dir().joinpath(item['cve_id'] + '.json'), 'w+') as f:
         #     # json.dump(item, f, indent=4, sort_keys=False, default=dump_obj)
