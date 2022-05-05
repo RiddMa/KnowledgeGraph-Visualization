@@ -53,9 +53,11 @@ class MyNeo:
         self.graph = Graph(secret.neo_uri,
                            name=secret.db_name,
                            auth=(secret.neo_username, secret.neo_password))
+        print('py2neo connected')
         # for neo4j
         self.driver = GraphDatabase.driver(secret.neo_driver_url,
                                            auth=basic_auth(secret.neo_username, secret.neo_password))
+        print('neo4j connected')
         logging.info("NEO created driver")
         self.session = self.driver.session(database=secret.neo_db)
         logging.info("NEO created session")

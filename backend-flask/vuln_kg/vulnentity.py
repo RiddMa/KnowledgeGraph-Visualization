@@ -1,4 +1,5 @@
 import collections
+import json
 from enum import auto, unique, Enum
 
 from py2neo import Node, Relationship, NodeMatcher
@@ -18,13 +19,18 @@ def split_properties(cve_item, api_ver: ApiVersion):
         # vuln_props = cve_item['vuln']
         # vuln_props['timestamp'] = cve_item['timestamp']
         # vuln_props['api_ver'] = api_ver
-        vuln_props = cve_item
+        vuln_props = {
+            'timestamp': cve_item['timestamp'],
+            'api_ver': api_ver.value,
+            'cve_id': cve_item['vuln']['cve_id'],
+            'props': json.dumps(cve_item)
+        }
 
         asset_props = cve_item['assets']
         # asset_props['timestamp'] = cve_item['timestamp']
         # asset_props['api_ver'] = api_ver
 
-        exploit_props = cve_item['exploit']
+        exploit_props = cve_item['exploit'] or {}
         exploit_props['timestamp'] = cve_item['timestamp']
         exploit_props['api_ver'] = api_ver
 
@@ -78,7 +84,7 @@ class Vulnerability:
 
     def get_node(self):
         node = NodeMatcher(neo.graph).match(
-            "Vulnerability", cve_id=self.props["cve_id"]).first()
+            "Vulnerability", cve_id=self.props['cve_id']).first()
         return node
 
     def add_node(self):
@@ -88,7 +94,7 @@ class Vulnerability:
 
 class Asset:
     """
-    self.props has a["type"], a["vendor"], a["name"], a["version"]
+    self.props has cpe23uri, field{}, reference[], title
     """
 
     def __init__(self, props):
@@ -98,10 +104,7 @@ class Asset:
     def get_node(self):  # it's bad!
         node = NodeMatcher(neo.graph).match(
             "Asset",
-            type=self.props["type"],
-            vendor=self.props["vendor"],
-            name=self.props["name"],
-            version=self.props["version"]).first()
+            cpe23uri=self.props['cpe23uri']).first()
         return node
 
     def add_node(self):
@@ -111,7 +114,7 @@ class Asset:
 
 class Exploit:
     """
-    self.props has
+    self.props has edb_id, title, author, type, platform, date, code, cve_ids[]
     """
 
     def __init__(self, props):
@@ -120,13 +123,16 @@ class Exploit:
 
     def get_node(self):
         node = NodeMatcher(neo.graph).match(
-            "Attack",
-            vulnerability_types=self.props["vulnerability_types"]).first()
+            "Exploit",
+            edb_id=self.props['edb_id']).first()
         return node
 
     def add_node(self):
-        labels = ["Attack"]
+        labels = ["Exploit"]
         return neo.add_node(labels, self.props)
+
+    def match_cves(self):
+        nodes = NodeMatcher(neo.graph).match("Vulnerability").where(f"cve_id in {self.props['cve_ids']}")
 
 
 class VulnEntity:

@@ -4,6 +4,7 @@ from db import mg
 
 from vulnentity import Vulnerability, Asset, Exploit, split_properties, VulnEntity, ApiVersion
 
+
 def init_vuln():
     cursor = mg.get_nvd()
     for doc in cursor.limit(3):
@@ -11,7 +12,9 @@ def init_vuln():
         pprint(doc)
         props = split_properties(doc, api_ver=ApiVersion.NVDv1)
         vuln = Vulnerability(props["vuln_props"])
-        exploit = Exploit(props["exploit_props"])
+        # asset = Asset(props['asset_props'])
+        # exploit = Exploit(props["exploit_props"])
+
 
 if __name__ == "__main__":
     # docs = mg.get_all_cve()
