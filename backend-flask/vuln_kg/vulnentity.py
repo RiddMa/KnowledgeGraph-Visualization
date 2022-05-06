@@ -5,6 +5,7 @@ from enum import auto, unique, Enum
 from py2neo import Node, Relationship, NodeMatcher
 
 from db import neo
+from logger_factory import mylogger
 
 
 @unique
@@ -16,9 +17,9 @@ class ApiVersion(Enum):
 # cpe:<cpe_version>:<part>:<vendor>:<product>:<version>:<update>:<edition>:<language>:<sw_edition>:<target_sw>:<target_hw>:<other>
 def split_properties(cve_item, api_ver: ApiVersion):
     if api_ver is ApiVersion.NVDv1:
-        # vuln_props = cve_item['vuln']
-        # vuln_props['timestamp'] = cve_item['timestamp']
-        # vuln_props['api_ver'] = api_ver
+        # vuln_props  =  cve_item['vuln']
+        # vuln_props['timestamp']  =  cve_item['timestamp']
+        # vuln_props['api_ver']  =  api_ver
         vuln_props = {
             'timestamp': cve_item['timestamp'],
             'api_ver': api_ver.value,
@@ -27,8 +28,8 @@ def split_properties(cve_item, api_ver: ApiVersion):
         }
 
         asset_props = cve_item['assets']
-        # asset_props['timestamp'] = cve_item['timestamp']
-        # asset_props['api_ver'] = api_ver
+        # asset_props['timestamp']  =  cve_item['timestamp']
+        # asset_props['api_ver']  =  api_ver
 
         exploit_props = cve_item['exploit'] or {}
         exploit_props['timestamp'] = cve_item['timestamp']
@@ -85,36 +86,67 @@ class Vulnerability:
     def get_node(self):
         node = NodeMatcher(neo.graph).match(
             "Vulnerability", cve_id=self.props['cve_id']).first()
+        if node:
+            mylogger('entity').info(f"Found node for cve_id = {self.props['cve_id']}.")
         return node
 
     def add_node(self):
+        mylogger('entity').info(f"Didn't found node for cve_id = {self.props['cve_id']}. Creating new node...")
         labels = ["Vulnerability"]
         return neo.add_node(labels, self.props)
 
 
+def convert_props(props):
+    """
+    Convert Mongo CPE props to Neo4j string-only props, with an index field and a props field.
+
+    :param props: Mongo props dict
+    :return: Converted dict with only string-like attributes.
+    """
+    return {
+        'cpe23uri': props['cpe23uri'],
+        'props': json.dumps(props)
+    }
+
+
 class Asset:
     """
-    self.props has cpe23uri, field{}, reference[], title
+    self.props has cpe23uri, field{}, references[], title
+
     """
+    part_type_map = {
+        'a': 'Application',
+        'o': 'OperatingSystem',
+        'h': 'Hardware'
+    }
 
     def __init__(self, props):
         self.props = props
         self.node = self.get_node() or self.add_node()
 
-    def get_node(self):  # it's bad!
+    def get_node(self):
         node = NodeMatcher(neo.graph).match(
             "Asset",
             cpe23uri=self.props['cpe23uri']).first()
+        if node:
+            mylogger('entity').info(f"Found node for cpe23uri = {self.props['cpe23uri']}.")
         return node
 
     def add_node(self):
-        labels = ["Asset", self.props["type"]]
-        return neo.add_node(labels, self.props)
+        """
+        Add asset node to neo4j
+
+        :return: Py2neo Node object of the added node.
+        """
+        mylogger('entity').info(f"Didn't found node for cpe23uri = {self.props['cpe23uri']}. Creating new node...")
+        labels = ["Asset", self.part_type_map[self.props['field']['part']]]
+        return neo.add_node(labels, convert_props(self.props))
 
 
 class Exploit:
     """
     self.props has edb_id, title, author, type, platform, date, code, cve_ids[]
+
     """
 
     def __init__(self, props):
@@ -125,9 +157,12 @@ class Exploit:
         node = NodeMatcher(neo.graph).match(
             "Exploit",
             edb_id=self.props['edb_id']).first()
+        if node:
+            mylogger('entity').info(f"Found node for edb_id = {self.props['edb_id']}.")
         return node
 
     def add_node(self):
+        mylogger('entity').info(f"Didn't found node for edb_id = {self.props['edb_id']}. Creating new node...")
         labels = ["Exploit"]
         return neo.add_node(labels, self.props)
 

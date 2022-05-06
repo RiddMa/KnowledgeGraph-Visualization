@@ -31,7 +31,7 @@ from lxml import etree
 from CVE_Bot.utils.db import mg
 from CVE_Bot.utils.gz import un_gz
 from bot_root_dir import get_cpe_data_dir
-from custom_logger import setup_logger
+from custom_logger import setup_logger, mylogger
 
 
 def download_file(url):
@@ -44,14 +44,30 @@ def download_file(url):
                 # If you have chunk encoded response, uncomment if and set chunk_size parameter to None.
                 # if chunk:
                 f.write(chunk)
-    logging.getLogger("cpe").info("Download {fname} complete.".format(fname=file_path))
+    mylogger("cpe").info("Download {fname} complete.".format(fname=file_path))
     return file_path
 
 
 def parse_cpe_xml(file_path):
+    """
+    Parse cpe xml, extract cpe-item to MongoDB.
+
+    :param file_path: Path to xml file.
+    :return: None
+    """
+    mylogger('cpe').info(f'Parsing CPE XML {file_path}')
+    context = etree.iterparse(file_path, tag='{http://cpe.mitre.org/dictionary/2.0}generator')
+    timestamp = 'Undefined'
+    for event, element in context:
+        if element.tag.endswith('generator'):
+            for child in element:
+                if child.tag.endswith('timestamp'):
+                    timestamp = child.text
+    mylogger('cpe').info(f'Timestamp of this file: {timestamp}.')
+
     context = etree.iterparse(file_path, tag='{http://cpe.mitre.org/dictionary/2.0}cpe-item')
     for event, element in context:
-        cpe = {}
+        cpe = {'timestamp': timestamp}
         for child in element:
             tag = child.tag.split('}')[1]
             if tag == 'title':
@@ -75,20 +91,19 @@ def parse_cpe_xml(file_path):
             'target_hw': field_list[11],
             'other': field_list[12]
         }
-        # logging.getLogger('cpe').info(f'Parsed {cpe["title"]} xml.')
+        mylogger('cpe').info(f'Parsed {cpe["title"]} xml.')
         mg.save_cpe(cpe['cpe23uri'], cpe)
         element.clear()
 
 
 if __name__ == "__main__":
-    log_filename = 'cpe-' + datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + '.log'
-    mylogger = setup_logger('cpe', log_filename, level_file=logging.INFO, level_stdout=logging.INFO)
     cpe_dict_url = "https://nvd.nist.gov/feeds/xml/cpe/dictionary/official-cpe-dictionary_v2.3.xml.gz"
     cpe_schema_url = "https://csrc.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd"
-    # filepath = un_gz(download_file(cpe_dict_url))
-    # download_file(cpe_schema_url)
+    filepath = un_gz(download_file(cpe_dict_url))
+    download_file(cpe_schema_url)
+    parse_cpe_xml(file_path=filepath)
 
-    parse_cpe_xml(
-        '/mnt/C2000PRO/GitRepos/KnowledgeGraphVisualization-Main/KnowledgeGraph-Visualization/CVE_Bot/source_data/cpe_data/official-cpe-dictionary_v2.3.xml')
+    # parse_cpe_xml(
+    #     '/mnt/C2000PRO/GitRepos/KnowledgeGraphVisualization-Main/KnowledgeGraph-Visualization/CVE_Bot/source_data/cpe_data/official-cpe-dictionary_v2.3.xml')
     # parse_cpe_xml(
     #     '/mnt/C2000PRO/GitRepos/KnowledgeGraphVisualization-Main/KnowledgeGraph-Visualization/CVE_Bot/source_data/cpe_data/cpe-test.xml')

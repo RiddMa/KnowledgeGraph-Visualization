@@ -1,6 +1,8 @@
 import logging
 import pymongo
 
+from custom_logger import mylogger
+
 
 class Mongo:
     def __init__(self):
@@ -120,7 +122,7 @@ class Mongo:
 
     def save_cpe(self, cpe23uri, content):
         self.cpe.update_one({'cpe23uri': cpe23uri}, {"$set": content}, upsert=True)
-        # logging.getLogger('cpe').info(cpe23uri + '.json saved to MongoDB cpe')
+        mylogger('cpe').info(cpe23uri + '.json saved to MongoDB cpe')
 
 
 mg = Mongo()
