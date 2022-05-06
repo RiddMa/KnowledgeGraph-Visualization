@@ -125,6 +125,11 @@ class Asset:
         self.node = self.get_node() or self.add_node()
 
     def get_node(self):
+        """
+        Get asset node from neo4j, if no matching, return None
+
+        :return:
+        """
         node = NodeMatcher(neo.graph).match(
             "Asset",
             cpe23uri=self.props['cpe23uri']).first()
@@ -136,7 +141,7 @@ class Asset:
         """
         Add asset node to neo4j
 
-        :return: Py2neo Node object of the added node.
+        :return: Py2neo Node object of the added node
         """
         mylogger('entity').info(f"Didn't found node for cpe23uri = {self.props['cpe23uri']}. Creating new node...")
         labels = ["Asset", self.part_type_map[self.props['field']['part']]]
