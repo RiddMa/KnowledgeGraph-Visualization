@@ -7,12 +7,16 @@ from pathlib import Path
 def init_log_dir(folder_name: str = ''):
     """
         Get directory for log files. Create folders if path doesn't exist.
+        Path = logs/folder_name if folder_name is set. Otherwise, use datetime.now()
 
+        :param folder_name: folder name as string
         :return: Directory for log files.
         """
     path = Path(__file__).parent.joinpath('logs')
     if folder_name:
         path = path.joinpath(folder_name)
+    else:
+        path = path.joinpath(str(datetime.now().strftime("%Y-%m-%d-%H-%M-%S")))
     if not path.exists():
         Path.mkdir(path, parents=True)
     return path
@@ -40,7 +44,7 @@ def setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None):
         lvl_file = logging.INFO
     if not lvl_stdout:
         lvl_stdout = logging.INFO
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s:  %(message)s')
+    formatter = logging.Formatter('P(%(processName)s, %(process)d) - T(%(threadName)s, %(thread)d) - %(funcName)s - %(asctime)s - %(name)s - %(levelname)s:  %(message)s')
 
     # logfile = f'{name}-{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.log'
     # logfile = f'{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.log'
@@ -69,7 +73,7 @@ def setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None):
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(lvl_stdout)
     stdout_handler.setFormatter(formatter)
-    logger.addHandler(stdout_handler)
+    # logger.addHandler(stdout_handler) # No STDOUT!!!
 
     if name == 'root':
         logger.info(
@@ -83,18 +87,49 @@ def setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None):
 loggers = {}
 
 
-def mylogger(name) -> logging.Logger:
+def mylogger(name, log_folder=None) -> logging.Logger:
     """
     Logger factory for getting singleton logger objects.
 
     :param name: Logger name
+    :param log_folder: Logging subfolder inside 'Logs' as string
     :return: <name> logger object
     """
 
     global global_log_dir
     if 'root' not in loggers:
         print('Creating root logger')
-        global_log_dir = init_log_dir(str(datetime.now().strftime("%Y-%m-%d-%H-%M-%S")))
+        if log_folder is None:
+            global_log_dir = init_log_dir()
+        else:
+            global_log_dir = init_log_dir(log_folder)
+        loggers['root'] = setup_logger('root', log_folder=global_log_dir, lvl_file=logging.INFO,
+                                       lvl_stdout=logging.INFO)
+        loggers['root'].info(f'Global log folder is {global_log_dir}')
+    if name not in loggers:
+        loggers['root'].info(f'Creating logger {name}')
+        loggers[name] = setup_logger(name, log_folder=global_log_dir, lvl_file=logging.INFO, lvl_stdout=logging.INFO)
+    loggers['root'].debug('Using created logger')  # NOTE THIS IS DEBUG LEVEL!
+    return loggers[name]
+
+
+def mylogger_p(name, log_folder=None) -> logging.Logger:
+    """
+    Parallel logger factory with fixed log folder.
+
+    :param name: Logger name
+    :param log_folder: Logging subfolder inside 'Logs' as string
+    :return: <name> logger object
+    """
+
+    global global_log_dir
+    if 'root' not in loggers:
+        print('Creating root logger')
+        # if log_folder is None:
+        #     global_log_dir = init_log_dir()
+        # else:
+        #     global_log_dir = init_log_dir(log_folder)
+        global_log_dir = init_log_dir('0-single-log')
         loggers['root'] = setup_logger('root', log_folder=global_log_dir, lvl_file=logging.INFO,
                                        lvl_stdout=logging.INFO)
         loggers['root'].info(f'Global log folder is {global_log_dir}')

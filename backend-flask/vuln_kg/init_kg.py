@@ -1,5 +1,4 @@
 import json
-import ray
 from datetime import datetime
 
 from py2neo import NodeMatcher, Relationship
@@ -9,14 +8,10 @@ from logger_factory import mylogger
 
 from vulnentity import Vulnerability, Asset, Exploit, split_properties, VulnEntity, ApiVersion
 
-ray.init()
 limit = 10000
 
 
-@ray.remote
 def init_vuln():
-    from db import mg
-    from logger_factory import mylogger
     start = datetime.now()
     mylogger('timer').info('Start init_vuln')
 
@@ -26,14 +21,11 @@ def init_vuln():
         mylogger('init_kg').debug(doc)
         props = split_properties(doc, api_ver=ApiVersion.NVDv1)
         vuln = Vulnerability(props["vuln_props"])
-        asset = Asset(props['asset_props'])
-        exploit = Exploit(props["exploit_props"])
 
     mylogger('timer').info(f'init_vuln with limit {limit} runtime = {datetime.now() - start}')
     return 0
 
 
-@ray.remote
 def init_asset():
     start = datetime.now()
     mylogger('timer').info('Start init_asset')
@@ -47,7 +39,6 @@ def init_asset():
     return 0
 
 
-@ray.remote
 def init_exploit():
     start = datetime.now()
     mylogger('timer').info('Start init_exploit')
@@ -62,7 +53,6 @@ def init_exploit():
     return 0
 
 
-@ray.remote
 def create_rel_vuln():
     start = datetime.now()
 
@@ -99,13 +89,7 @@ if __name__ == "__main__":
     #     vuln_entity.add_relationship()
     #     print("1")
 
-    vuln_id = init_vuln.remote()
-    ray.get(vuln_id)
-
-    # asset_id = init_asset.remote()
-    #
-    # exploit_id = init_exploit.remote()
-    #
-    # ray.get([vuln_id, asset_id, exploit_id])
-
-    # create_rel_vuln()
+    init_vuln()
+    init_asset()
+    init_exploit()
+    create_rel_vuln()
