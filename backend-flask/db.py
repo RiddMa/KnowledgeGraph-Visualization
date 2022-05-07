@@ -1,10 +1,11 @@
 import logging
+import re
 from uuid import uuid4
 import pymongo as pymongo
 from flask import g
 from neo4j import (GraphDatabase, basic_auth)
 import pymongo
-from py2neo import Node, Relationship, Graph, NodeMatcher
+from py2neo import Node, Relationship, Graph, NodeMatcher, RelationshipMatcher
 from py2neo.cypher import cypher_escape
 import secret
 from logger_factory import mylogger
@@ -79,6 +80,14 @@ class MyNeo:
         mylogger('db').info("neo4j created session")
         self.session.run("match (n) return n limit 1")
         mylogger('db').info("neo4j run init query")
+        self.index_map = {
+            'Vulnerability': 'cve_id',
+            'Asset': 'cpe23uri',
+            'Application': 'cpe23uri',
+            'OperatingSystem': 'cpe23uri',
+            'Hardware': 'cpe23uri',
+            'Exploit': 'edb_id'
+        }
 
     def get_session(self):
         """
@@ -104,6 +113,22 @@ class MyNeo:
             mylogger('init_kg').warning(f"{args} node {kwargs} not found")
         return cursor
 
+    def match_asset(self, pattern: str):
+        def work_prefix(tx):
+            cql = "MATCH (a:Asset) WHERE a.cpe23uri STARTS WITH $prefix RETURN a"
+            match_list = tx.run(cql, prefix=pattern[:pattern.find('.*')]).data()
+            res = [entry['a'] for entry in match_list if re.match(pattern, entry['a']['cpe23uri'])]
+            return res
+
+        def work_re(tx):
+            cql = "MATCH (a:Asset) WHERE a.cpe23uri =~ $pattern RETURN a"
+            res = tx.run(cql, pattern=pattern)
+            return res
+
+        with self.get_session() as session:
+            # return session.read_transaction(work_re)
+            return session.read_transaction(work_prefix)
+
     def add_node(self, labels: list, props: dict) -> Node:
         """
         Add node of given labels and props to neo4j. A 'eid' attribute is auto generated for node identification.
@@ -120,12 +145,61 @@ class MyNeo:
         mylogger('db').info(f'Node {repr(labels)} {props["eid"]} added to {tx.graph.name} neo4j database')
         return node
 
-    def add_relationship(self, start, type_, end, props):
-        rel = Relationship(start, type_, end, props)
+    def add_relationship(self, start, type_, end, props=None):
+        """
+        Add relationship (start)-[type_]->(end) to neo4j database, if not exists.
+        If rel already exist, won't add.
+
+        :param start: start Node obj
+        :param type_: relationship type as string
+        :param end: end Node obj
+        :param props: props for relationship
+        :return: 1 if added new rel, 0 if rel exists
+        """
+        if RelationshipMatcher(neo.graph).match([start, end], r_type=type_).first() is not None:
+            mylogger('db').info(
+                f"Exist relationship {start[self.index_map[list(start.labels)[0]]]}--{type_}->{end[self.index_map[list(end.labels)[0]]]}")
+            return 0
+
+        if props is None:
+            props = {}
+        props['rid'] = str(uuid4())
+        rel = Relationship(start, type_, end, **props)
         tx = self.graph.begin()
         tx.create(rel)
         tx.commit()
-        mylogger('db').info(f"Relationship {start}--{type_}->{end} added to {tx.graph.name} neo4j database")
+        mylogger('db').info(
+            f"Added relationship {start[self.index_map[list(start.labels)[0]]]}--{type_}->{end[self.index_map[list(end.labels)[0]]]} to {tx.graph.name} neo4j database")
+        return 1
+
+    def add_rel_cql_va(self, cve_id, cpe23uri, props=None):
+        # def check_rel(tx):
+        #     cql = "MATCH (v:Vulnerability {cve_id:$cve_id})-[r:Affects]->(a:Asset {cpe23uri:$cpe23uri}) RETURN count(r)"
+        #     res = tx.run(cql, cve_id=cve_id, cpe23uri=cpe23uri).data()
+        #     return res
+
+        def add_rel(tx):
+            cql = "MATCH (v:Vulnerability {cve_id:$cve_id}),(a:Asset {cpe23uri:$cpe23uri})" \
+                  "MERGE (v)-[r1:Affects {rid:$rid1}]->(a)" \
+                  "MERGE (a)-[r2:Has {rid:$rid2}]->(v)"
+            res = tx.run(cql, cve_id=cve_id, cpe23uri=cpe23uri, rid1=f'{cve_id}->{cpe23uri}', rid2=f'{cpe23uri}->{cve_id}')
+            return res
+
+        with self.get_session() as session:
+            # if session.read_transaction(check_rel) > 0:
+            #     return 0
+            # else:
+            #
+            # return 2
+            num = session.write_transaction(add_rel)._summary.counters.relationships_created
+            if num:
+                mylogger('db').info(
+                    f"Added relationship {cve_id}-[Affects]->{cpe23uri}")
+                mylogger('db').info(
+                    f"Added relationship {cve_id}<-[Has]-{cpe23uri}")
+            else:
+                mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{cpe23uri}")
+            return num
 
     def get_movie(self):
         def work(tx):
@@ -140,19 +214,41 @@ class MyNeo:
 
     def create_node_index(self):
         """
+        Make sure node index exist
         See https://neo4j.com/docs/cypher-manual/current/indexes-for-search-performance/#administration-indexes-types
 
         :return: None
         """
-        cql_vuln = "CREATE INDEX vuln_index IF NOT EXISTS FOR (n:Vulnerability) ON (n.cve_id)"
-        self.get_session().run(cql_vuln)
-        mylogger('db').info('Created vuln_index on cve_id for neo4j')
-        cql_asset = "CREATE INDEX asset_index IF NOT EXISTS FOR (n:Asset) ON (n.cpe23uri)"
-        self.get_session().run(cql_asset)
-        mylogger('db').info('Created asset_index on cpe23uri for neo4j')
-        cql_exploit = "CREATE INDEX exploit_index IF NOT EXISTS FOR (n:Exploit) ON (n.edb_id)"
-        self.get_session().run(cql_exploit)
-        mylogger('db').info('Created exploit_index on edb_id for neo4j')
+        # self.get_session().run("CREATE INDEX vuln_index IF NOT EXISTS FOR (n:Vulnerability) ON (n.cve_id)")
+        self.get_session().run(
+            "CREATE CONSTRAINT vuln_con IF NOT EXISTS FOR (n:Vulnerability) REQUIRE n.cve_id IS UNIQUE")
+        mylogger('db').info('Checked vuln_index on cve_id for neo4j')
+
+        # self.get_session().run("CREATE INDEX asset_index IF NOT EXISTS FOR (n:Asset) ON (n.cpe23uri)")
+        self.get_session().run("CREATE CONSTRAINT asset_con IF NOT EXISTS FOR (n:Asset) REQUIRE n.cpe23uri IS UNIQUE")
+        mylogger('db').info('Checked asset_index on cpe23uri for neo4j')
+
+        # self.get_session().run("CREATE INDEX exploit_index IF NOT EXISTS FOR (n:Exploit) ON (n.edb_id)")
+        self.get_session().run("CREATE CONSTRAINT exploit_con IF NOT EXISTS FOR (n:Exploit) REQUIRE n.edb_id IS UNIQUE")
+        mylogger('db').info('Checked exploit_index on edb_id for neo4j')
+
+    def create_rel_index(self):
+        """
+        Make sure relationship index exist
+        See https://neo4j.com/docs/cypher-manual/current/indexes-for-search-performance/#administration-indexes-types
+
+        :return:
+        """
+        self.get_session().run("CREATE INDEX rel_has_index IF NOT EXISTS FOR ()-[r:Has]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_exploits_index IF NOT EXISTS FOR ()-[r:Exploits]-() ON (r.rid)")
+        self.get_session().run(
+            "CREATE INDEX rel_exploited_by_index IF NOT EXISTS FOR ()-[r:Exploited_by]-() ON (r.rid)")
+        mylogger('db').info('Checked rel_index for neo4j')
+        # cql_affects = "CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)"
+        # self.get_session().run(cql_affects)
+        # cql_affects = "CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)"
+        # self.get_session().run(cql_affects)
 
     def close_db(self):
         """
@@ -179,6 +275,7 @@ neo = MyNeo()
 #     app.cli.add_command(init_neo_command)
 if __name__ == "__main__":
     # neo.create_node_index()
-    node = neo.get_node('Asset', cpe23uri='cpe:2.3:a:\@thi.ng\/egf_project:\@thi.ng\/egf:-:*:*:*:*:node.js:*:*').first()
-    print(node)
-    neo.close_db()
+    # node = neo.get_node('Asset', cpe23uri='cpe:2.3:a:\@thi.ng\/egf_project:\@thi.ng\/egf:-:*:*:*:*:node.js:*:*').first()
+    # print(node)
+    # neo.close_db()
+    pass

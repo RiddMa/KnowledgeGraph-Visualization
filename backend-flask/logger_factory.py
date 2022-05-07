@@ -44,7 +44,8 @@ def setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None):
         lvl_file = logging.INFO
     if not lvl_stdout:
         lvl_stdout = logging.INFO
-    formatter = logging.Formatter('P(%(processName)s, %(process)d) - T(%(threadName)s, %(thread)d) - %(funcName)s - %(asctime)s - %(name)s - %(levelname)s:  %(message)s')
+    formatter = logging.Formatter(
+        'P%(process)d-T%(thread)d- %(funcName)s - %(asctime)s - %(name)s - %(levelname)s: %(message)s')
 
     # logfile = f'{name}-{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.log'
     # logfile = f'{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.log'
@@ -73,7 +74,7 @@ def setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None):
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(lvl_stdout)
     stdout_handler.setFormatter(formatter)
-    # logger.addHandler(stdout_handler) # No STDOUT!!!
+    logger.addHandler(stdout_handler)  # No STDOUT!!!
 
     if name == 'root':
         logger.info(

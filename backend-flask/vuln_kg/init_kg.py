@@ -55,8 +55,8 @@ def init_exploit():
 
 def create_rel_vuln():
     start = datetime.now()
-
-    cursor = NodeMatcher(neo.graph).match("Vulnerability").limit(10)
+    global limit
+    cursor = NodeMatcher(neo.graph).match("Vulnerability").limit(limit)
     for vuln_node in cursor:
         props = json.loads(vuln_node['props'])
         for op_dict in props['assets']:
