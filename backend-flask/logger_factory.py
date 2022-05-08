@@ -16,7 +16,7 @@ def init_log_dir(folder_name: str = ''):
     if folder_name:
         path = path.joinpath(folder_name)
     else:
-        path = path.joinpath(str(datetime.now().strftime("%Y-%m-%d-%H-%M-%S")))
+        path = path.joinpath(str(datetime.now().strftime("%Y-%m-%d-%H-%M")))
     if not path.exists():
         Path.mkdir(path, parents=True)
     return path

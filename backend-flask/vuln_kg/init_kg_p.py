@@ -6,7 +6,7 @@ import ray
 from db import MyNeo
 from logger_factory import mylogger_p
 
-limit = 1
+limit = 100000
 
 
 @ray.remote
@@ -62,6 +62,27 @@ def init_asset_ray():
 
 
 @ray.remote
+def init_asset_family_ray(skip, _limit):
+    """
+    Create an asset family node for assets of same <part>:<vendor>:<product>
+    # cpe:<cpe_version>:<part>:<vendor>:<product>:<version>:<update>:<edition>:<language>:<sw_edition>:<target_sw>:<target_hw>:<other>
+
+    :param skip:
+    :param _limit:
+    :return:
+    """
+    from py2neo import NodeMatcher
+    from db import MyNeo
+    start = datetime.now()
+    neo = MyNeo()
+    cursor = NodeMatcher(neo.graph).match("Asset").skip(skip).limit(_limit)
+    family_cnt = 0
+    for asset_node in cursor:
+        asset_cnt = 0
+        neo.add_asset_family_node(asset_node)
+
+
+@ray.remote
 def init_exploit_ray():
     from db import MyMongo
     from datetime import datetime
@@ -88,31 +109,40 @@ def init_exploit_ray():
 
 
 @ray.remote
-def create_rel_va_ray():
+def create_rel_va_ray(skip, _limit):
     """
     Create Asset-HAS->Vuln and Vuln-AFFECTS->Asset relationship.
 
     :return:
     """
-    start = datetime.now()
-
     from py2neo import NodeMatcher
     from db import MyNeo
-    global limit
+    start = datetime.now()
     neo = MyNeo()
-    cursor = NodeMatcher(neo.graph).match("Vulnerability").limit(limit)
+    cursor = NodeMatcher(neo.graph).match("Vulnerability").skip(skip).limit(_limit)
+    vul_cnt = 0
     for vuln_node in cursor:
+        rel_cnt = 0
         props = json.loads(vuln_node['props'])
         for op_dict in props['assets']:
-            if op_dict['operator'] == 'OR':
-                for match in op_dict['cpe_match']:
-                    if match['vulnerable']:
-                        asset_node = neo.get_node('Asset', cpe23uri=match['cpe23Uri']).first()
-                        if asset_node is not None:
-                            neo.add_relationship(start=asset_node, type_='Has', end=vuln_node)
-                            neo.add_relationship(start=vuln_node, type_='Affects', end=asset_node)
+            try:
+                if op_dict['operator'] == 'OR':
+                    for match in op_dict['cpe_match']:
+                        if match['vulnerable']:
+                            pattern = re.sub(r'\*+', '.*', match['cpe23Uri'])
+                            assets = neo.match_asset(pattern)
+                            for asset in assets:
+                                rel_cnt += neo.add_rel_cql_va(cve_id=vuln_node['cve_id'], cpe23uri=asset['cpe23uri'])
+            except BaseException as err:
+                mylogger_p('init_kg').error(err)
+            finally:
+                pass
+        vul_cnt += 1
+        mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
+        if vul_cnt % 50 == 0:
+            mylogger_p('init_kg').info(f'Processed {vul_cnt} vulnerabilities')
     neo.close_db()
-    mylogger_p('timer').info(f'init_exploit with limit {limit} runtime = {datetime.now() - start}')
+    mylogger_p('timer').info(f'init_exploit().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
     return 0
 
 
@@ -148,7 +178,7 @@ def create_rel_va():
 
 
 @ray.remote
-def create_rel_eva_ray():
+def create_rel_eva_ray(skip, _limit):
     """
     Create Exploit-Exploits->Vuln and Vuln-Exploited_by->Exploit,
     then Deduct Exploit-Against->Asset and Asset-Exploited_by->Exploit
@@ -158,12 +188,12 @@ def create_rel_eva_ray():
 
     from db import MyNeo
     from py2neo import NodeMatcher, RelationshipMatcher
-    global limit
     start = datetime.now()
     mylogger_p('timer').info('Start create_rel_ve')
 
     neo = MyNeo()
-    cursor = NodeMatcher(neo.graph).match("Exploit").limit(limit)
+    # cursor = NodeMatcher(neo.graph).match("Exploit").limit(limit)
+    cursor = NodeMatcher(neo.graph).match("Exploit").skip(skip).limit(_limit)
     for exploit_node in cursor:
         cve_ids = exploit_node['cve_ids']
         for cve_id_no in cve_ids:
@@ -298,13 +328,21 @@ def get_node_stats():
     return neo_stat
 
 
-def init_rels():
+def init_rels(vuln_num=0, exploit_num=0, step=10000):
     rel_start_time = datetime.now()
+    ray.init()
     mylogger_p('init_kg').info('Start Relationship init')
 
-    rel_va = create_rel_va_ray.remote()
-    rel_eva = create_rel_eva_ray.remote()
-    ray.get([rel_va, rel_eva])
+    if vuln_num:
+        arr = [create_rel_va_ray.remote(skip=i, _limit=step + 1) for i in range(0, vuln_num, step)]
+        ray.get(arr)
+    else:
+        rel_va = create_rel_va_ray.remote()
+        ray.get([rel_va])
+
+    # if exploit_num:
+    #     arr = [create_rel_eva_ray.remote(skip=i, _limit=step) for i in range(0, exploit_num, step)]
+    #     ray.get(arr)
 
     mylogger_p('init_kg').info('Finished Node init')
     mylogger_p('timer').info(
@@ -316,17 +354,18 @@ if __name__ == "__main__":
     mylogger_p('timer').info('Start init')
 
     n = MyNeo()
-    n.create_node_index()
-    n.create_rel_index()
+    n.check_node_index()
+    n.check_rel_index()
     mylogger_p('db').info('Checked index, good to go')
 
-    # ray.init()
     # init_nodes()
-    mylogger_p('init_kg').info(f"Neo4j stat:\n{get_node_stats()}")
+    stats = get_node_stats()
+    mylogger_p('init_kg').info(f"Neo4j stat:\n{stats}")
 
-    # init_rels()
-    create_rel_va()
+    init_rels(vuln_num=int(stats['Vuln']), exploit_num=int(stats['Exploit']), step=3000)
+    # create_rel_va()
     # create_rel_eva()
 
     mylogger_p('timer').info(f'Runtime = {datetime.now() - global_start}')
     n.close_db()
+    mylogger_p('root').info('\n\n\n\n\n\n')

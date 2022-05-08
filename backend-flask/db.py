@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import datetime
 from uuid import uuid4
 import pymongo as pymongo
 from flask import g
@@ -20,13 +21,16 @@ class MyMongo:
         self.client = pymongo.MongoClient(secret.mongo_uri)
         if "cve_bot" not in self.client.list_database_names():
             mylogger('db').info('Database "cve_bot" does not exist.')
-        self.db = self.client["cve_bot"]
-        self.json = self.db["json"]
-        self.nvd_json_src = self.db['nvd_json_src']
-        self.nvd_json = self.db['nvd_json']
-        self.edb_html = self.db['edb_html']
-        self.edb_json = self.db['edb_json']
-        self.cpe = self.db['cpe']
+        self.data_db = self.client["cve_bot"]
+        self.json = self.data_db["json"]
+        self.nvd_json_src = self.data_db['nvd_json_src']
+        self.nvd_json = self.data_db['nvd_json']
+        self.edb_html = self.data_db['edb_html']
+        self.edb_json = self.data_db['edb_json']
+        self.cpe = self.data_db['cpe']
+
+        self.web_db = self.client['vul_kg_web']
+        self.graph_data = self.web_db['graph_data']
 
     def save_json(self, cve_id, content):
         doc = {"cve_id": cve_id, "content": content}
@@ -60,6 +64,18 @@ class MyMongo:
         else:
             doc = self.edb_json.find_one({"edb_id": edb_id}, {"content": 1, "_id": 0})
             return doc
+
+    def check_index(self):
+        self.graph_data.create_index([('timestamp', pymongo.DESCENDING)], name='timestamp_index')
+
+    def save_graph_data(self, doc=None):
+        timestamp = datetime.utcnow()
+        self.graph_data.update_one({"timestamp": timestamp}, {"$set": doc}, upsert=True)
+        mylogger('db').info(str(timestamp) + f".json saved to MongoDB {self.graph_data.name}.")
+
+    def get_graph_data(self):
+        doc = self.graph_data.find_one({}, {})
+        return doc
 
 
 mg = MyMongo()
@@ -129,6 +145,30 @@ class MyNeo:
             # return session.read_transaction(work_re)
             return session.read_transaction(work_prefix)
 
+    def add_asset_family_node(self, cpe23uri):
+        def check_work(tx):
+            cql = 'MATCH (a:Asset {cpe23uri:$cpe23uri}) RETURN COUNT(a) as cnt'
+            cnt = tx.run(cql, cpe23uri=family_cpe23uri).data()[0]['cnt']
+            return cnt
+
+        def add_work(tx):
+            cql = 'CREATE (a:Asset:Family {cpe23uri:$family_cpe23uri}) return a'
+            _res = tx.run(cql, family_cpe23uri=family_cpe23uri).data()
+            return _res
+
+        arr = cpe23uri.split(':')
+        family_cpe23uri = ''
+        for i in range(0, 5):
+            family_cpe23uri += (arr[i] + ':')
+        with self.get_session() as session:
+            if session.read_transaction(check_work) == 0:
+                res = session.write_transaction(add_work)
+                mylogger('db').info(f"Added asset family {family_cpe23uri}")
+                return 1
+            else:
+                mylogger('db').info(f"Exist asset family {family_cpe23uri}")
+                return 0
+
     def add_node(self, labels: list, props: dict) -> Node:
         """
         Add node of given labels and props to neo4j. A 'eid' attribute is auto generated for node identification.
@@ -182,7 +222,8 @@ class MyNeo:
             cql = "MATCH (v:Vulnerability {cve_id:$cve_id}),(a:Asset {cpe23uri:$cpe23uri})" \
                   "MERGE (v)-[r1:Affects {rid:$rid1}]->(a)" \
                   "MERGE (a)-[r2:Has {rid:$rid2}]->(v)"
-            res = tx.run(cql, cve_id=cve_id, cpe23uri=cpe23uri, rid1=f'{cve_id}->{cpe23uri}', rid2=f'{cpe23uri}->{cve_id}')
+            res = tx.run(cql, cve_id=cve_id, cpe23uri=cpe23uri, rid1=f'{cve_id}->{cpe23uri}',
+                         rid2=f'{cpe23uri}->{cve_id}')
             return res
 
         with self.get_session() as session:
@@ -212,7 +253,7 @@ class MyNeo:
         with self.get_session() as session:
             return session.read_transaction(work)
 
-    def create_node_index(self):
+    def check_node_index(self):
         """
         Make sure node index exist
         See https://neo4j.com/docs/cypher-manual/current/indexes-for-search-performance/#administration-indexes-types
@@ -232,7 +273,11 @@ class MyNeo:
         self.get_session().run("CREATE CONSTRAINT exploit_con IF NOT EXISTS FOR (n:Exploit) REQUIRE n.edb_id IS UNIQUE")
         mylogger('db').info('Checked exploit_index on edb_id for neo4j')
 
-    def create_rel_index(self):
+        self.get_session().run("CREATE LOOKUP INDEX node_label_lookup_index IF NOT EXISTS FOR (n) ON EACH labels(n)")
+        self.get_session().run("CREATE LOOKUP INDEX rel_type_lookup_index IF NOT EXISTS FOR ()-[r]-() ON EACH type(r)")
+        mylogger('db').info('Checked lookup index for neo4j')
+
+    def check_rel_index(self):
         """
         Make sure relationship index exist
         See https://neo4j.com/docs/cypher-manual/current/indexes-for-search-performance/#administration-indexes-types
@@ -249,6 +294,18 @@ class MyNeo:
         # self.get_session().run(cql_affects)
         # cql_affects = "CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)"
         # self.get_session().run(cql_affects)
+
+    def delete_rel(self, cve_id=""):
+        # def work(tx):
+        #      = tx.run()
+        #     # tx.run('match (v:Vulnerability {cve_id:$cve_id})<-[r]-(a) delete r',cve_id=cve_id)
+        #
+        #     return res
+
+        with self.get_session() as session:
+            res = session.run('match (v:Vulnerability {cve_id:$cve_id})-[r]-(a) delete r', cve_id=cve_id)
+            mylogger('db').info(f'Deleted all rels for {cve_id}')
+            return
 
     def close_db(self):
         """

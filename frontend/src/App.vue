@@ -1,14 +1,16 @@
 <template>
   <v-app>
-    <v-system-bar app> </v-system-bar>
+    <v-system-bar app></v-system-bar>
 
     <v-navigation-drawer app>
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="text-h6">
-            Cyber Security<br />Knowledge Graph
+            <!--            Vulnerability<br />Knowledge Graph-->
+            漏洞知识图谱<br />Vul-KG
           </v-list-item-title>
-          <v-list-item-subtitle>Visualization</v-list-item-subtitle>
+          <!--          <v-list-item-subtitle>Visualization System</v-list-item-subtitle>-->
+          <v-list-item-subtitle>可视化系统</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -41,9 +43,9 @@ export default {
 
   data: () => ({
     items: [
-      { title: "Dashboard", icon: "mdi-view-dashboard", route: "/dashboard" },
-      { title: "Search", icon: "mdi-database-search", route: "/search" },
-      { title: "About", icon: "mdi-information", route: "/about" },
+      { title: "控制台", icon: "mdi-view-dashboard", route: "/dashboard" },
+      { title: "搜索", icon: "mdi-database-search", route: "/search" },
+      { title: "关于", icon: "mdi-information", route: "/about" },
     ],
     right: null,
   }),

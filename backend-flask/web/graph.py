@@ -46,15 +46,16 @@ def retrieve_graph_stats():
     t0 = time.time()
 
     def work(tx):
-        cql_vuln = "match (vuln:Vulnerability) return count(vuln) as vuln_count"
+        cql_vuln = "match (vul:Vulnerability) return count(vul) as vul_count"
         cql_asset = "match (asset:Asset) return count(asset) as asset_count"
-        cql_atk = "match (atk:Attack) return count(atk) as atk_count"
+        cql_atk = "match (e:Exploit) return count(e) as exploit_count"
         cql_app = "match (app:Application) return count(app) as app_count"
         cql_hw = "match (hardware:Hardware) return count(hardware) as hw_count"
-        cql_os = "match (os:OS) return count(os) as os_count"
-        result = {"vuln_count": tx.run(cql_vuln).data()[0]["vuln_count"],
+        cql_os = "match (os:OperatingSystem) return count(os) as os_count"
+        cql_affected_asset="match (os:OperatingSystem) return count(os) as os_count"
+        result = {"vul_count": tx.run(cql_vuln).data()[0]["vul_count"],
                   "asset_count": tx.run(cql_asset).data()[0]["asset_count"],
-                  "atk_count": tx.run(cql_atk).data()[0]["atk_count"],
+                  "exploit_count": tx.run(cql_atk).data()[0]["exploit_count"],
                   "app_count": tx.run(cql_app).data()[0]["app_count"],
                   "hw_count": tx.run(cql_hw).data()[0]["hw_count"],
                   "os_count": tx.run(cql_os).data()[0]["os_count"]}
@@ -71,7 +72,7 @@ def retrieve_graph_stats():
 def retrieve_graph(limit):
     def work(tx, limit_):
         cql_vuln = "match (vuln:Vulnerability) return vuln.eid limit $limit_"
-        result = tx.run(cql_vuln).data()
+        result = tx.run(cql_vuln,limit_=limit_).data()
         eid_list = []
         for item in result:
             eid_list.append(item["vuln.eid"])
