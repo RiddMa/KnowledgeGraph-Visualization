@@ -32,6 +32,9 @@ class MyMongo:
         self.web_db = self.client['vul_kg_web']
         self.graph_data = self.web_db['graph_data']
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.client.close()
+
     def save_json(self, cve_id, content):
         doc = {"cve_id": cve_id, "content": content}
         # doc_id = self.json.insert_one(doc).inserted_id
@@ -105,6 +108,9 @@ class MyNeo:
             'Exploit': 'edb_id'
         }
 
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close_db()
+
     def get_session(self):
         """
         Used for getting singleton session for neo4j.
@@ -145,9 +151,25 @@ class MyNeo:
             # return session.read_transaction(work_re)
             return session.read_transaction(work_prefix)
 
+    def match_asset_family(self, pattern: str):
+        def work_prefix(tx):
+            cql = "MATCH (a:Family) WHERE a.cpe23uri STARTS WITH $prefix RETURN a"
+            match_list = tx.run(cql, prefix=pattern[:pattern.find('.*')]).data()
+            res = [entry['a'] for entry in match_list if re.match(pattern, entry['a']['cpe23uri'])]
+            return res
+
+        def work_exact_match(tx):
+            cql = "MATCH (a:Family {cpe23uri:$pattern}) RETURN a"
+            res = tx.run(cql, pattern=pattern).data()[0]['a']
+            return res
+
+        with self.get_session() as session:
+            # return session.read_transaction(work_re)
+            return session.read_transaction(work_exact_match)
+
     def add_asset_family_node(self, cpe23uri):
         def check_work(tx):
-            cql = 'MATCH (a:Asset {cpe23uri:$cpe23uri}) RETURN COUNT(a) as cnt'
+            cql = 'MATCH (a:Asset:Family {cpe23uri:$cpe23uri}) RETURN COUNT(a) as cnt'
             cnt = tx.run(cql, cpe23uri=family_cpe23uri).data()[0]['cnt']
             return cnt
 
@@ -241,6 +263,38 @@ class MyNeo:
             else:
                 mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{cpe23uri}")
             return num
+
+    def add_rel_cql_vaf(self, cve_id, cpe23uri, asset_uri):
+        def add_rel(tx):
+            cql1 = "MATCH (v:Vulnerability {cve_id:$cve_id}),(a:Family {cpe23uri:$cpe23uri}) " \
+                   "MERGE (a)-[r2:Has {rid:$rid}]->(v) " \
+                   "ON CREATE SET r2.assets = [$asset] " \
+                   "WITH r2, apoc.coll.contains(r2.assets, $asset) AS r2e " \
+                   "WHERE r2e = false " \
+                   "SET r2.assets = r2.assets + $asset " \
+                   "RETURN r2.assets "
+            cql2 = "MATCH (v:Vulnerability {cve_id:$cve_id}),(a:Family {cpe23uri:$cpe23uri}) " \
+                   "MERGE (v)-[r1:Affects {rid:$rid}]->(a) " \
+                   "ON CREATE SET r1.assets = [$asset] " \
+                   "WITH r1, apoc.coll.contains(r1.assets, $asset) AS r1e " \
+                   "WHERE r1e = false " \
+                   "SET r1.assets = r1.assets + $asset " \
+                   "RETURN r1.assets "
+            res = tx.run(cql1, cve_id=cve_id, cpe23uri=cpe23uri, rid=f'{cve_id}->{cpe23uri}', asset=asset_uri)
+            res = tx.run(cql2, cve_id=cve_id, cpe23uri=cpe23uri, rid=f'{cve_id}->{cpe23uri}', asset=asset_uri)
+            return res
+
+        with self.get_session() as session:
+            num = session.write_transaction(add_rel)._summary.counters.relationships_created
+            # num = session.write_transaction(add_rel)
+            if num:  # if num == 1 then 2 edges created
+                mylogger('db').info(
+                    f"Added relationship {cve_id}-[Affects]->{cpe23uri}")
+                mylogger('db').info(
+                    f"Added relationship {cve_id}<-[Has]-{cpe23uri}")
+            else:
+                mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{cpe23uri}")
+            return 2
 
     def get_movie(self):
         def work(tx):

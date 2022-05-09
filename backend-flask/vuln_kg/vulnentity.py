@@ -77,6 +77,24 @@ def split_properties(cve_item, api_ver: ApiVersion):
         }
 
 
+def get_vul_node(_neo, props):
+    node = NodeMatcher(_neo.graph).match(
+        "Vulnerability", cve_id=props['cve_id']).first()
+    if node:
+        mylogger('entity').info(f"Found node for cve_id = {props['cve_id']}.")
+    return node
+
+
+def add_vul_node(_neo, props):
+    mylogger('entity').info(f"Didn't found node for cve_id = {props['cve_id']}. Creating new node...")
+    labels = ["Vulnerability"]
+    return _neo.add_node(labels, props)
+
+
+def add_vul(_neo, props):
+    return get_vul_node(_neo, props) or add_vul_node(_neo, props)
+
+
 class Vulnerability:
 
     def __init__(self, props):
@@ -107,6 +125,40 @@ def convert_props(props):
         'cpe23uri': props['cpe23uri'],
         'props': json.dumps(props)
     }
+
+
+def get_node(_neo, props):
+    """
+    Get asset node from neo4j, if no matching, return None
+
+    :return:
+    """
+    node = NodeMatcher(_neo.graph).match(
+        "Asset",
+        cpe23uri=props['cpe23uri']).first()
+    if node:
+        mylogger('entity').info(f"Found node for cpe23uri = {props['cpe23uri']}.")
+    return node
+
+
+def add_node(_neo, props):
+    """
+    Add asset node to neo4j
+
+    :return: Py2neo Node object of the added node
+    """
+    part_type_map = {
+        'a': 'Application',
+        'o': 'OperatingSystem',
+        'h': 'Hardware'
+    }
+    mylogger('entity').info(f"Didn't found node for cpe23uri = {props['cpe23uri']}. Creating new node...")
+    labels = ["Asset", part_type_map[props['field']['part']]]
+    return _neo.add_node(labels, convert_props(props))
+
+
+def add_asset(_neo, props):
+    return get_node(_neo, props) or add_node(_neo, props)
 
 
 class Asset:
@@ -146,6 +198,25 @@ class Asset:
         mylogger('entity').info(f"Didn't found node for cpe23uri = {self.props['cpe23uri']}. Creating new node...")
         labels = ["Asset", self.part_type_map[self.props['field']['part']]]
         return neo.add_node(labels, convert_props(self.props))
+
+
+def get_exploit_node(_neo, props):
+    node = NodeMatcher(_neo.graph).match(
+        "Exploit",
+        edb_id=props['edb_id']).first()
+    if node:
+        mylogger('entity').info(f"Found node for edb_id = {props['edb_id']}.")
+    return node
+
+
+def add_exploit_node(_neo, props):
+    mylogger('entity').info(f"Didn't found node for edb_id = {props['edb_id']}. Creating new node...")
+    labels = ["Exploit"]
+    return _neo.add_node(labels, props)
+
+
+def add_exploit(_neo, props):
+    return get_exploit_node(_neo, props) or add_exploit_node(_neo, props)
 
 
 class Exploit:

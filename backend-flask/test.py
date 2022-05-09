@@ -14,8 +14,11 @@ if __name__ == '__main__':
 
     # neo.add_asset_family_node('cpe:2.3:a:\@thi.ng\/egf_project:\@thi.ng\/egf:')
 
-    cursor = NodeMatcher(neo.graph).match("Asset").skip(0).limit(30)
-    family_cnt = 0
-    for asset_node in cursor:
-        asset_cnt = 0
-        neo.add_asset_family_node(dict(asset_node)['cpe23uri'])
+    # cursor = NodeMatcher(neo.graph).match("Asset").skip(0).limit(30)
+    # family_cnt = 0
+    # for asset_node in cursor:
+    #     asset_cnt = 0
+    #     neo.add_asset_family_node(dict(asset_node)['cpe23uri'])
+    # print(int((0 / 16) - 1))
+    print(
+        neo.add_rel_cql_vaf('CVE-1999-0001', 'cpe:2.3:o:freebsd:freebsd:', 'CVE-1999-0001->cpe:2.3:o:freebsd:freebsd:'))
