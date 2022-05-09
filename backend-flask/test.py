@@ -1,8 +1,8 @@
-from py2neo import RelationshipMatcher, NodeMatcher
-
-from db import neo
-from logger_factory import mylogger_p
-from vuln_kg.init_kg_p import get_node_stats
+# from py2neo import RelationshipMatcher, NodeMatcher
+#
+# from db import neo
+# from logger_factory import mylogger_p
+# from vuln_kg.init_kg_p import get_node_stats
 
 if __name__ == '__main__':
     # print(f"Neo4j stat:\n{get_node_stats()}")
@@ -20,5 +20,6 @@ if __name__ == '__main__':
     #     asset_cnt = 0
     #     neo.add_asset_family_node(dict(asset_node)['cpe23uri'])
     # print(int((0 / 16) - 1))
-    print(
-        neo.add_rel_cql_vaf('CVE-1999-0001', 'cpe:2.3:o:freebsd:freebsd:', 'CVE-1999-0001->cpe:2.3:o:freebsd:freebsd:'))
+    # print(
+    #     neo.add_rel_cql_vaf('CVE-1999-0001', 'cpe:2.3:o:freebsd:freebsd:', 'CVE-1999-0001->cpe:2.3:o:freebsd:freebsd:'))
+    print('cpe:2.3:a:emc:rsa_certificate_manager:*:*:*:*:*:*:*:*'.split(':')[2])

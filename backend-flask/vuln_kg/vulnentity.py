@@ -88,7 +88,7 @@ def get_vul_node(_neo, props):
 def add_vul_node(_neo, props):
     mylogger('entity').info(f"Didn't found node for cve_id = {props['cve_id']}. Creating new node...")
     labels = ["Vulnerability"]
-    return _neo.add_node(labels, props)
+    return _neo.add_asset_node(labels, props)
 
 
 def add_vul(_neo, props):
@@ -111,7 +111,7 @@ class Vulnerability:
     def add_node(self):
         mylogger('entity').info(f"Didn't found node for cve_id = {self.props['cve_id']}. Creating new node...")
         labels = ["Vulnerability"]
-        return neo.add_node(labels, self.props)
+        return neo.add_asset_node(labels, self.props)
 
 
 def convert_props(props):
@@ -127,7 +127,7 @@ def convert_props(props):
     }
 
 
-def get_node(_neo, props):
+def get_asset_node(_neo, props):
     """
     Get asset node from neo4j, if no matching, return None
 
@@ -141,7 +141,7 @@ def get_node(_neo, props):
     return node
 
 
-def add_node(_neo, props):
+def add_asset_node(_neo, props):
     """
     Add asset node to neo4j
 
@@ -154,11 +154,11 @@ def add_node(_neo, props):
     }
     mylogger('entity').info(f"Didn't found node for cpe23uri = {props['cpe23uri']}. Creating new node...")
     labels = ["Asset", part_type_map[props['field']['part']]]
-    return _neo.add_node(labels, convert_props(props))
+    return _neo.add_asset_node(labels, convert_props(props))
 
 
 def add_asset(_neo, props):
-    return get_node(_neo, props) or add_node(_neo, props)
+    return get_asset_node(_neo, props) or add_asset_node(_neo, props)
 
 
 class Asset:
@@ -197,7 +197,7 @@ class Asset:
         """
         mylogger('entity').info(f"Didn't found node for cpe23uri = {self.props['cpe23uri']}. Creating new node...")
         labels = ["Asset", self.part_type_map[self.props['field']['part']]]
-        return neo.add_node(labels, convert_props(self.props))
+        return neo.add_asset_node(labels, convert_props(self.props))
 
 
 def get_exploit_node(_neo, props):
@@ -212,7 +212,7 @@ def get_exploit_node(_neo, props):
 def add_exploit_node(_neo, props):
     mylogger('entity').info(f"Didn't found node for edb_id = {props['edb_id']}. Creating new node...")
     labels = ["Exploit"]
-    return _neo.add_node(labels, props)
+    return _neo.add_asset_node(labels, props)
 
 
 def add_exploit(_neo, props):
@@ -240,7 +240,7 @@ class Exploit:
     def add_node(self):
         mylogger('entity').info(f"Didn't found node for edb_id = {self.props['edb_id']}. Creating new node...")
         labels = ["Exploit"]
-        return neo.add_node(labels, self.props)
+        return neo.add_asset_node(labels, self.props)
 
     def match_cves(self):
         nodes = NodeMatcher(neo.graph).match("Vulnerability").where(f"cve_id in {self.props['cve_ids']}")

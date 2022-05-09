@@ -63,7 +63,7 @@ def create_rel_vuln():
             if op_dict['operator'] == 'OR':
                 for match in op_dict['cpe_match']:
                     if match['vulnerable']:
-                        asset_node = neo.get_node('Asset', cpe23uri=match['cpe23Uri']).first()
+                        asset_node = neo.get_asset_node('Asset', cpe23uri=match['cpe23Uri']).first()
                         if asset_node is not None:
                             neo.add_relationship(start=asset_node, type_='HAS', end=vuln_node)
     return 0

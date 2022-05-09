@@ -89,8 +89,7 @@ def init_asset_family_ray(skip, _limit):
     start = datetime.now()
     _neo = MyNeo()
     cursor = NodeMatcher(_neo.graph).match("Asset").skip(skip).limit(_limit)
-    family_cnt = 0
-    asset_cnt = 0
+    family_cnt, asset_cnt = 0, 0
     for asset_node in cursor:
         try:
             family_cnt += _neo.add_asset_family_node(asset_node['cpe23uri'])
@@ -103,6 +102,37 @@ def init_asset_family_ray(skip, _limit):
             mylogger_p('init_kg').info(f'Created {family_cnt} families')
     mylogger_p('timer').info(
         f'init_asset_family_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
+    return 0
+
+
+@ray.remote
+def fix_asset_family_ray(skip, _limit):
+    """
+    Create an asset family node for assets of same <part>:<vendor>:<product>
+    # cpe:<cpe_version>:<part>:<vendor>:<product>:<version>:<update>:<edition>:<language>:<sw_edition>:<target_sw>:<target_hw>:<other>
+
+    :param skip:
+    :param _limit:
+    :return:
+    """
+    from py2neo import NodeMatcher
+    from db import MyNeo
+    start = datetime.now()
+    _neo = MyNeo()
+    cursor = NodeMatcher(_neo.graph).match("Asset").skip(skip).limit(_limit)
+    family_cnt, asset_cnt = 0, 0
+    for asset_node in cursor:
+        try:
+            family_cnt += _neo.fix_asset_family_label(asset_node['cpe23uri'])
+        except BaseException as e:
+            mylogger_p('error').error(e, exc_info=True)
+        finally:
+            asset_cnt += 1
+        if asset_cnt % 50 == 0:
+            mylogger_p('init_kg').info(f'Processed {asset_cnt} assets')
+            mylogger_p('init_kg').info(f'Created {family_cnt} families')
+    mylogger_p('timer').info(
+        f'fix_asset_family_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
     return 0
 
 
@@ -217,6 +247,49 @@ def create_rel_vaf_ray(skip, _limit):
     neo.close_db()
     mylogger_p('timer').info(
         f'create_rel_vaf_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
+    return 0
+
+
+@ray.remote
+def create_rel_afa_ray(skip, _limit):
+    """
+    Ensure Asset:Family-ParentOf->Asset and Asset-ChildOf->Asset:Family relationship.
+    'afa' means asset:family-asset
+
+    :return:
+    """
+    from py2neo import NodeMatcher
+    from db import MyNeo
+    start = datetime.now()
+    neo = MyNeo()
+    if skip or _limit:
+        mylogger_p('timer').info(f'create_rel_afa_ray().skip({skip}) with limit {_limit} start')
+        cursor = NodeMatcher(neo.graph).match("Vulnerability").skip(skip).limit(_limit)
+    else:
+        mylogger_p('timer').info(f'create_rel_afa_ray() start')
+        cursor = NodeMatcher(neo.graph).match("Vulnerability")
+    vul_cnt = 0
+    for vuln_node in cursor:
+        rel_cnt = 0
+        props = json.loads(vuln_node['props'])
+        for op_dict in props['assets']:
+            try:
+                if op_dict['operator'] == 'OR':
+                    for match in op_dict['cpe_match']:
+                        if match['vulnerable']:
+                            prefix = match['cpe23Uri'][:match['cpe23Uri'].find('*')]
+                            rel_cnt += neo.add_rel_cql_afa(asset_uri=match['cpe23Uri'])
+            except BaseException as e:
+                mylogger_p('init_kg').error(e, exc_info=True)
+            finally:
+                pass
+        vul_cnt += 1
+        mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
+        if vul_cnt % 50 == 0:
+            mylogger_p('init_kg').info(f'.skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities')
+    neo.close_db()
+    mylogger_p('timer').info(
+        f'create_rel_afa_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
     return 0
 
 
@@ -395,7 +468,10 @@ def init_nodes(vuln_num=0, asset_num=0, exploit_num=0):
         '''
         Ensure Asset:Family nodes exist.
         '''
-        # family_id = [init_asset_family_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
+        family_id = [init_asset_family_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
+                     range(0, asset_num, get_step(asset_num))]
+        ray.get(family_id)
+        # family_id = [fix_asset_family_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
         #              range(0, asset_num, get_step(asset_num))]
         # ray.get(family_id)
     else:
@@ -463,14 +539,18 @@ def init_rels(vuln_num=0, exploit_num=0):
     mylogger_p('init_kg').info('Start Relationship init')
 
     if vuln_num:
+        arr = []
         '''Ensure Vulnerability---Family relationships'''
-        arr = [create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-               range(0, vuln_num, get_step(vuln_num))]
+        # arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+        #        range(0, vuln_num, get_step(vuln_num))])
         '''Ensure Family---Asset relationships'''
+        arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+                    range(0, vuln_num, get_step(vuln_num))])
         ray.get(arr)
     else:
-        rel_va = create_rel_vaf_ray.remote()
-        ray.get([rel_va])
+        rel_vaf = create_rel_vaf_ray.remote()
+        rel_afa = create_rel_afa_ray.remote()
+        ray.get([rel_vaf, rel_afa])
 
     # if exploit_num:
     #     arr = [create_rel_EVAF_ray.remote(skip=i, _limit=step) for i in range(0, exploit_num, step)]

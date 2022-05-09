@@ -111,12 +111,37 @@ export default {
       graphStats: (state) => state.graphStats,
       graphData: (state) => state.graphData,
       vulStats: (state) =>
-        (({ vul_count }) => ({ vul_count }))(state.graphStats),
+        (({
+          vul_count,
+          affected_asset,
+          affected_app,
+          affected_os,
+          affected_hw,
+        }) => ({
+          vul_count,
+          affected_asset,
+          affected_app,
+          affected_os,
+          affected_hw,
+        }))(state.graphStats),
       assetStats: (state) =>
-        (({ asset_count, app_count, os_count, hw_count }) => ({
+        (({
           asset_count,
+          family_cnt,
+          app_family,
           app_count,
+          os_family,
           os_count,
+          hw_family,
+          hw_count,
+        }) => ({
+          asset_count,
+          family_cnt,
+          app_family,
+          app_count,
+          os_family,
+          os_count,
+          hw_family,
           hw_count,
         }))(state.graphStats),
       exploitStats: (state) =>

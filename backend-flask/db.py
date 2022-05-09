@@ -9,7 +9,7 @@ import pymongo
 from py2neo import Node, Relationship, Graph, NodeMatcher, RelationshipMatcher
 from py2neo.cypher import cypher_escape
 import secret
-from logger_factory import mylogger
+from logger_factory import mylogger, mylogger_p
 
 driver = GraphDatabase.driver(secret.neo_driver_url,
                               auth=basic_auth(secret.neo_username, secret.neo_password))
@@ -107,6 +107,11 @@ class MyNeo:
             'Hardware': 'cpe23uri',
             'Exploit': 'edb_id'
         }
+        self.part_type_map = {
+            'a': 'Application',
+            'o': 'OperatingSystem',
+            'h': 'Hardware'
+        }
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close_db()
@@ -174,14 +179,19 @@ class MyNeo:
             return cnt
 
         def add_work(tx):
-            cql = 'CREATE (a:Asset:Family {cpe23uri:$family_cpe23uri}) return a'
-            _res = tx.run(cql, family_cpe23uri=family_cpe23uri).data()
+            cqls = {
+                'a': 'CREATE (a:Asset:Application:Family {cpe23uri:$family_cpe23uri}) RETURN a',
+                'o': 'CREATE (a:Asset:OperatingSystem:Family {cpe23uri:$family_cpe23uri}) RETURN a',
+                'h': 'CREATE (a:Asset:Hardware:Family {cpe23uri:$family_cpe23uri}) RETURN a'
+            }
+            _res = tx.run(cqls[cpe23uri.split(':')[2]], family_cpe23uri=family_cpe23uri).data()
             return _res
 
         arr = cpe23uri.split(':')
         family_cpe23uri = ''
         for i in range(0, 5):
             family_cpe23uri += (arr[i] + ':')
+        # label = self.part_type_map[]
         with self.get_session() as session:
             if session.read_transaction(check_work) == 0:
                 res = session.write_transaction(add_work)
@@ -189,6 +199,28 @@ class MyNeo:
                 return 1
             else:
                 mylogger('db').info(f"Exist asset family {family_cpe23uri}")
+                return 0
+
+    def fix_asset_family_label(self, cpe23uri):
+        def fix_work(tx):
+            cqls = {
+                'a': 'MATCH (a:Asset:Family {cpe23uri:$cpe23uri}) SET a:Application',
+                'o': 'MATCH (a:Asset:Family {cpe23uri:$cpe23uri}) SET a:OperatingSystem',
+                'h': 'MATCH (a:Asset:Family {cpe23uri:$cpe23uri}) SET a:Hardware'
+            }
+            return tx.run(cqls[cpe23uri.split(':')[2]], cpe23uri=family_cpe23uri)
+
+        arr = cpe23uri.split(':')
+        family_cpe23uri = ''
+        for i in range(0, 5):
+            family_cpe23uri += (arr[i] + ':')
+        # label = self.part_type_map[cpe23uri.split(':')[2]]
+        with self.get_session() as session:
+            try:
+                session.write_transaction(fix_work)
+                return 1
+            except BaseException as _e:
+                mylogger_p('error').error(_e, exc_info=True)
                 return 0
 
     def add_node(self, labels: list, props: dict) -> Node:
@@ -295,6 +327,36 @@ class MyNeo:
             else:
                 mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{cpe23uri}")
             return 2
+
+    def add_rel_cql_afa(self, asset_uri):
+        def work(tx):
+            cql = 'MATCH (af:Asset:Family) WHERE af.cpe23uri = $prefix ' \
+                  'MATCH (a:Asset) WHERE a.cpe23uri = $cpe23uri ' \
+                  'MERGE (af)-[r1:ParentOf {rid:$rid}]->(a) ' \
+                  'MERGE (a)-[r2:ChildOf {rid:$rid}]->(af)'
+            # cqls = {
+            #     'a': 'MATCH (af:Asset:Application:Family) WHERE af.cpe23uri = $prefix '
+            #          'MATCH (a:Asset:Application) WHERE a.cpe23uri = cpe23uri'
+            #          'MERGE (af)-[r:ParentOf {rid:$rid1}]->(a)',
+            #     'o': 'MATCH (a:Asset:OperatingSystem:Family) WHERE a.cpe23uri = $prefix RETURN a',
+            #     'h': 'MATCH (a:Asset:Hardware:Family) WHERE a.cpe23uri = $prefix RETURN a'
+            # }
+            return tx.run(cql, prefix=family_cpe23uri, cpe23uri=asset_uri, rid=f'{family_cpe23uri}->{asset_uri}')
+
+        arr = asset_uri.split(':')
+        family_cpe23uri = ''
+        for i in range(0, 5):
+            family_cpe23uri += (arr[i] + ':')
+        with self.get_session() as session:
+            num = session.write_transaction(work)._summary.counters.relationships_created
+            if num:
+                mylogger('db').info(
+                    f"Added relationship {family_cpe23uri}-[ParentOf]->{asset_uri}")
+                mylogger('db').info(
+                    f"Added relationship {family_cpe23uri}<-[ChildOf]-{asset_uri}")
+            else:
+                mylogger('db').info(f"Exist relationship {family_cpe23uri}<-[r]->{asset_uri}")
+            return num
 
     def get_movie(self):
         def work(tx):

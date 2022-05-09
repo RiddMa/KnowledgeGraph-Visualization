@@ -47,18 +47,31 @@ def retrieve_graph_stats():
 
     def work(tx):
         cql_vuln = "match (vul:Vulnerability) return count(vul) as vul_count"
-        cql_asset = "match (asset:Asset) return count(asset) as asset_count"
         cql_atk = "match (e:Exploit) return count(e) as exploit_count"
         cql_app = "match (app:Application) return count(app) as app_count"
         cql_hw = "match (hardware:Hardware) return count(hardware) as hw_count"
         cql_os = "match (os:OperatingSystem) return count(os) as os_count"
-        cql_affected_asset="match (os:OperatingSystem) return count(os) as os_count"
+        cql_app_family = "match (app:Application:Family) return count(app) as cnt"
+        cql_hw_family = "match (hardware:Hardware:Family) return count(hardware) as cnt"
+        cql_os_family = "match (os:OperatingSystem:Family) return count(os) as cnt"
+        cql_affected_app = "match (n:Application)-[]->(af:Family) return count(n) as cnt"
+        cql_affected_os = "match (n:OperatingSystem)-[]->(af:Family) return count(n) as cnt"
+        cql_affected_hw = "match (n:Hardware)-[]->(af:Family) return count(n) as cnt"
         result = {"vul_count": tx.run(cql_vuln).data()[0]["vul_count"],
-                  "asset_count": tx.run(cql_asset).data()[0]["asset_count"],
                   "exploit_count": tx.run(cql_atk).data()[0]["exploit_count"],
                   "app_count": tx.run(cql_app).data()[0]["app_count"],
+                  "os_count": tx.run(cql_os).data()[0]["os_count"],
                   "hw_count": tx.run(cql_hw).data()[0]["hw_count"],
-                  "os_count": tx.run(cql_os).data()[0]["os_count"]}
+                  "app_family": tx.run(cql_app_family).data()[0]["cnt"],
+                  "os_family": tx.run(cql_os_family).data()[0]["cnt"],
+                  "hw_family": tx.run(cql_hw_family).data()[0]["cnt"],
+                  'affected_app': tx.run(cql_affected_app).data()[0]["cnt"],
+                  'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
+                  'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
+                  }
+        result["asset_count"] = result['app_count'] + result['os_count'] + result['hw_count']
+        result["affected_asset"] = result['affected_app'] + result['affected_os'] + result['affected_hw']
+        result["family_cnt"] = result['app_family'] + result['os_family'] + result['hw_family']
         return result
 
     res = neo.get_session().read_transaction(work)
@@ -72,7 +85,7 @@ def retrieve_graph_stats():
 def retrieve_graph(limit):
     def work(tx, limit_):
         cql_vuln = "match (vuln:Vulnerability) return vuln.eid limit $limit_"
-        result = tx.run(cql_vuln,limit_=limit_).data()
+        result = tx.run(cql_vuln, limit_=limit_).data()
         eid_list = []
         for item in result:
             eid_list.append(item["vuln.eid"])
