@@ -138,14 +138,43 @@ def get_symbol_size(label):
     return _symbol_size_map[label]
 
 
-vul_label_settings = {'show': True,
-                      'position': 'inside',
-                      'fontSize': 14,
-                      'overflow': 'break',
-                      'fontWeight': 'bold',
-                      'textBorderColor': 'inherit',
-                      'textBorderWidth': '2',
-                      }
+vul_label_settings = {
+    'show': True,
+    'position': 'inside',
+    'fontSize': 14,
+    'overflow': 'break',
+    'fontWeight': 'bold',
+    'textBorderColor': 'inherit',
+    'textBorderWidth': '2',
+}
+
+category_map = {
+    'Vulnerability': {'name': '漏洞'},
+    'Family': {'name': '家族'},
+    'Asset': {'name': '资产'},
+    'Application': {'name': '应用程序'},
+    'OperatingSystem': {'name': '操作系统'},
+    'Hardware': {'name': '硬件'},
+    'Exploit': {'name': '利用'},
+}
+
+
+def get_node_category(type_list):
+    if 'Family' in type_list:
+        type_list = list(category_map.keys()).index('Family')
+    elif 'Vulnerability' in type_list:
+        type_list = list(category_map.keys()).index('Vulnerability')
+    elif 'Application' in type_list:
+        type_list = list(category_map.keys()).index('Application')
+    elif 'OperatingSystem' in type_list:
+        type_list = list(category_map.keys()).index('OperatingSystem')
+    elif 'Hardware' in type_list:
+        type_list = list(category_map.keys()).index('Hardware')
+    elif 'Application' in type_list:
+        type_list = list(category_map.keys()).index('Application')
+    elif 'Exploit' in type_list:
+        type_list = list(category_map.keys()).index('Exploit')
+    return type_list
 
 
 @bp.route('/<limit>')
@@ -159,19 +188,9 @@ def retrieve_graph(limit):
         cql_get_family = "match (v:Vulnerability)-[r]-(a:Family) where v.cve_id in $cve_id_list return v,r,a"
         cql_get_assets = 'match (v:Vulnerability)-[r1]-(af:Family)-[r2]-(a:Asset) where v.cve_id in $cve_id_list return v,r1,af,r2,a'
 
-        # result = tx.run(cql_get_family, cve_id_list=cve_id_list)
         result = tx.run(cql_get_assets, cve_id_list=cve_id_list)
         node_map, rel_map = {}, {}
-        category_map = {
-            'Vulnerability': {'name': '漏洞'},
-            'Family': {'name': '家族'},
-            'Asset': {'name': '资产'},
-            'Application': {'name': '应用程序'},
-            'OperatingSystem': {'name': '操作系统'},
-            'Hardware': {'name': '硬件'},
-            'Exploit': {'name': '利用'},
-        }
-
+        global category_map
         for entry in result:
             '''part for nodes'''
             for i in [0, 2, 4]:
@@ -179,10 +198,10 @@ def retrieve_graph(limit):
                 node = {'type': list(entry[i].labels), 'name': entry[i][label_to_id_field(list(entry[i].labels)[0])]}
                 for _tuple in entry[i].items():
                     node[_tuple[0]] = _tuple[1]
-                # graph related
-                node['category'] = list(category_map.keys()).index(node['type'][0])
+                '''graph related'''
+                node['category'] = get_node_category(node['type'])
                 # node['symbolSize'] = get_symbol_size(node['type'][0])
-                if 'Vulnerability' in node['type']:
+                if 'Vulnerability' in node['type'] or 'Family' in node['type']:
                     node['label'] = vul_label_settings
                 node_map[node['name']] = node
 
@@ -192,6 +211,10 @@ def retrieve_graph(limit):
                 for _tuple in entry[i].items():
                     rel[_tuple[0]] = _tuple[1]
                 rel['source'], rel['target'] = rel['rid'].split('->')
+                '''graph related'''
+                # rel['lineStyle'] = {
+                #     'curveness': (i - 2) / 8
+                # }
                 rel_map[rel['name']] = rel
 
         return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
