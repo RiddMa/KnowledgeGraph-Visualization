@@ -8,42 +8,53 @@
     </v-row>
 
     <v-row>
-      <v-col>
+      <v-col v-for="(v, k) in overviewStats" :key="k" sm="12" md="6" lg="4">
         <v-card class="pa-6">
           <v-row>
             <v-col>
               <!--              <h2>Vulnerability</h2>-->
-              <h2>{{ translation.vul }}</h2>
+              <h2>{{ translation[k] }}</h2>
             </v-col>
           </v-row>
-          <entry-list :entry-translate="translation" :vul-stats="vulStats" />
+          <entry-list :entry-translate="translation" :vul-stats="v" />
         </v-card>
       </v-col>
-      <v-col>
-        <v-card class="pa-6">
-          <v-row>
-            <v-col>
-              <!--              <h2>Asset</h2>-->
-              <h2>{{ translation.asset }}</h2>
-            </v-col>
-          </v-row>
-          <entry-list :entry-translate="translation" :vul-stats="assetStats" />
-        </v-card>
-      </v-col>
-      <v-col>
-        <v-card class="pa-6">
-          <v-row>
-            <v-col>
-              <!--              <h2>Exploit</h2>-->
-              <h2>{{ translation.exploit }}</h2>
-            </v-col>
-          </v-row>
-          <entry-list
-            :entry-translate="translation"
-            :vul-stats="exploitStats"
-          />
-        </v-card>
-      </v-col>
+<!--      <v-col sm="12" md="6" lg="4">-->
+<!--        <v-card class="pa-6">-->
+<!--          <v-row>-->
+<!--            <v-col>-->
+<!--              &lt;!&ndash;              <h2>Vulnerability</h2>&ndash;&gt;-->
+<!--              <h2>{{ translation.vul }}</h2>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--          <entry-list :entry-translate="translation" :vul-stats="vulStats" />-->
+<!--        </v-card>-->
+<!--      </v-col>-->
+<!--      <v-col cols="12" sm="12" md="6" lg="4">-->
+<!--        <v-card class="pa-6">-->
+<!--          <v-row>-->
+<!--            <v-col>-->
+<!--              &lt;!&ndash;              <h2>Asset</h2>&ndash;&gt;-->
+<!--              <h2>{{ translation.asset }}</h2>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--          <entry-list :entry-translate="translation" :vul-stats="assetStats" />-->
+<!--        </v-card>-->
+<!--      </v-col>-->
+<!--      <v-col cols="12" sm="12" md="6" lg="4">-->
+<!--        <v-card class="pa-6">-->
+<!--          <v-row>-->
+<!--            <v-col>-->
+<!--              &lt;!&ndash;              <h2>Exploit</h2>&ndash;&gt;-->
+<!--              <h2>{{ translation.exploit }}</h2>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
+<!--          <entry-list-->
+<!--            :entry-translate="translation"-->
+<!--            :vul-stats="exploitStats"-->
+<!--          />-->
+<!--        </v-card>-->
+<!--      </v-col>-->
     </v-row>
 
     <v-row>
@@ -110,42 +121,10 @@ export default {
       translation: (state) => state.translation,
       graphStats: (state) => state.graphStats,
       graphData: (state) => state.graphData,
-      vulStats: (state) =>
-        (({
-          vul_count,
-          affected_asset,
-          affected_app,
-          affected_os,
-          affected_hw,
-        }) => ({
-          vul_count,
-          affected_asset,
-          affected_app,
-          affected_os,
-          affected_hw,
-        }))(state.graphStats),
-      assetStats: (state) =>
-        (({
-          asset_count,
-          family_cnt,
-          app_family,
-          app_count,
-          os_family,
-          os_count,
-          hw_family,
-          hw_count,
-        }) => ({
-          asset_count,
-          family_cnt,
-          app_family,
-          app_count,
-          os_family,
-          os_count,
-          hw_family,
-          hw_count,
-        }))(state.graphStats),
-      exploitStats: (state) =>
-        (({ exploit_count }) => ({ exploit_count }))(state.graphStats),
+      overviewStats: (state) => state.graphStats,
+      vulStats: (state) => state.graphStats.vul,
+      assetStats: (state) => state.graphStats.asset,
+      exploitStats: (state) => state.graphStats.exploit,
     }),
   },
   async mounted() {

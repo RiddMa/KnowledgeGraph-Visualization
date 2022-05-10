@@ -332,8 +332,8 @@ class MyNeo:
         def work(tx):
             cql = 'MATCH (af:Asset:Family) WHERE af.cpe23uri = $prefix ' \
                   'MATCH (a:Asset) WHERE a.cpe23uri = $cpe23uri ' \
-                  'MERGE (af)-[r1:ParentOf {rid:$rid}]->(a) ' \
-                  'MERGE (a)-[r2:ChildOf {rid:$rid}]->(af)'
+                  'MERGE (af)-[r1:ParentOf {rid:$rid1}]->(a) ' \
+                  'MERGE (a)-[r2:ChildOf {rid:$rid2}]->(af)'
             # cqls = {
             #     'a': 'MATCH (af:Asset:Application:Family) WHERE af.cpe23uri = $prefix '
             #          'MATCH (a:Asset:Application) WHERE a.cpe23uri = cpe23uri'
@@ -341,7 +341,8 @@ class MyNeo:
             #     'o': 'MATCH (a:Asset:OperatingSystem:Family) WHERE a.cpe23uri = $prefix RETURN a',
             #     'h': 'MATCH (a:Asset:Hardware:Family) WHERE a.cpe23uri = $prefix RETURN a'
             # }
-            return tx.run(cql, prefix=family_cpe23uri, cpe23uri=asset_uri, rid=f'{family_cpe23uri}->{asset_uri}')
+            return tx.run(cql, prefix=family_cpe23uri, cpe23uri=asset_uri, rid1=f'{family_cpe23uri}->{asset_uri}',
+                          rid2=f'{asset_uri}->{family_cpe23uri}')
 
         arr = asset_uri.split(':')
         family_cpe23uri = ''

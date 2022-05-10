@@ -277,7 +277,6 @@ def create_rel_afa_ray(skip, _limit):
                 if op_dict['operator'] == 'OR':
                     for match in op_dict['cpe_match']:
                         if match['vulnerable']:
-                            prefix = match['cpe23Uri'][:match['cpe23Uri'].find('*')]
                             rel_cnt += neo.add_rel_cql_afa(asset_uri=match['cpe23Uri'])
             except BaseException as e:
                 mylogger_p('init_kg').error(e, exc_info=True)

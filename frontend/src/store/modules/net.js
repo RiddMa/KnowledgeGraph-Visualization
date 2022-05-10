@@ -1,4 +1,9 @@
-import { getGraphData, getGraphSearch, getGraphStats } from "@/api/base.api";
+import {
+  getGraphData,
+  getGraphSearch,
+  getGraphStats,
+  getSampleData,
+} from "@/api/graph.api";
 const net = {
   state: {},
   getters: {},
@@ -8,6 +13,7 @@ const net = {
       try {
         const response = await getGraphData(limit);
         context.commit("setGraphData", response.data);
+        return response.data
       } catch (e) {
         console.log(e);
       }
@@ -24,6 +30,15 @@ const net = {
       try {
         const response = await getGraphSearch(keyword);
         context.commit("setGraphData", response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async getSampleData(context, url) {
+      try {
+        const response = await getSampleData(url);
+        return response.data;
+        // context.commit("setGraphData", response.data);
       } catch (e) {
         console.log(e);
       }

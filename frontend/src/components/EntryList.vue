@@ -1,10 +1,12 @@
 <template>
-  <v-list class="ma-0 px-0">
+  <v-list class="mx-0 mt-2 mb-0 pa-0">
     <v-row v-for="(v, k) in vulStats" :key="k" class="px-0 py-2 ma-0">
-      <v-col sm="12" md="8" class="ma-0 pa-0">
+<!--      <v-col sm="12" md="8" class="ma-0 pa-0">-->
+      <v-col cols="8" md="7" class="ma-0 pa-0">
         {{ entryTranslate[k] }}
       </v-col>
-      <v-col sm="12" md="4" class="ma-0 pa-0">
+<!--      <v-col sm="12" md="4" class="ma-0 pa-0">-->
+      <v-col cols="4" md="5" class="ma-0 pa-0">
         {{ formatNumber(v) }}
       </v-col>
     </v-row>

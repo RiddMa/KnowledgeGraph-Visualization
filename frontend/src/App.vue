@@ -7,7 +7,7 @@
         <v-list-item-content>
           <v-list-item-title class="text-h6">
             <!--            Vulnerability<br />Knowledge Graph-->
-            漏洞知识图谱<br />Vul-KG
+            漏洞知识图谱<br />VulKG
           </v-list-item-title>
           <!--          <v-list-item-subtitle>Visualization System</v-list-item-subtitle>-->
           <v-list-item-subtitle>可视化系统</v-list-item-subtitle>
@@ -30,7 +30,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <v-container fluid>
+      <v-container fluid class="ma-0 pa-0">
         <router-view />
       </v-container>
     </v-main>
@@ -44,6 +44,7 @@ export default {
   data: () => ({
     items: [
       { title: "控制台", icon: "mdi-view-dashboard", route: "/dashboard" },
+      { title: "可视化", icon: "mdi-graphql", route: "/vis" },
       { title: "搜索", icon: "mdi-database-search", route: "/search" },
       { title: "关于", icon: "mdi-information", route: "/about" },
     ],
