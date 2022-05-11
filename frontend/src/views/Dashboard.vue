@@ -3,19 +3,59 @@
     <v-row>
       <v-col>
         <h1>{{ translation.graph_overview }}</h1>
-        <v-btn onclick="this.sortStatItems('vul', this.graphStats['vul'])"></v-btn>
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col v-for="(v, k) in overviewStats" :key="k" sm="12" md="6" lg="4">
+      <v-col cols="12" sm="12" md="6" lg="4">
         <v-card class="pa-6">
           <v-row>
             <v-col>
-              <h2>{{ translation[k] }}</h2>
+              <h2>{{ translation["vul"] }}</h2>
             </v-col>
           </v-row>
-          <entry-list :entry-translate="translation" :vul-stats="v" />
+          <entry-list
+            :entry-translate="translation"
+            :stats="this.graphStats.vul"
+          />
+          <stats-graph
+            graph-id="stats-graph-vul"
+            type="vul"
+            :data="this.getVulChartData()"
+            style="height: 300px"
+          ></stats-graph>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="12" md="6" lg="4">
+        <v-card class="pa-6">
+          <v-row>
+            <v-col>
+              <h2>{{ translation["asset"] }}</h2>
+            </v-col>
+          </v-row>
+          <entry-list
+            :entry-translate="translation"
+            :stats="this.graphStats.asset"
+          />
+          <stats-graph
+            graph-id="stats-graph-asset"
+            type="asset"
+            :data="this.getAssetChartData()"
+            style="height: 300px"
+          ></stats-graph>
+        </v-card>
+      </v-col>
+      <v-col cols="12" sm="12" md="6" lg="4">
+        <v-card class="pa-6">
+          <v-row>
+            <v-col>
+              <h2>{{ translation["exploit"] }}</h2>
+            </v-col>
+          </v-row>
+          <entry-list
+            :entry-translate="translation"
+            :stats="this.graphStats.exploit"
+          />
         </v-card>
       </v-col>
       <!--      <v-col sm="12" md="6" lg="4">-->
@@ -54,18 +94,6 @@
       <!--          />-->
       <!--        </v-card>-->
       <!--      </v-col>-->
-    </v-row>
-
-    <v-row>
-      <v-col sm="12" md="6" lg="4">
-        <v-card class="pa-6">
-          <v-row>
-            <v-col style="height: 300px">
-              <stats-graph graph-id="vul"></stats-graph>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
     </v-row>
 
     <v-row>
@@ -120,7 +148,7 @@
 </template>
 
 <script>
-import _ from "lodash";
+import _, { range } from "lodash";
 import { mapState } from "vuex";
 import EntryList from "@/components/EntryList";
 import StatsGraph from "@/components/StatsGraph";
@@ -136,30 +164,40 @@ export default {
       graphStatsOrder: (state) => state.graphStatsOrder,
       graphData: (state) => state.graphData,
       overviewStats: (state) => state.graphStats,
-      vulStats: (state) => state.graphStats.vul,
-      assetStats: (state) => state.graphStats.asset,
-      exploitStats: (state) => state.graphStats.exploit,
+      // vulStats: (state) => state.graphStats.vul,
+      // assetStats: (state) => state.graphStats.asset,
+      // exploitStats: (state) => state.graphStats.exploit,
     }),
   },
   methods: {
-    sortStatItems(k, v) {
-      console.log("k", k, "v", v);
-      let kvArr = Object.entries(v).map(([key, value]) => ({ key, value }));
-      console.log("kvarr is", kvArr);
-      console.log(this.graphStatsOrder[k]);
-      kvArr = kvArr.sort(function (a, b) {
-        console.log(a, b);
-        return (
-          this.graphStatsOrder[k].indexOf(a.key) -
-          this.graphStatsOrder[k].indexOf(b.key)
-        );
-      });
-      // _.sortBy(kvArr, function (obj) {
-      //   return _.indexOf(this.graphStatsOrder[k], obj.key);
-      // });
-      console.log("kvarr now", kvArr);
-      return kvArr;
+    getVulChartData() {
+      let arr = _.cloneDeep(this.graphStats.vul);
+      arr = arr.slice(2, arr.length);
+      for (const i in range(0, arr.length)) {
+        let translatedName = this.translation[arr[i]["name"]];
+        arr[i]["name"] = translatedName.substring(3, translatedName.length - 1);
+      }
+      return arr;
     },
+    getAssetChartData() {},
+    // sortStatItems(k, v) {
+    //   console.log("k", k, "v", v);
+    //   let kvArr = Object.entries(v).map(([key, value]) => ({ key, value }));
+    //   console.log("kvarr is", kvArr);
+    //   console.log(this.graphStatsOrder[k]);
+    //   kvArr = kvArr.sort(function (a, b) {
+    //     console.log(a, b);
+    //     return (
+    //       this.graphStatsOrder[k].indexOf(a.key) -
+    //       this.graphStatsOrder[k].indexOf(b.key)
+    //     );
+    //   });
+    //   // _.sortBy(kvArr, function (obj) {
+    //   //   return _.indexOf(this.graphStatsOrder[k], obj.key);
+    //   // });
+    //   console.log("kvarr now", kvArr);
+    //   return kvArr;
+    // },
   },
   async mounted() {
     await this.$store.dispatch("fetchGraphStats");

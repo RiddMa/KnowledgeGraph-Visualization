@@ -71,42 +71,82 @@ def retrieve_graph_stats():
         #           'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
         #           'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
         #           }
+
+        # result = {
+        #     'vul': {
+        #         'vul_count': tx.run(cql_vuln).data()[0]["vul_count"],
+        #         'affected_asset': -1,
+        #         'affected_app': tx.run(cql_affected_app).data()[0]["cnt"],
+        #         'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
+        #         'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
+        #     },
+        #     'asset': {
+        #         'asset_count': -1,
+        #         'family_cnt': -1,
+        #         'app_family': tx.run(cql_app_family).data()[0]["cnt"],
+        #         'app_count': tx.run(cql_app).data()[0]["app_count"],
+        #         'os_family': tx.run(cql_os_family).data()[0]["cnt"],
+        #         'os_count': tx.run(cql_os).data()[0]["os_count"],
+        #         'hw_family': tx.run(cql_hw_family).data()[0]["cnt"],
+        #         'hw_count': tx.run(cql_hw).data()[0]["hw_count"],
+        #     },
+        #     'exploit': {
+        #         'exploit_count': tx.run(cql_atk).data()[0]["exploit_count"],
+        #     },
+        # }
+        # result['vul']["affected_asset"] = result['vul']['affected_app'] + result['vul']['affected_os'] + result['vul'][
+        #     'affected_hw']
+        # result['asset']["asset_count"] = result['asset']['app_count'] + result['asset']['os_count'] + result['asset'][
+        #     'hw_count']
+        # result['asset']["family_cnt"] = result['asset']['app_family'] + result['asset']['os_family'] + result['asset'][
+        #     'hw_family']
+        # # return result
+        # # a = [list(i[1].items()) for i in list(result.items())]
+        # # return json.dumps({'vul': a[0], 'asset': a[1], 'exploit': a[2]})
+        # _res = [list(i[1].items()) for i in list(result.items())]
+        # for item_list in _res:
+        #     for item in item_list:
+        #         _res[_res.index(item_list)][item_list.index(item)] = {item[0]: item[1]}
+        # ans = {
+        #     'vul': _res[0],
+        #     'assets': _res[1],
+        #     'exploit': _res[2],
+        # }
+        # return json.dumps(ans)
         result = {
-            'vul': {
-                'vul_count': tx.run(cql_vuln).data()[0]["vul_count"],
-                'affected_asset': -1,
-                'affected_app': tx.run(cql_affected_app).data()[0]["cnt"],
-                'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
-                'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
-            },
-            'asset': {
-                'asset_count': -1,
-                'family_cnt': -1,
-                'app_family': tx.run(cql_app_family).data()[0]["cnt"],
-                'app_count': tx.run(cql_app).data()[0]["app_count"],
-                'os_family': tx.run(cql_os_family).data()[0]["cnt"],
-                'os_count': tx.run(cql_os).data()[0]["os_count"],
-                'hw_family': tx.run(cql_hw_family).data()[0]["cnt"],
-                'hw_count': tx.run(cql_hw).data()[0]["hw_count"],
-            },
-            'exploit': {
-                'exploit_count': tx.run(cql_atk).data()[0]["exploit_count"],
-            },
+            'vul': [
+                {'name': 'vul_count', 'value': tx.run(cql_vuln).data()[0]["vul_count"]},
+                {'name': 'affected_asset', 'value': -1},
+                {'name': 'affected_app', 'value': tx.run(cql_affected_app).data()[0]["cnt"]},
+                {'name': 'affected_os', 'value': tx.run(cql_affected_os).data()[0]["cnt"]},
+                {'name': 'affected_hw', 'value': tx.run(cql_affected_hw).data()[0]["cnt"]},
+            ],
+            'asset': [
+                {'name': 'asset_count', 'value': -1},
+                {'name': 'family_cnt', 'value': -1},
+                {'name': 'app_family', 'value': tx.run(cql_app_family).data()[0]["cnt"]},
+                {'name': 'app_count', 'value': tx.run(cql_app).data()[0]["app_count"]},
+                {'name': 'os_family', 'value': tx.run(cql_os_family).data()[0]["cnt"]},
+                {'name': 'os_count', 'value': tx.run(cql_os).data()[0]["os_count"]},
+                {'name': 'hw_family', 'value': tx.run(cql_hw_family).data()[0]["cnt"]},
+                {'name': 'hw_count', 'value': tx.run(cql_hw).data()[0]["hw_count"]},
+            ],
+            'exploit': [
+                {'name': 'exploit_count', 'value': tx.run(cql_atk).data()[0]["exploit_count"]},
+            ],
         }
-        result['vul']["affected_asset"] = result['vul']['affected_app'] + result['vul']['affected_os'] + result['vul'][
-            'affected_hw']
-        result['asset']["asset_count"] = result['asset']['app_count'] + result['asset']['os_count'] + result['asset'][
-            'hw_count']
-        result['asset']["family_cnt"] = result['asset']['app_family'] + result['asset']['os_family'] + result['asset'][
-            'hw_family']
-        # return result
-        a = [list(i[1].items()) for i in list(result.items())]
-        return json.dumps({'vul': a[0], 'asset': a[1], 'exploit': a[2]})
+        result['vul'][1]['value'] = result['vul'][2]['value'] + result['vul'][3]['value'] + result['vul'][4]['value']
+        result['asset'][1]['value'] = result['asset'][2]['value'] + result['asset'][4]['value'] + result['asset'][6][
+            'value']
+        result['asset'][0]['value'] = result['asset'][3]['value'] + result['asset'][5]['value'] + result['asset'][7][
+            'value']
+
+        return result
 
     res = neo.get_session().read_transaction(work)
     # res = neo.get_movie()
     print("time elapsed:" + str(time.time() - t0))
-    return res
+    return json.dumps(res)
 
 
 def label_to_id_field(label) -> str:

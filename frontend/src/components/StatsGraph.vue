@@ -22,13 +22,13 @@ export default {
   name: "StatsGraph",
   props: {
     graphId: String,
+    type: String,
     data: {},
   },
   data: () => ({}),
   computed: {
     ...mapState({
       graph: (state) => state.graph,
-      graphData: (state) => state.graphData,
     }),
   },
   methods: {
@@ -52,7 +52,7 @@ export default {
           {
             name: "受影响资产分布",
             type: "pie",
-            radius: ["30%", "70%"],
+            radius: ["40%", "70%"],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 10,
@@ -73,13 +73,7 @@ export default {
             // labelLine: {
             //   show: false,
             // },
-            data: [
-              { value: 1048, name: "Search Engine" },
-              { value: 735, name: "Direct" },
-              { value: 580, name: "Email" },
-              { value: 484, name: "Union Ads" },
-              { value: 300, name: "Video Ads" },
-            ],
+            data: this.data,
           },
         ],
       };

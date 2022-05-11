@@ -8,77 +8,28 @@ export default new Vuex.Store({
   state: {
     graph: {},
     graphData: {},
+    graphStatsOrder: {},
+    // graphStats: {},
     graphStats: {
-      graphData: undefined,
-      graphStatsOrder: {
-        vul: [
-          "vul_count",
-          "affected_asset",
-          "affected_app",
-          "affected_os",
-          "affected_hw",
-        ],
-        asset: [
-          "asset_count",
-          "family_cnt",
-          "app_family",
-          "app_count",
-          "os_family",
-          "os_count",
-          "hw_family",
-          "hw_count",
-        ],
-        exploit: ["exploit_count"],
-      },
-      graphStats: {
-        vul: {
-          vul_count: -1,
-          affected_asset: -1,
-          affected_app: -1,
-          affected_os: -1,
-          affected_hw: -1,
-        },
-        asset: {
-          asset_count: -1,
-          family_cnt: -1,
-          app_family: -1,
-          app_count: -1,
-          os_family: -1,
-          os_count: -1,
-          hw_family: -1,
-          hw_count: -1,
-        },
-        exploit: {
-          exploit_count: -1,
-        },
-      },
+      vul: [
+        { name: "vul_count", value: 0 },
+        { name: "affected_asset", value: 0 },
+        { name: "affected_app", value: 0 },
+        { name: "affected_os", value: 0 },
+        { name: "affected_hw", value: 0 },
+      ],
+      asset: [
+        { name: "asset_count", value: 0 },
+        { name: "family_cnt", value: 0 },
+        { name: "app_family", value: 0 },
+        { name: "app_count", value: 0 },
+        { name: "os_family", value: 0 },
+        { name: "os_count", value: 0 },
+        { name: "hw_family", value: 0 },
+        { name: "hw_count", value: 0 },
+      ],
+      exploit: [{ name: "exploit_count", value: 0 }],
     },
-    // graphStats: new Map([
-    //   [
-    //     "vul",
-    //     new Map([
-    //       ["vul_count", -1],
-    //       ["affected_asset", -1],
-    //       ["affected_app", -1],
-    //       ["affected_os", -1],
-    //       ["affected_hw", -1],
-    //     ]),
-    //   ],
-    //   [
-    //     "asset",
-    //     new Map([
-    //       ["asset_count", -1],
-    //       ["family_cnt", -1],
-    //       ["app_family", -1],
-    //       ["app_count", -1],
-    //       ["os_family", -1],
-    //       ["os_count", -1],
-    //       ["hw_family", -1],
-    //       ["hw_count", -1],
-    //     ]),
-    //   ],
-    //   ["exploit", new Map([["exploit_count", -1]])],
-    // ]),
     translation: {
       graph_overview: "图谱概览",
       vul: "漏洞",
@@ -119,10 +70,8 @@ export default new Vuex.Store({
       state.graphData[name] = data;
     },
     setGraphStats(state, data) {
-      console.log(data);
-      // state.graphStats["vul"] = data["vul"];
-      // state.graphStats["asset"] = data["asset"];
-      // state.graphStats["exploit"] = data["exploit"];
+      console.log("接收到的数据：", data);
+      // console.log("处理的数据：", JSON.parse(JSON.stringify(data)));
       state.graphStats = data;
     },
   },
