@@ -13,7 +13,7 @@ import { GraphChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
 import localeCfg from "@/utils/langZH.ts";
 import { mapState } from "vuex";
-import { nodeFormatter } from "@/utils/tooltipConfig";
+import { fullVizFormatter } from "@/utils/tooltipConfig";
 echarts.use([
   TitleComponent,
   TooltipComponent,
@@ -159,7 +159,7 @@ export default {
                 width: 400,
                 overflow: "break",
               },
-              formatter: (params) => nodeFormatter(params),
+              formatter: (params) => fullVizFormatter(params),
             },
           },
         ],

@@ -133,6 +133,7 @@ def retrieve_graph_stats():
             ],
             'exploit': [
                 {'name': 'exploit_count', 'value': tx.run(cql_atk).data()[0]["exploit_count"]},
+                {'name': 'type_remote', 'value': tx.run(cql_atk).data()[0]["exploit_count"]},
             ],
         }
         result['vul'][1]['value'] = result['vul'][2]['value'] + result['vul'][3]['value'] + result['vul'][4]['value']

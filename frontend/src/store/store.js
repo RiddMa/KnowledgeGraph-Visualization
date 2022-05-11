@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import net from "@/store/modules/net";
+import _, { range } from "lodash";
 
 Vue.use(Vuex);
 
@@ -70,8 +71,6 @@ export default new Vuex.Store({
       state.graphData[name] = data;
     },
     setGraphStats(state, data) {
-      console.log("接收到的数据：", data);
-      // console.log("处理的数据：", JSON.parse(JSON.stringify(data)));
       state.graphStats = data;
     },
   },

@@ -18,12 +18,16 @@
             :entry-translate="translation"
             :stats="this.graphStats.vul"
           />
+          <!--          <v-row class="mt-2 mb-0 mx-0 pa-0">-->
+          <!--            <v-col class="ma-0 pa-0">-->
           <stats-graph
             graph-id="stats-graph-vul"
             type="vul"
-            :data="this.getVulChartData()"
-            style="height: 300px"
+            :nodes="this.getVulChartData()"
+            style="height: 260px"
           ></stats-graph>
+          <!--            </v-col>-->
+          <!--          </v-row>-->
         </v-card>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="4">
@@ -40,8 +44,8 @@
           <stats-graph
             graph-id="stats-graph-asset"
             type="asset"
-            :data="this.getAssetChartData()"
-            style="height: 300px"
+            :nodes="this.getAssetFamilyChartData()"
+            style="height: 260px"
           ></stats-graph>
         </v-card>
       </v-col>
@@ -177,27 +181,38 @@ export default {
         let translatedName = this.translation[arr[i]["name"]];
         arr[i]["name"] = translatedName.substring(3, translatedName.length - 1);
       }
+
+      let total = 0;
+      for (const i of range(0, arr.length)) {
+        total += arr[i]["value"];
+      }
+      for (const i of range(0, arr.length)) {
+        arr[i]["percentage"] = arr[i]["value"] / total;
+      }
       return arr;
     },
-    getAssetChartData() {},
-    // sortStatItems(k, v) {
-    //   console.log("k", k, "v", v);
-    //   let kvArr = Object.entries(v).map(([key, value]) => ({ key, value }));
-    //   console.log("kvarr is", kvArr);
-    //   console.log(this.graphStatsOrder[k]);
-    //   kvArr = kvArr.sort(function (a, b) {
-    //     console.log(a, b);
-    //     return (
-    //       this.graphStatsOrder[k].indexOf(a.key) -
-    //       this.graphStatsOrder[k].indexOf(b.key)
-    //     );
-    //   });
-    //   // _.sortBy(kvArr, function (obj) {
-    //   //   return _.indexOf(this.graphStatsOrder[k], obj.key);
-    //   // });
-    //   console.log("kvarr now", kvArr);
-    //   return kvArr;
-    // },
+    getAssetChartData() {
+      let arr = _.cloneDeep(this.graphStats.asset);
+      arr = arr.slice(2, arr.length);
+      for (const i in range(0, arr.length)) {
+        let translatedName = this.translation[arr[i]["name"]];
+        arr[i]["name"] = translatedName.substring(0, translatedName.length - 1);
+      }
+      arr = [arr[1], arr[3], arr[5]];
+      console.log(arr);
+      return arr;
+    },
+    getAssetFamilyChartData() {
+      let arr = _.cloneDeep(this.graphStats.asset);
+      arr = arr.slice(2, arr.length);
+      for (const i in range(0, arr.length)) {
+        let translatedName = this.translation[arr[i]["name"]];
+        arr[i]["name"] = translatedName.substring(0, translatedName.length - 1);
+      }
+      arr = [arr[0], arr[2], arr[4]];
+      console.log(arr);
+      return arr;
+    },
   },
   async mounted() {
     await this.$store.dispatch("fetchGraphStats");

@@ -1,5 +1,5 @@
 import moment from "moment";
-export function nodeFormatter(params) {
+export function fullVizFormatter(params) {
   let mmt = moment;
   mmt.locale("zh-cn");
   mmt.defaultFormat = "L";
@@ -68,4 +68,8 @@ export function nodeFormatter(params) {
       return template;
     }
   }
+}
+
+export function kgStatsFormatter(params){
+
 }

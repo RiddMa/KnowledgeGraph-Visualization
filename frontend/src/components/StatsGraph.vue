@@ -10,6 +10,8 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import { mapState } from "vuex";
 import localeCfg from "@/utils/langZH.ts";
+import { kgStatsFormatter } from "@/utils/tooltipConfig";
+import { range } from "lodash";
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -23,7 +25,7 @@ export default {
   props: {
     graphId: String,
     type: String,
-    data: {},
+    nodes: {},
   },
   data: () => ({}),
   computed: {
@@ -32,17 +34,11 @@ export default {
     }),
   },
   methods: {
-    async drawStatsGraph() {
-      this.$store.commit("setGraph", {
-        name: this.graphId,
-        graph: echarts.init(document.getElementById(this.graphId), null, {
-          locale: "ZH",
-        }),
-      });
-      this.graph[this.graphId].showLoading();
+    async drawStatsGraph(update = false) {
       let option = {
         tooltip: {
           trigger: "item",
+          position: "bottom",
         },
         legend: {
           top: 0,
@@ -55,14 +51,19 @@ export default {
             radius: ["40%", "70%"],
             avoidLabelOverlap: false,
             itemStyle: {
-              borderRadius: 10,
+              borderRadius: 7,
               borderColor: "#fff",
               borderWidth: 2,
             },
+            center: ["50%", "55%"],
             label: {
               show: true,
               position: "inside",
             },
+            // label: {
+            //   show: false,
+            //   position: "center",
+            // },
             emphasis: {
               label: {
                 show: true,
@@ -73,16 +74,32 @@ export default {
             // labelLine: {
             //   show: false,
             // },
-            data: this.data,
+            data: this.nodes,
+            formatter: (params) => kgStatsFormatter(params),
           },
         ],
       };
-      this.graph[this.graphId].hideLoading();
-      this.graph[this.graphId].setOption(option);
+
+      if (update) {
+        this.graph[this.graphId].setOption(option);
+      } else {
+        this.$store.commit("setGraph", {
+          name: this.graphId,
+          graph: echarts.init(document.getElementById(this.graphId), null, {
+            locale: "ZH",
+          }),
+        });
+        this.graph[this.graphId].setOption(option);
+      }
     },
   },
   mounted() {
     this.drawStatsGraph();
+  },
+  watch: {
+    nodes: function () {
+      this.drawStatsGraph(true);
+    },
   },
 };
 </script>
