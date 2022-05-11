@@ -1,5 +1,6 @@
 import json
 import time
+from math import sqrt
 from collections import OrderedDict
 from pprint import pprint
 
@@ -58,18 +59,18 @@ def retrieve_graph_stats():
         cql_affected_app = "match (n:Application)-[]->(af:Family) return count(n) as cnt"
         cql_affected_os = "match (n:OperatingSystem)-[]->(af:Family) return count(n) as cnt"
         cql_affected_hw = "match (n:Hardware)-[]->(af:Family) return count(n) as cnt"
-        result = {"vul_count": tx.run(cql_vuln).data()[0]["vul_count"],
-                  "exploit_count": tx.run(cql_atk).data()[0]["exploit_count"],
-                  "app_count": tx.run(cql_app).data()[0]["app_count"],
-                  "os_count": tx.run(cql_os).data()[0]["os_count"],
-                  "hw_count": tx.run(cql_hw).data()[0]["hw_count"],
-                  "app_family": tx.run(cql_app_family).data()[0]["cnt"],
-                  "os_family": tx.run(cql_os_family).data()[0]["cnt"],
-                  "hw_family": tx.run(cql_hw_family).data()[0]["cnt"],
-                  'affected_app': tx.run(cql_affected_app).data()[0]["cnt"],
-                  'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
-                  'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
-                  }
+        # result = {"vul_count": tx.run(cql_vuln).data()[0]["vul_count"],
+        #           "exploit_count": tx.run(cql_atk).data()[0]["exploit_count"],
+        #           "app_count": tx.run(cql_app).data()[0]["app_count"],
+        #           "os_count": tx.run(cql_os).data()[0]["os_count"],
+        #           "hw_count": tx.run(cql_hw).data()[0]["hw_count"],
+        #           "app_family": tx.run(cql_app_family).data()[0]["cnt"],
+        #           "os_family": tx.run(cql_os_family).data()[0]["cnt"],
+        #           "hw_family": tx.run(cql_hw_family).data()[0]["cnt"],
+        #           'affected_app': tx.run(cql_affected_app).data()[0]["cnt"],
+        #           'affected_os': tx.run(cql_affected_os).data()[0]["cnt"],
+        #           'affected_hw': tx.run(cql_affected_hw).data()[0]["cnt"],
+        #           }
         result = {
             'vul': {
                 'vul_count': tx.run(cql_vuln).data()[0]["vul_count"],
@@ -98,7 +99,9 @@ def retrieve_graph_stats():
             'hw_count']
         result['asset']["family_cnt"] = result['asset']['app_family'] + result['asset']['os_family'] + result['asset'][
             'hw_family']
-        return result
+        # return result
+        a = [list(i[1].items()) for i in list(result.items())]
+        return json.dumps({'vul': a[0], 'asset': a[1], 'exploit': a[2]})
 
     res = neo.get_session().read_transaction(work)
     # res = neo.get_movie()
@@ -125,23 +128,40 @@ def label_to_id_field(label) -> str:
     return _converter[label]
 
 
-def get_symbol_size(label):
-    _symbol_size_map = {
-        'Vulnerability': 30,
-        'Family': 20,
-        'Asset': 10,
-        'Application': 10,
-        'OperatingSystem': 10,
-        'Hardware': 10,
-        'Exploit': 30,
-    }
-    return _symbol_size_map[label]
+def get_symbol_size(_type, cnt) -> int:
+    if _type == 'v' or _type == 'e':
+        base_size = 50
+    elif _type == 'af':
+        base_size = 30
+    else:
+        base_size = 15
+    # _symbol_size_map = {
+    #     'Vulnerability': 30,
+    #     'Family': 20,
+    #     'Asset': 10,
+    #     'Application': 10,
+    #     'OperatingSystem': 10,
+    #     'Hardware': 10,
+    #     'Exploit': 30,
+    # }
+    # return int(base_size + sqrt(cnt))
+    return int(base_size + 5 * sqrt(cnt))
 
 
 vul_label_settings = {
     'show': True,
     'position': 'inside',
     'fontSize': 14,
+    'overflow': 'break',
+    'fontWeight': 'bold',
+    'textBorderColor': 'inherit',
+    'textBorderWidth': '2',
+}
+
+af_label_settings = {
+    'show': True,
+    'position': 'inside',
+    'fontSize': 10,
     'overflow': 'break',
     'fontWeight': 'bold',
     'textBorderColor': 'inherit',
@@ -186,41 +206,91 @@ def retrieve_graph(limit):
         cve_id_list, nodes, links = [item['cve_id'] for item in result], [], []
 
         cql_get_family = "match (v:Vulnerability)-[r]-(a:Family) where v.cve_id in $cve_id_list return v,r,a"
-        cql_get_assets = 'match (v:Vulnerability)-[r1]-(af:Family)-[r2]-(a:Asset) where v.cve_id in $cve_id_list return v,r1,af,r2,a'
 
-        result = tx.run(cql_get_assets, cve_id_list=cve_id_list)
+        # cql_get_assets = 'match (v:Vulnerability)-[r1]-(af:Family)-[r2]-(a:Asset) where v.cve_id in $cve_id_list return v,r1,af,r2,a'
+        #
+        # result = tx.run(cql_get_assets, cve_id_list=cve_id_list)
+        # node_map, rel_map = {}, {}
+        # global category_map
+        # for entry in result:
+        #     '''part for nodes'''
+        #     for i in [0, 2, 4]:
+        #         pass
+        #         node = {'type': list(entry[i].labels), 'name': entry[i][label_to_id_field(list(entry[i].labels)[0])]}
+        #         for _tuple in entry[i].items():
+        #             node[_tuple[0]] = _tuple[1]
+        #         '''graph related'''
+        #         node['category'] = get_node_category(node['type'])
+        #         # node['symbolSize'] = get_symbol_size(node['type'][0])
+        #         if 'Vulnerability' in node['type'] or 'Family' in node['type']:
+        #             node['label'] = vul_label_settings
+        #         node_map[node['name']] = node
+        #
+        #     '''part for relationship'''
+        #     for i in [1, 3]:
+        #         rel = {'name': entry[i]['rid'], 'category': entry[i].type}
+        #         for _tuple in entry[i].items():
+        #             rel[_tuple[0]] = _tuple[1]
+        #         rel['source'], rel['target'] = rel['rid'].split('->')
+        #         '''graph related'''
+        #         # rel['lineStyle'] = {
+        #         #     'curveness': (i - 2) / 8
+        #         # }
+        #         rel_map[rel['name']] = rel
+        #
+        # return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
+        #         "links": list(rel_map.values())}
+
         node_map, rel_map = {}, {}
         global category_map
-        for entry in result:
-            '''part for nodes'''
-            for i in [0, 2, 4]:
-                pass
-                node = {'type': list(entry[i].labels), 'name': entry[i][label_to_id_field(list(entry[i].labels)[0])]}
-                for _tuple in entry[i].items():
-                    node[_tuple[0]] = _tuple[1]
-                '''graph related'''
-                node['category'] = get_node_category(node['type'])
-                # node['symbolSize'] = get_symbol_size(node['type'][0])
-                if 'Vulnerability' in node['type'] or 'Family' in node['type']:
-                    node['label'] = vul_label_settings
-                node_map[node['name']] = node
+        for cve_id in cve_id_list:
+            cql_get_count = 'match (v:Vulnerability)-[r1]-(af:Family)-[r2]-(a:Asset) where v.cve_id = $cve_id return count(distinct(a)) as a'
+            cnt = tx.run(cql_get_count, cve_id=cve_id).data()[0]['a']
+            if cnt > 200:
+                continue
+            cql_get_assets = 'match (v:Vulnerability)-[r1]-(af:Family)-[r2]-(a:Asset) where v.cve_id = $cve_id return v,r1,af,r2,a'
+            result = tx.run(cql_get_assets, cve_id=cve_id)
+            for entry in result:
+                '''part for nodes'''
+                for i in [0, 2, 4]:
+                    name = entry[i][label_to_id_field(list(entry[i].labels)[0])]
+                    if name not in node_map:
+                        node = {'type': list(entry[i].labels),
+                                'name': name}
+                        for _tuple in entry[i].items():
+                            node[_tuple[0]] = _tuple[1]
+                        '''graph related'''
+                        node['category'] = get_node_category(node['type'])
+                        # node['symbolSize'] = get_symbol_size(node['type'][0])
+                        if 'Vulnerability' in node['type']:
+                            node['label'] = vul_label_settings
+                            node['symbolSize'] = get_symbol_size('v', cnt)
+                        elif 'Family' in node['type']:
+                            node['label'] = af_label_settings
+                            node['symbolSize'] = get_symbol_size('af', cnt)
+                        node_map[node['name']] = node
 
-            '''part for relationship'''
-            for i in [1, 3]:
-                rel = {'name': entry[i]['rid'], 'category': entry[i].type}
-                for _tuple in entry[i].items():
-                    rel[_tuple[0]] = _tuple[1]
-                rel['source'], rel['target'] = rel['rid'].split('->')
-                '''graph related'''
-                # rel['lineStyle'] = {
-                #     'curveness': (i - 2) / 8
-                # }
-                rel_map[rel['name']] = rel
+                '''part for relationship'''
+                for i in [1, 3]:
+                    rel = {'name': entry[i]['rid'], 'category': entry[i].type}
+                    for _tuple in entry[i].items():
+                        rel[_tuple[0]] = _tuple[1]
+                    rel['source'], rel['target'] = rel['rid'].split('->')
+                    '''graph related'''
+                    rel['lineStyle'] = {
+                        'curveness': (i - 2) / 8
+                    }
+                    rel_map[rel['name']] = rel
+
+            # node_map[cve_id]['symbolSize'] = get_symbol_size('v', cnt)
 
         return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
                 "links": list(rel_map.values())}
+        # pprint(node_map)
+        # return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
+        #         "links": []}
 
-    limit = min(50, int(limit))
+    limit = min(200, int(limit))
     res = neo.get_session().read_transaction(work, limit)
     return res
 

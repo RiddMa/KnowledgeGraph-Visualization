@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Graph from "@/components/Graph";
+import Graph from "@/components/KnowledgeGraph";
 export default {
   name: "Visualization",
   components: { Graph },

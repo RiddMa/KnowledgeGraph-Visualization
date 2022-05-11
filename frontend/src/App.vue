@@ -55,3 +55,9 @@ export default {
   },
 };
 </script>
+<style>
+.vis-graph {
+  width: 100%;
+  height: 100%;
+}
+</style>

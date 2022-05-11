@@ -9,11 +9,11 @@ const net = {
   getters: {},
   mutations: {},
   actions: {
-    async fetchGraphData(context, limit) {
+    async fetchGraphData(context, { name: name, limit: limit }) {
       try {
         const response = await getGraphData(limit);
-        context.commit("setGraphData", response.data);
-        return response.data
+        context.commit("setGraphData", { name: name, data: response.data });
+        return response.data;
       } catch (e) {
         console.log(e);
       }
