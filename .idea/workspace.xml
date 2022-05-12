@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/quotes_spider.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CVE_Bot/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/csv_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/csv_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/example.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/cve_detail.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/xml_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/xml_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +25,10 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -45,10 +40,24 @@
       <option name="presentableId" value="Default" />
       <updated>1644501810237</updated>
       <workItem from="1644501811375" duration="645000" />
+      <workItem from="1651713074514" duration="7000" />
+      <workItem from="1651713094650" duration="35000" />
+      <workItem from="1652364854856" duration="383000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
