@@ -3,7 +3,7 @@
     <v-row v-for="entry in stats" :key="entry.name" class="px-0 py-2 ma-0">
       <!--      <v-col sm="12" md="8" class="ma-0 pa-0">-->
       <v-col cols="8" md="7" class="ma-0 pa-0">
-        {{ entryTranslate[entry.name] }}
+        {{ entryTranslate[entry.name] }}：
       </v-col>
       <!--      <v-col sm="12" md="4" class="ma-0 pa-0">-->
       <v-col cols="4" md="5" class="ma-0 pa-0">

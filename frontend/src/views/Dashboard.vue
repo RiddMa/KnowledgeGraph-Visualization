@@ -24,6 +24,7 @@
             graph-id="stats-graph-vul"
             type="vul"
             :nodes="this.getVulChartData()"
+            class="mt-4"
             style="height: 260px"
           ></stats-graph>
           <!--            </v-col>-->
@@ -33,8 +34,14 @@
       <v-col cols="12" sm="12" md="6" lg="4">
         <v-card class="pa-6">
           <v-row>
-            <v-col>
+            <v-col class="shrink" style="min-width: 120px">
               <h2>{{ translation["asset"] }}</h2>
+            </v-col>
+            <v-col class="ma-0 px-0">
+              <v-btn-toggle dense v-model="assetChartToggle" mandatory>
+                <v-btn>显示家族</v-btn>
+                <v-btn>显示资产</v-btn>
+              </v-btn-toggle>
             </v-col>
           </v-row>
           <entry-list
@@ -42,9 +49,10 @@
             :stats="this.graphStats.asset"
           />
           <stats-graph
-            graph-id="stats-graph-asset"
+            graph-id="stats-graph-asset-family"
             type="asset"
-            :nodes="this.getAssetFamilyChartData()"
+            :nodes="this.selectAssetChartData()"
+            class="mt-4"
             style="height: 260px"
           ></stats-graph>
         </v-card>
@@ -60,6 +68,13 @@
             :entry-translate="translation"
             :stats="this.graphStats.exploit"
           />
+          <stats-graph
+            graph-id="stats-graph-exploit"
+            type="asset"
+            :nodes="this.getExploitChartData()"
+            class="mt-4"
+            style="height: 260px"
+          ></stats-graph>
         </v-card>
       </v-col>
       <!--      <v-col sm="12" md="6" lg="4">-->
@@ -160,7 +175,10 @@ import StatsGraph from "@/components/StatsGraph";
 export default {
   name: "Dashboard",
   components: { StatsGraph, EntryList },
-  data: () => ({}),
+  data: () => ({
+    assetChartToggle: 0,
+    showAssetFamily: true,
+  }),
   computed: {
     ...mapState({
       translation: (state) => state.translation,
@@ -179,7 +197,7 @@ export default {
       arr = arr.slice(2, arr.length);
       for (const i in range(0, arr.length)) {
         let translatedName = this.translation[arr[i]["name"]];
-        arr[i]["name"] = translatedName.substring(3, translatedName.length - 1);
+        arr[i]["name"] = translatedName.substring(3, translatedName.length);
       }
 
       let total = 0;
@@ -191,26 +209,58 @@ export default {
       }
       return arr;
     },
+    selectAssetChartData() {
+      if (this.assetChartToggle === 0) {
+        return this.getAssetFamilyChartData();
+      } else {
+        return this.getAssetChartData();
+      }
+    },
     getAssetChartData() {
       let arr = _.cloneDeep(this.graphStats.asset);
       arr = arr.slice(2, arr.length);
       for (const i in range(0, arr.length)) {
-        let translatedName = this.translation[arr[i]["name"]];
-        arr[i]["name"] = translatedName.substring(0, translatedName.length - 1);
+        arr[i]["name"] = this.translation[arr[i]["name"]];
       }
-      arr = [arr[1], arr[3], arr[5]];
-      console.log(arr);
+      arr = _.cloneDeep([arr[1], arr[3], arr[5]]);
+      let total = 0;
+      for (const i of range(0, arr.length)) {
+        total += arr[i]["value"];
+      }
+      for (const i of range(0, arr.length)) {
+        arr[i]["percentage"] = arr[i]["value"] / total;
+      }
       return arr;
     },
     getAssetFamilyChartData() {
       let arr = _.cloneDeep(this.graphStats.asset);
       arr = arr.slice(2, arr.length);
       for (const i in range(0, arr.length)) {
-        let translatedName = this.translation[arr[i]["name"]];
-        arr[i]["name"] = translatedName.substring(0, translatedName.length - 1);
+        arr[i]["name"] = this.translation[arr[i]["name"]];
       }
-      arr = [arr[0], arr[2], arr[4]];
-      console.log(arr);
+      arr = _.cloneDeep([arr[0], arr[2], arr[4]]);
+      let total = 0;
+      for (const i of range(0, arr.length)) {
+        total += arr[i]["value"];
+      }
+      for (const i of range(0, arr.length)) {
+        arr[i]["percentage"] = arr[i]["value"] / total;
+      }
+      return arr;
+    },
+    getExploitChartData() {
+      let arr = _.cloneDeep(this.graphStats.exploit);
+      arr = arr.slice(1, arr.length);
+      for (const i in range(0, arr.length)) {
+        arr[i]["name"] = this.translation[arr[i]["name"]];
+      }
+      let total = 0;
+      for (const i of range(0, arr.length)) {
+        total += arr[i]["value"];
+      }
+      for (const i of range(0, arr.length)) {
+        arr[i]["percentage"] = arr[i]["value"] / total;
+      }
       return arr;
     },
   },

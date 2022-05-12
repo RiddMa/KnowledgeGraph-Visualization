@@ -6,7 +6,7 @@ from pprint import pprint
 
 from flask import Blueprint
 
-from db import neo
+from db import neo, mg
 
 bp = Blueprint('graph', __name__, url_prefix='/api/graph')
 
@@ -133,7 +133,6 @@ def retrieve_graph_stats():
             ],
             'exploit': [
                 {'name': 'exploit_count', 'value': tx.run(cql_atk).data()[0]["exploit_count"]},
-                {'name': 'type_remote', 'value': tx.run(cql_atk).data()[0]["exploit_count"]},
             ],
         }
         result['vul'][1]['value'] = result['vul'][2]['value'] + result['vul'][3]['value'] + result['vul'][4]['value']
@@ -145,7 +144,8 @@ def retrieve_graph_stats():
         return result
 
     res = neo.get_session().read_transaction(work)
-    # res = neo.get_movie()
+    res['exploit'].extend(mg.get_exploit_stats())
+
     print("time elapsed:" + str(time.time() - t0))
     return json.dumps(res)
 

@@ -10,8 +10,7 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import { mapState } from "vuex";
 import localeCfg from "@/utils/langZH.ts";
-import { kgStatsFormatter } from "@/utils/tooltipConfig";
-import { range } from "lodash";
+import { fullVizFormatter, kgStatsFormatter } from "@/utils/tooltipConfig";
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -75,7 +74,13 @@ export default {
             //   show: false,
             // },
             data: this.nodes,
-            formatter: (params) => kgStatsFormatter(params),
+            tooltip: {
+              textStyle: {
+                width: 400,
+                overflow: "break",
+              },
+              formatter: (params) => kgStatsFormatter(params),
+            },
           },
         ],
       };

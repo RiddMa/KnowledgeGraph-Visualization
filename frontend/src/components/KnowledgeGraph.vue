@@ -24,7 +24,7 @@ echarts.use([
 echarts.registerLocale("ZH", localeCfg);
 
 export default {
-  name: "Graph",
+  name: "KnowledgeGraph",
   props: {},
   data: () => ({
     // graph: undefined,

@@ -80,6 +80,15 @@ class MyMongo:
         doc = self.graph_data.find_one({}, {})
         return doc
 
+    def get_exploit_stats(self):
+        doc = self.edb_json.aggregate([
+            {"$group": {"_id": "$content.type", "value": {"$sum": 1}}}
+        ])
+        doc = [{'name': entry['_id'], 'value': entry['value']} for entry in doc]
+        sort_order = {'webapps': 0, 'remote': 1, 'local': 2, 'dos': 3}
+        doc.sort(key=lambda val: sort_order[val['name']])
+        return doc
+
 
 mg = MyMongo()
 

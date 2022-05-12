@@ -22,7 +22,7 @@ export function fullVizFormatter(params) {
 <span>宿结点：${params.data.target}</span>
 <span>受影响资产：${params.data.assets}</span>
 </div>
-`;
+      `;
       }
       return template;
     }
@@ -43,9 +43,9 @@ export function fullVizFormatter(params) {
         }
         case 1: {
           return `
-<div style="max-width: 400px;white-space:pre-wrap;overflow-wrap: break-word;hyphens: auto;"><h3 style="margin-bottom: 5px">资产家族名称：${params.data.name}</h3><span>标签：${params.data.type}</span>
-</div>
-`;
+            <div style="max-width: 400px;white-space:pre-wrap;overflow-wrap: break-word;hyphens: auto;"><h3 style="margin-bottom: 5px">资产家族名称：${params.data.name}</h3><span>标签：${params.data.type}</span>
+            </div>
+        `;
         }
         case 2:
         case 3:
@@ -60,7 +60,7 @@ export function fullVizFormatter(params) {
 <span>资产标识：${props.cpe23uri}</span>
 <span>数据更新日期：${mmt(props.timestamp).format()}</span>
 </div>
-`;
+        `;
         }
         case 6:
           break;
@@ -70,6 +70,16 @@ export function fullVizFormatter(params) {
   }
 }
 
-export function kgStatsFormatter(params){
-
+export function kgStatsFormatter(params) {
+  let template = `
+<div style="max-width: 400px;white-space:pre-wrap;overflow-wrap: break-word;hyphens: auto;"><h3 style="margin-bottom: 5px">类型：${
+    params.data.name
+  }</h3><span>数量：${params.data.value}</span>
+<span>占比：${params.data.percentage.toLocaleString(undefined, {
+    style: "percent",
+    minimumFractionDigits: 2,
+  })}</span>
+</div>
+  `;
+  return template;
 }

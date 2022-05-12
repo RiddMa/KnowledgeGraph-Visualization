@@ -1,3 +1,7 @@
+GET http://localhost:5000/api/graph/
+Accept: application/json
+
+###
 GET http://localhost:5000/api/graph/test/1
 Accept: application/json
 
