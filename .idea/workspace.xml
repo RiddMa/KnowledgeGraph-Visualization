@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper chapter 2">
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper chapter 4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +48,7 @@
       <workItem from="1644501811375" duration="645000" />
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
-      <workItem from="1652364854856" duration="2033000" />
+      <workItem from="1652364854856" duration="2737000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -65,7 +64,21 @@
       <option name="project" value="LOCAL" />
       <updated>1652422902488</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update paper chapter 3">
+      <created>1652439066213</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1652439066213</updated>
+    </task>
+    <task id="LOCAL-00004" summary="update paper chapter 4">
+      <created>1652452970410</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1652452970410</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -85,6 +98,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add paper" />
     <MESSAGE value="update paper chapter 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="update paper chapter 2" />
+    <MESSAGE value="update paper chapter 3" />
+    <MESSAGE value="update paper chapter 4" />
+    <option name="LAST_COMMIT_MESSAGE" value="update paper chapter 4" />
   </component>
 </project>
