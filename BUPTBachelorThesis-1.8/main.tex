@@ -103,7 +103,7 @@ Pandas\footnote{https://pandas.pydata.org/} 是适用于 Python 语言的数据�
 
 \section{知识图谱构建子系统}
 
-采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。
+采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。//TODO
 
 \subsection{Ray}
 
@@ -219,7 +219,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 \subsubsection{关系融合}
 
-啊这……
+啊这……//TODO
 
 \subsection{知识图谱持久化存储}
 
@@ -308,7 +308,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 			            \item 利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码
 			            \item 利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码
 		            \end{itemize}
-		      \item 关系融合：
+		      \item 关系融合：//TODO
 	      \end{enumerate}
 	\item 后端服务子系统的加工细化为：
 	      \begin{enumerate}
@@ -339,7 +339,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 数据采集服务：通过生成索引、爬虫、数据清洗，向持久化层输入数据。数据采集服务在持久化层存储的数据包括用于指引爬虫生成新链接的索引、爬虫从各数据源爬取得到的 HTML 文档、JSON 等原始数据用于存档、经过数据管线处理得到的可用于下一步构建知识图谱的 JSON 格式化数据。数据采集服务与持久化层 MongoDB 进行交互，是系统数据输入介面。
 
-知识图谱构建服务：从 MongoDB 数据库读取格式化数据，经过实体生成、关系生成等步骤，构建互联网信息安全漏洞的知识图谱。知识图谱构建服务与持久化层 MongoDB 和 Neo4j 进行交互，实现原始数据的加工，将图谱相关结点、关系、属性数据存储至 Neo4j 数据库中。
+知识图谱构建服务：从 MongoDB 数据库读取格式化数据，经过实体生成、关系生成等步骤，构建互联网信息安全漏洞的知识图谱。知识图谱构建服务与持久化层 MongoDB 和 Neo4j 进行交互，实现原始数据的加工，将图谱相关结点、关系、属性数据存储至 Neo4j 数据库中。//TODO
 
 后端服务：与表示层通过 RESTful API 交互，获取存取数据、服务调度等用户指令。与持久化层 Neo4j 数据库进行加护，读取知识图谱相关结点、关系、属性数据，将其通过 HTTPS 协议传递给表示层。此外，后端服务还具有调度功能，通过 APScheduler 调度逻辑层其他服务的运行，从而保障整个系统正常运转。
 
@@ -379,7 +379,7 @@ Neo4j 数据库在系统中主要发挥互联网安全信息漏洞知识图谱�
 
 基于规则的关系生成模块利用不同类型实体间隐含的联系，在 Neo4j 数据库中匹配对应结点，在两个结点间生成对应的边，并为其添加属性。因知识图谱中预计将有一百万个结点，使用最细粒度将每个漏洞结点与每个资产结点连接将产生超过一亿条边，这对于本项目的性能要求而言是不现实的。因此，关系生成模块会使用前述步骤生成的资产家族结点，在漏洞结点与漏洞结点所包含的受影响资产列表中的每条正则匹配项所匹配到的资产对应的资产家族之间添加关系。为了维持该关系指向资产的语义准确，将匹配到的资产列表作为属性添加到该关系边之上。
 
-关系融合模块：
+关系融合模块：//TODO
 
 \subsection{后端服务子系统}
 
@@ -387,17 +387,42 @@ Neo4j 数据库在系统中主要发挥互联网安全信息漏洞知识图谱�
 
 Web API 访问点由 Flask 支持，使用 Flask 的 Blueprint 功能对注册在 RESTful API 根路径下的第一级 API 进行分组管理，实现模块化设计。在某个 Route 收到请求时，根据用户请求内容，将请求参数作为 CQL 参数，调用持久化层数据库控制对象对数据库进行操作，增删查改知识图谱中的结点和关系。若是可视化相关的 Route，则会对查询到的数据调用绘图数据生成模块进行转换。
 
-绘图数据生成模块，
+绘图数据生成模块将存储在 Neo4j 数据库中的知识图谱数据转化为 ECharts 绘图库可以使用的数据格式。
+
+APScheduler 调度模块：//TODO
 
 \subsection{前端子系统}
 
+前端子系统负责管理用户运行时相关数据、通过 UI 向用户展示信息。使用 Vue.js 的 MVVM 架构，主要包含视图与模型两个组成部分。
+
+视图包含仪表盘、知识图谱、搜索、关于四部分。仪表盘视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。知识图谱视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。搜索视图只是用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。关于视图展示本系统相关信息及用户指南。
+
+模型主要包含 Vuex 数据控制器、Axios 网络控制器两部分。Vuex 数据控制器统一管理前端子系统的数据与状态，是前端子系统的“Single Source of Truth”，为视图的响应式显示提供数据源，还包含在前端对数据进行简单处理功能。Axios 网络控制器封装一个 httpCliet 对象，以及若干与后端通信的方法。Vuex 数据控制器可以调用 Axios 网络控制器，从后端获取数据，更新 Vuex Store 中的状态。
+
 \subsection{数据库设计}
+
+图\ref{CyKG_Entity-Mongo}所示为 MongoDB 数据模式图。//TODO
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Entity-Mongo.png}{MongoDB 数据模式图}{CyKG_Entity-Mongo}
+
+图\ref{CyKG_Entity}所示为 Neo4j 数据模式图，同时也是知识图谱实体与关系模式图。
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Entity.png}{Neo4j 数据模式图}{CyKG_Entity}
 
 \subsection{子系统间接口设计}
 
 \section{系统详细设计}
 
 \subsection{开发环境配置}
+
+\begin{itemize}
+	\item 操作系统：Ubuntu 20.04，Windows 11 Pro
+	\item 数据采集子系统：Python 3.8，Scrapy 2.6
+	\item 知识图谱构建子系统：Python 3.8，Ray 1.11.1，uuid 1.3
+	\item 持久化子系统：Python 3.8，Py2neo 2021.2.3，Pymongo 3.12，Neo4j 4.4
+	\item 后端服务子系统：Python 3.8，Flask 2.0，flask-cors 3.0
+	\item 前端子系统：JavaScript ES6，Vue 2.6，Vuetify 2.6，ECharts 5.3.2，vue-axios 3.4，Vuex 3.4
+\end{itemize}
 
 \subsection{各核心功能模块详细设计}
 
