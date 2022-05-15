@@ -7,6 +7,7 @@
     <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper chapter 4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +48,7 @@
       <workItem from="1644501811375" duration="645000" />
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
-      <workItem from="1652364854856" duration="2828000" />
+      <workItem from="1652364854856" duration="5361000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -84,7 +85,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652525437889</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update paper chapter 4">
+      <created>1652539199743</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1652539199743</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

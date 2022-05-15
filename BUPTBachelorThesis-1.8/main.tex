@@ -254,7 +254,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 \section{用户视角的需求分析}
 
 \begin{itemize}
-	\item 查看仪表盘
+	\item 查看控制台
 	      \begin{itemize}
 		      \item 查看图谱统计数据
 		      \item 查看图谱统计图表
@@ -395,7 +395,7 @@ APScheduler 调度模块：//TODO
 
 前端子系统负责管理用户运行时相关数据、通过 UI 向用户展示信息。使用 Vue.js 的 MVVM 架构，主要包含视图与模型两个组成部分。
 
-视图包含仪表盘、知识图谱、搜索、关于四部分。仪表盘视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。知识图谱视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。搜索视图只是用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。关于视图展示本系统相关信息及用户指南。
+视图包含控制台、可视化、搜索、关于四部分。控制台视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。可视化视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。搜索视图只是用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。关于视图展示本系统相关信息及用户指南。
 
 模型主要包含 Vuex 数据控制器、Axios 网络控制器两部分。Vuex 数据控制器统一管理前端子系统的数据与状态，是前端子系统的“Single Source of Truth”，为视图的响应式显示提供数据源，还包含在前端对数据进行简单处理功能。Axios 网络控制器封装一个 httpCliet 对象，以及若干与后端通信的方法。Vuex 数据控制器可以调用 Axios 网络控制器，从后端获取数据，更新 Vuex Store 中的状态。
 
@@ -403,13 +403,25 @@ APScheduler 调度模块：//TODO
 
 图\ref{CyKG_Entity-Mongo}所示为 MongoDB 数据模式图。//TODO
 
-\buptfigure[width=\textwidth]{pictures/CyKG_Entity-Mongo.png}{MongoDB 数据模式图}{CyKG_Entity-Mongo}
+\buptfigure[height=0.5\textheight]{pictures/CyKG_Entity-Mongo.png}{MongoDB 数据模式图}{CyKG_Entity-Mongo}
 
 图\ref{CyKG_Entity}所示为 Neo4j 数据模式图，同时也是知识图谱实体与关系模式图。
 
-\buptfigure[width=\textwidth]{pictures/CyKG_Entity.png}{Neo4j 数据模式图}{CyKG_Entity}
+\buptfigure[height=0.5\textheight]{pictures/CyKG_Entity.png}{Neo4j 数据模式图}{CyKG_Entity}
 
-\subsection{子系统间接口设计}
+\subsection{系统接口设计}
+
+图\ref{api_table}展示了系统接口设计。
+\begin{bupttable}{系统接口设计}{api_table}
+	\begin{tabularx}{\textwidth}{llX}
+		\toprule
+		\textbf{类别} & \textbf{路径}         & \textbf{描述}                                         \\ \midrule
+		              & /<path>               & 前端路由路径                                          \\ \cmidrule(l){2-3}
+		              & /api/graph/           & 获取知识图谱统计信息                                  \\ \cmidrule(l){2-3}
+		前端          & /api/graph/<limit>    & 获取与<limit>个漏洞结点相关联的结点或关系组成的子图谱 \\ \cmidrule(l){2-3}
+		              & /api/search/<keyword> & 搜索与<keyword>关键字相关的结点或关系                 \\ \bottomrule %\midrule
+	\end{tabularx}
+\end{bupttable}
 
 \section{系统详细设计}
 
@@ -421,10 +433,30 @@ APScheduler 调度模块：//TODO
 	\item 知识图谱构建子系统：Python 3.8，Ray 1.11.1，uuid 1.3
 	\item 持久化子系统：Python 3.8，Py2neo 2021.2.3，Pymongo 3.12，Neo4j 4.4
 	\item 后端服务子系统：Python 3.8，Flask 2.0，flask-cors 3.0
-	\item 前端子系统：JavaScript ES6，Vue 2.6，Vuetify 2.6，ECharts 5.3.2，vue-axios 3.4，Vuex 3.4
+	\item 前端子系统：JavaScript ES6，Vue 2.6，Vuetify 2.6，ECharts 5.3.2，vue-axios 3.4，Vuex 3.4，Moment 2.29.3，Lodash 4.17.21
 \end{itemize}
 
 \subsection{各核心功能模块详细设计}
+
+\subsubsection{类图}
+
+\ref{CyKG_Class-DataCollection}
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Class-DataCollection.png}{数据采集子系统类图}{CyKG_Class-DataCollection}
+
+\ref{CyKG_Class-KnowledgeGraphGeneration}
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Class-KnowledgeGraphGeneration.png}{知识图谱构建子系统类图}{CyKG_Class-KnowledgeGraphGeneration}
+
+\ref{CyKG_Class-Backend}
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Class-Backend.png}{后端服务子系统类图}{CyKG_Class-Backend}
+
+\subsubsection{功能时序图}
+
+\ref{CyKG_Sequence-UserSequence}
+
+\buptfigure[width=\textwidth]{pictures/CyKG_Sequence-UserSequence.png}{用户请求功能时序图}{CyKG_Sequence-UserSequence}
 
 \chapter{系统实现}
 
@@ -432,274 +464,131 @@ APScheduler 调度模块：//TODO
 
 \chapter{系统测试}
 
+\section{测试环境}
+
+\begin{itemize}
+	\item CPU：AMD Ryzen ZEN3 架构 8C16T@4.8GHz
+	\item RAM：16GB*2 DDR4@3600MT/s
+	\item 存储：PCIe Gen 3 固态硬盘
+	\item 操作系统：Ubuntu 20.04
+\end{itemize}
+
 \section{数据采集子系统测试}
+
+图\ref{pictures/DB_Mongo-Overview.png}展示 MongoDB 数据库中的 Collections 概览。
+
+\buptfigure[width=\textwidth]{pictures/DB_Mongo-Overview.png}{MongoDB Collections 概览}{pictures/DB_Mongo-Overview.png}
+
+通过 Scrapy 爬虫 cve.mitre.org，获得约 23 万条 cve id 数据，经筛选清洗获得约 16 万条有效 cve id 信息，如图\ref{pictures/DB_Cve.png}所示。
+
+\buptfigure[width=\textwidth]{pictures/DB_Cve.png}{cve id 索引 csv 数据}{pictures/DB_Cve.png}
+
+爬取 cpe.mitre.org 定期发布的官方 cpe 信息文件，使用 lxml 库解析，经筛选清洗获得约 90 万条有效 cpe 资产信息 JSON 数据。其中包含用于识别的 cpe23uri、cpe 资产名称、参考资料链接等属性，如图\ref{pictures/DB_Cpe.png}所示。
+
+\buptfigure[height=0.45\textheight]{pictures/DB_Cpe.png}{cpe 资产 JSON 数据}{pictures/DB_Cpe.png}
+
+爬取 cvedetails.com，获得约 16 万个 HTML 页面，清洗整理获得超 400 万个 cve 漏洞与资产相关属性 JSON 数据，如图\ref{pictures/DB_Cvedetails.png}所示。
+
+\buptfigure[height=0.45\textheight]{pictures/DB_Cvedetails.png}{cvedetails.com JSON 数据}{pictures/DB_Cvedetails.png}
+
+通过 nvd.nist.gov JSON API 数据接口，获得约 16 万条 JSON 数据，包含漏洞名称与简介、漏洞条目发布日期、漏洞条目更新日期、CVSS 风险评级、参考资料、受影响资产的 cpe23uri 匹配正则表达式等信息，如图\ref{pictures/DB_Nvd.png}所示。
+
+\buptfigure[height=0.45\textheight]{pictures/DB_Nvd.png}{nvd.nist.gov JSON 数据}{pictures/DB_Nvd.png}
+
+爬取 exploit-db.com，获得约 5 万个 HTML 页面，包含漏洞利用代码、作者、发布时间、适用平台、利用类型、利用 cve id 等信息，清洗处理为 JSON 格式数据，如图\ref{pictures/DB_edb_json.png}所示。
+
+\buptfigure[height=0.45\textheight]{pictures/DB_edb_json.png}{exploit-db.com JSON 数据}{pictures/DB_edb_json.png}
 
 \section{知识图谱构建子系统测试}
 
+\subsection{结点生成}
+
+使用 Ray 库提供的 @Ray.remote 装饰器与 ray.get() 方法，将全部漏洞数据根据并行度参数进行分割，开辟多进程对分块漏洞数据进行生成结点操作。
+
+开辟 32 个进程生成漏洞结点、资产结点、资产家族结点、漏洞利用结点，总计约 120 万个结点。系统耗时约 5 分钟，如图\ref{pictures/Gen_Nodes.png}与图\ref{pictures/DB_Nodes.png}所示。
+
+\buptfigure[width=\textwidth]{pictures/Gen_Nodes.png}{结点生成模块运行日志}{pictures/Gen_Nodes.png}
+
+\buptfigure[width=0.5\textwidth]{pictures/DB_Nodes.png}{数据库查询结点数量}{pictures/DB_Nodes.png}
+
+\subsection{关系生成}
+
+使用 Ray 库提供的 @Ray.remote 装饰器与 ray.get() 方法，将全部漏洞数据根据并行度参数进行分割，开辟多进程对分块漏洞数据进行生成操作。
+
+开辟 32 个进程生成“资产$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产；资产$-[$是子级$]->$资产家族，资产家族$-[$是父级$]->$资产；利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码；利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码”等关系，由于资产关系生成涉及正则匹配运算，无法有效利用数据库索引，且 CPU 性能消耗较大，因此生成时间较长。对总计约 120 万个结点共生成约 45 万条边（更多详细信息存储在边属性中），耗时约 1 小时 50 分钟，如图\ref{pictures/Gen_Rels.png}与图\ref{pictures/DB_Rels.png}所示。
+
+\buptfigure[width=\textwidth]{pictures/Gen_Rels.png}{关系生成模块运行日志}{pictures/Gen_Rels.png}
+
+\buptfigure[width=\textwidth]{pictures/DB_Rels.png}{数据库查询关系数量}{pictures/DB_Rels.png}
+
+\section{关系融合}
+
+本系统设计上，结构化数据生成的漏洞实体具有 cve id 属性作为唯一标识；资产实体具有 cpe23uri 属性作为唯一标识；漏洞利用代码实体具有 edb-id 属性作为唯一标识。且在数据库控制器对象的方法中，使用 MERGE 等 CQL 子句保证不会向数据库插入重复的实体或属性。因此当前知识图谱内并不会出现语义相同的不同实体或关系。
+
+关系融合模块作为适配使用深度学习模型进行命名实体识别结点生成与关系抽取方案的模块，当前仅在系统数据加工管线中留有接口，以备未来扩展需要。因此暂不作测试。
+
 \section{数据库子系统与后端服务子系统测试}
+
+\subsection{/api/graph/}
+
+向运行在 localhost 上的后端服务子系统发送 /api/graph/ 请求，获取当前知识图谱基础统计信息。后端返回各类资产数量统计、各类漏洞数量统计、各类代码利用数量统计等信息，如图\ref{pictures/Backend_api-graph-content.png}所示。
+
+\buptfigure[height=0.4\textheight]{pictures/Backend_api-graph-content.png}{/api/graph/ 请求响应数据}{pictures/Backend_api-graph-content.png}
+
+耗时约 200 毫秒，如图\ref{pictures/Backend_api-graph.png}所示。
+
+\buptfigure[height=0.4\textheight]{pictures/Backend_api-graph.png}{/api/graph/ 请求响应摘要}{pictures/Backend_api-graph.png}
+
+\subsection{/api/graph/<limit>}
+
+向运行在 localhost 上的后端服务子系统发送 /api/graph/100 请求，获取当前知识图谱的 100 个漏洞结点以及与其相关的资产、利用代码结点、关系等信息，用于可视化。后端返回经绘图数据生成模块处理的绘图数据，包含分类、结点、关系三个数组，如图\ref{pictures/Backend_api-graph-100-content.png}所示。
+
+\buptfigure[height=0.4\textheight]{pictures/Backend_api-graph-100-content.png}{/api/graph/100 请求响应数据}{pictures/Backend_api-graph-100-content.png}
+
+耗时约 640 毫秒，如图\ref{pictures/Backend_api-graph-100.png}所示。
+
+\buptfigure[height=0.4\textheight]{pictures/Backend_api-graph-100.png}{/api/graph/100 请求响应摘要}{pictures/Backend_api-graph-100.png}
 
 \section{前端子系统测试}
 
+\subsection{控制台视图}
+
+图\ref{pictures/Vis_Dashboard_Info.png}所示为控制台概览。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载控制台界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
+
+\buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Info.png}{控制台视图预览}{pictures/Vis_Dashboard_Info.png}
+
+\buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{控制台视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
+
+\subsection{可视化视图}
+
+图\ref{pictures/Vis_Full.png}所示为知识图谱概览。从 localhost 后端 /api/graph/100 端口加载数据，实际返回 1070 个结点、2035 条关系边，根据瀑布流图可看出，通过刷新页面冷加载可视化力引导图耗时约 1300ms，且加载过程中有加载指示器提示正在加载，用户体验较好。如图\ref{pictures/Vis_Waterfall.png}所示。
+
+\buptfigure[width=\textwidth]{pictures/Vis_Full.png}{可视化视图概览}{pictures/Vis_Full.png}
+
+\buptfigure[width=\textwidth]{pictures/Vis_Waterfall.png}{可视化视图加载请求瀑布流}{pictures/Vis_Waterfall.png}
+
+图\ref{pictures/Vis_Detail.png}所示为知识图谱细节图。力引导图为有向图，因此结点间的无向边使用两条有向边表示。图中蓝色结点为漏洞结点，绿色结点为资产家族结点，红色结点为受影响资产结点。可以看到，通过将漏洞所影响的大量资产关系替换成漏洞到资产家族的一个关系，大幅简化了图的结构，在使视觉观感清晰的同时，将鼠标移至漏洞至资产家族的边上可显示受该漏洞影响的所有资产，保证图谱数据的详细精确。
+
+\buptfigure[width=\textwidth]{pictures/Vis_Detail.png}{可视化视图细节}{pictures/Vis_Detail.png}
+
+图\ref{pictures/Vis_Info.png}所示为当鼠标移动至或触摸图中元素，包括各类结点和各类关系，会显示 tooltip 指示，展现当前高亮元素的详细信息。
+
+\buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+
+\subsection{搜索视图}
+
+图\ref{}所示为搜索视图。搜索视图提供一个悬浮搜索框，允许用户对知识图谱进行精确查询。输入查询关键字并按下回车，后端服务将搜索整个知识图谱查找关键字相关信息，并以绘图数据形式将结果返回前端。前端随即调用 ECharts 可视化库展示数据。
+
+% \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+
+\subsection{关于视图}
+
+图\ref{}所示为关于视图。关于视图清晰地展示了本系统名称、功能、作者、使用指南等信息。
+
+% \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+
 \chapter{结束语}
 
-
-
-\section{特殊文本类型}
-\subsection{脚注}
-% 如果你的项目来源于科研项目，可以使用以下指令插入无编号脚注于正文第一页
-\blfootnote{本项目来源于科研项目“基于\LaTeX{}的本科毕业设计”，项目编号1124}
-社交媒体是一种供用户创建在线社群来分享信息、观点、个人信息和其它内容（如视频）的电子化交流平台，社交网络服务（social network service, SNS）和微博客（microblogging）都属于社交媒体的范畴\cite{webster_social_media}，国外较为知名的有Facebook\footnote{http://www.facebook.com/}、Instagram\footnote{https://www.instagram.com/}、Twitter\footnote{http://www.twitter.com/}、LinkedIn\footnote{http://www.linkedin.com/}等，国内较为知名的有新浪微博\footnote{http://www.weibo.com/}。
-
-在社交媒体的强覆盖下，新闻信息的传播渠道也悄然了发生变化。\cite{false_news_spread_2018}
-
-\subsection{定义、定理与引理等}
-\begin{definition}
-	这是一条我也不知道在说什么的定义，反正我就是写在这里做个样子罢了，也没人会仔细读。\cite{周兴2017基于深度学习的谣言检测及模式挖掘}
-\end{definition}
-
-\begin{theorem}
-	这是一条我也不知道在说什么的定理，反正我就是写在这里做个样子罢了，也没人会仔细读。
-\end{theorem}
-
-\begin{axiom}
-	这是一条我也不知道在说什么的公理，反正我就是写在这里做个样子罢了，也没人会仔细读。
-\end{axiom}
-
-\begin{lemma}
-	这是一条我也不知道在说什么的引理，反正我就是写在这里做个样子罢了，也没人会仔细读。
-\end{lemma}
-
-\begin{proposition}
-	这是一条我也不知道在说什么的命题，反正我就是写在这里做个样子罢了，也没人会仔细读。
-\end{proposition}
-
-\begin{corollary}
-	这是一条我也不知道在说什么的推论，反正我就是写在这里做个样子罢了，也没人会仔细读。
-\end{corollary}
-
-\subsection{中英文文献、学位论文引用}
-根据美国皮尤研究中心的2017年9月发布的调查结果\cite{pew_news_use_2017}，67\%的美国民众会从社交媒体上获取新闻信息，其中高使用频率用户占20\%。在国内，中国互联网信息中心《2016年中国互联网新闻市场研究报告》\cite{internet_news_2016}也显示，社交媒体已逐渐成为新闻获取、评论、转发、跳转的重要渠道，在2016年下半年，曾经通过社交媒体获取过新闻资讯的用户比例高达90.7\%，在微信、微博等社交媒体参与新闻评论的比例分别为62.8\%和50.2\%。社交媒体正在成为网络上热门事件生成并发酵的源头，在形成传播影响力后带动传统媒体跟进报道，最终形成更大规模的舆论浪潮。\cite{Yang2012Automatic}
-
-在国内，新浪微博由于其发布方便、传播迅速、受众广泛且总量大的特点，成为了虚假信息传播的重灾区：《中国新媒体发展报告（2013）》\cite{唐绪军2013中国新媒体发展报告}显示，2012年的100件微博热点舆情案例中，有超过1/3出现谣言；《中国新媒体发展报告（2015）》\cite{唐绪军2015中国新媒体发展报告}对2014年传播较广、比较典型的92条假新闻进行了多维度分析，发现有59\%的虚假新闻首发于新浪微博。
-
-此等信息的传播严重损害了有关公众人物的名誉权，降低了社交媒体服务商的商业美誉度，扰乱了网络空间秩序，冲击着网民的认知，极易对民众造成误导，带来诸多麻烦和经济损失，甚至会导致社会秩序的混乱。针对社交媒体谣言采取行动成为了有关部门、服务提供商和广大民众的共同选择。\cite{周兴2017基于深度学习的谣言检测及模式挖掘}
-
-\section{相关技术介绍}
-此处引用了简单的表\ref{crowdwisdom_TMP}。
-
-请注意，\LaTeX{}的图表排版规则决定了图表\textbf{不一定会乖乖呆在你插入的地方}，这是为了避免Word中由于图片尺寸不匹配在页面下部出现的的空白，所以请不要使用“下图”“下表”作为指向文字，应使用“图1-1所示”这样的表述。
-
-\begin{bupttable}{基于浏览者行为的特征}{crowdwisdom_TMP}
-
-	\begin{tabular}{l|l|l}
-		\hline \textbf{特征} & \textbf{描述}  & \textbf{形式与理论范围} \\
-		\hline 点赞量        & 微博的点赞数量 & 数值，$\mathbb{N}$      \\
-		\hline 评论量        & 微博的评论数量 & 数值，$\mathbb{N}$      \\
-		\hline 转发量        & 微博的转发数量 & 数值，$\mathbb{N}$      \\
-		\hline
-	\end{tabular}
-\end{bupttable}
-
-此处引用了复杂的表\ref{complexcrowdwisdom_TMP}。
-
-
-\begin{bupttable}{基于浏览者行为的复杂特征}{complexcrowdwisdom_TMP}
-	\begin{tabular}{l|l|l|l}
-		\hline
-		\multicolumn{1}{c|}{\multirow{2}{*}{\textbf{类别}}} & \multicolumn{1}{c|}{\multirow{2}{*}{\textbf{特征}}} & \multicolumn{2}{c}{\textbf{不知道叫什么的表头}}                                               \\
-		\cline{3-4}
-		                                                    &                                                     & \multicolumn{1}{c|}{\textbf{描述}}              & \multicolumn{1}{c}{\textbf{形式与理论范围}} \\
-		\hline
-		\multirow{3}{*}{正常互动}                           & 点赞量                                              & 微博的点赞数量                                  & 数值，$\mathbb{N}$                          \\
-		\cline{2-4}
-		                                                    & 评论量                                              & 微博的评论数量                                  & 数值，$\mathbb{N}$                          \\
-		\cline{2-4}
-		                                                    & 转发量                                              & 微博的转发数量                                  & 数值，$\mathbb{N}$                          \\
-		\hline
-		非正常互动                                          & 羡慕量                                              & 微博的羡慕数量                                  & 数值，$\mathbb{N}$                          \\
-		\hline
-	\end{tabular}
-\end{bupttable}
-
-此处展示了更专业的表\ref{tab:abbr_table}，一个好的表格没有竖线。
-% 请注意1）tabularx环境对多行文本的处理；2）booktabs宏包中支持的更粗的顶端和底端表格边界线，边界线与文本间更大的间距。
-\begin{bupttable}{红警2名词解释}{tab:abbr_table}
-	\begin{tabularx}{\textwidth}{llX}
-		\toprule
-		\textbf{术语类别} & \textbf{缩略语} & \textbf{解释}                                                                                                                                  \\ \midrule
-		                  & 兵营            & 兵营（Barracks），《命令与征服\ 红色警戒2：尤里的复仇》游戏中的一种生产建筑，用以生产步兵单位                                                  \\ \cmidrule(l){2-3}
-		                  & 建造场          & 建造场（Construction Yard），《命令与征服\ 红色警戒2：尤里的复仇》游戏中的一种基础建筑，用以支持其他建筑的建造                                 \\ \cmidrule(l){2-3}
-		                  & 矿厂            & 矿石精炼厂（Ore Refinery），《命令与征服\ 红色警戒2：尤里的复仇》游戏中的一种资源建筑，用以将矿车采集的矿石转化为游戏资金                      \\ \cmidrule(l){2-3}
-		游戏              & 空指            & 空指部（Airforce Command Headquarters），《命令与征服\ 红色警戒2：尤里的复仇》游戏中的一种资源建筑，用以提供雷达功能和T2科技及生产部分空军单位 \\ \cmidrule(l){2-3}
-		                  & 相机            & 游戏术语，特指游戏内的观察区域和视角                                                                                                           \\ \cmidrule(l){2-3}
-		                  & 重工            & 战车工厂（War Factory），《命令与征服\ 红色警戒2：尤里的复仇》游戏中的一种生产建筑，用以生产载具单位                                           \\ \cmidrule(l){2-3}
-		                  & 战争迷雾        & 游戏术语，《命令与征服\ 红色警戒2：尤里的复仇》中指黑色的未探索区域                                                                            \\ \bottomrule
-	\end{tabularx}
-\end{bupttable}
-
-此处引用了一张图。图\ref{autoencoder_TMP}表示的是一个由含有4个神经元的输入层、含有3个神经元的隐藏层和含有4个神经元的输出层组成的自编码器，$+1$代表偏置项。
-
-%图片宽度设置为文本宽度的75%，可以调整为合适的比例
-\buptfigure[width=0.7\textwidth]{pictures/autoencoder}{自编码器结构}{autoencoder_TMP}
-
-%组图示例，已按照指导手册要求设计，由于子图数量不同，无法压缩成\buptfigure那样，大家对照示例即可
-\begin{figure}[!htbp]
-	\centering
-	\subfloat[]{ %[]对齐方式，t为top，b为bottom，留空即可
-		\label{Fig:R1} % 子图1标签名
-		\includegraphics[width=0.45\textwidth]{pictures/autoencoder} %插入图片命令，格式为[配置]{图片路径}
-	}
-	\quad %空格
-	\subfloat[]{
-		\label{Fig:R2} % 子图2标签名
-		\includegraphics[width=0.45\textwidth]{pictures/autoencoder}
-	}
-	\caption{这是两个自编码器结构，我就是排一下子图的效果：\protect\subref{Fig:R1}左边的自编码器，\protect\subref{Fig:R2}右边的自编码器} %注意须使用\protect\subref{}进行标号引用
-	\label{Fig:RecAccuracy} % 整个组图的标签名
-\end{figure}
-
-\section{公式与算法表示}
-
-\subsection{例子：基于主成分分析}
-
-\subsubsection{主成分分析算法}
-
-下面对主成分分析进行介绍。
-
-主成分分析是一种简单的机器学习算法，其功能可以从两方面解释：一方面可以认为它提供了一种压缩数据的方式，另一方面也可以认为它是一种学习数据表示的无监督学习算法。\cite{Goodfellow2016DeepLearning}
-通过PCA，我们可以得到一个恰当的超平面及一个投影矩阵，通过投影矩阵，样本点将被投影在这一超平面上，且满足最大可分性（投影后样本点的方差最大化），直观上讲，也就是能尽可能分开。
-
-对中心化后的样本点集$\bm{X}=\{\bm{x}_1,\bm{x}_2,\ldots,\bm{x}_i,\ldots,\bm{x}_m\}$（有$\sum_{i=1}^{m}\bm{x}_i = 0$），考虑将其最大可分地投影到新坐标系\ $\bm{W}= \{\bm{w}_1,\bm{w}_2,\ldots,\bm{w}_i,\ldots,\bm{w}_d\} $，其中$\bm{w}_i$是标准正交基向量，满足$\|\bm{w}_i\|_2 = 1$， $\bm{w}_i^T\bm{w}_j = 0$（$i \not= j$）。假设我们需要$d^\prime$（$d^\prime < d$）个主成分，那么样本点$\bm{x}_i$在低维坐标系中的投影是$\bm{z}_i = (z_{i1};z_{i2};\ldots;z_{id^\prime})$，其中$z_{ij} = \bm{w}_j^\mathrm{T}\bm{x}_i$，是$\bm{x}_i$在低维坐标系下第$j$维的坐标。
-对整个样本集，投影后样本点的方差是
-\begin{equation}
-	\begin{aligned}
-		  & \frac{1}{m}\sum_{i=1}^m \bm{z}_i^\mathrm{T}\bm{z}_i                                       \\
-		= & \frac{1}{m}\sum_{i=1}^m (\bm{x}_i^\mathrm{T}\bm{W})^\mathrm{T}(\bm{x}_i^\mathrm{T}\bm{W}) \\
-		= & \frac{1}{m}\sum_{i=1}^m \bm{W}^\mathrm{T}\bm{x}_i\bm{x}_i^\mathrm{T}\bm{W}                \\
-		= & \frac{1}{m} \bm{W}^\mathrm{T}\bm{X}\bm{X}^\mathrm{T}\bm{W}                                \\
-	\end{aligned}
-\end{equation}
-
-由于我们知道新坐标系$\bm{W}$的列向量是标准正交基向量，且样本点集$\bm{X}$已经过中心化，则PCA的优化目标可以写为
-\begin{equation}
-	\label{PCA_goal_TMP}
-	\begin{aligned}
-		 & \max_{\substack{\bm{W}}} & tr(\bm{W}^\mathrm{T}\bm{X}\bm{X}^ \mathrm{T}\bm{W}) \\
-		 & \operatorname{ s.t. }    & \bm{W}^\mathrm{T}\bm{W} = \bm{I}                    \\
-	\end{aligned}
-\end{equation}
-
-由于$\bm{X}\bm{X}^ \mathrm{ T }$是协方差矩阵，那么只需对它做特征值分解，即
-\begin{equation}
-	\label{PCA_eigenvalue}
-	\bm{X}^ \mathrm{ T }\bm{X} = \bm{W}\bm{\Lambda}\bm{W}^ \mathrm{ T } \\
-\end{equation}
-其中$\bm{\Lambda}=diag(\bm{\lambda})$，$\bm{\lambda} = \{\lambda_1,\lambda_2,\ldots,\lambda_m\}$。
-
-具体地，考虑到它是半正定矩阵的二次型，存在最大值，可对\eqref{PCA_goal_TMP}使用拉格朗日乘数法
-\begin{equation}
-	\bm{X}\bm{X}^ \mathrm{ T }\bm{w}_i  = \lambda_i \bm{w}_i \\
-\end{equation}
-
-之后将求得的特征值降序排列，取前$d^\prime$个特征值对应的特征向量组成所需的投影矩阵$\bm{W}^\prime =(\bm{w}_1,\bm{w}_2,\ldots,\bm{w}_{d^\prime})$，即可得到PCA的解。PCA算法的描述如算法\ref{PCA_algorithm}所示。
-
-\begin{algorithm}
-	\begin{spacing}{1.3}
-		\floatname{algorithm}{算法}
-		\caption{主成分分析（PCA）}
-		\label{PCA_algorithm}
-		\renewcommand{\algorithmicrequire}{\textbf{输入：}}
-		\renewcommand{\algorithmicensure}{\textbf{输出：}}
-		\begin{algorithmic}[1]
-			\Require 样本集$\bm{x}=\{\bm{x}_1,\bm{x}_2,\ldots,\bm{x}_i,\ldots,\bm{x}_m\}$，低维空间维数$d^\prime$
-			\Ensure 投影矩阵  $\bm{W}^\prime =(\bm{w}_1,\bm{w}_2,\ldots,\bm{w}_{d^\prime})$
-			\State 对所有样本中心化$\bm{x}_i \gets \bm{x}_i - \frac{1}{m}\sum_{i=1}^m \bm{x}_i$
-			\State  计算样本的协方差$\bm{X}\bm{X}^ \mathrm{T}$
-			\State 对协方差矩阵$\bm{X}\bm{X}^ \mathrm{T}$做特征值分解
-			\State 取最大的$d^\prime$个特征值所对应的特征向量$\bm{w}_1,\bm{w}_2,\ldots,\bm{w}_{d^\prime}$
-		\end{algorithmic}
-	\end{spacing}
-\end{algorithm}
-
-\subsubsection{主成分分析可信度评估方法}
-记待判定微博$\bm{w}_0$的经典特征向量为$\bm{f}^{c}_{0}$，它的发布者在$\bm{w_0}$前发布的$k$条微博为$\bm{W} = \bm{w}_1,\bm{w}_2,\ldots,\bm{w}_k$，这$k$条微博对应的经典特征向量集为$\bm{F}^{c}_{W} = \{ \bm{f}^{c}_{1},\bm{f}^{c}_{2},\ldots,\bm{f}^{c}_{k} \}$。令$label = 1$代表谣言，$label = 0$代表非谣言。算法的具体流程如算法\ref{PCA_model}所示。
-
-\begin{algorithm}
-	\begin{spacing}{1.3}
-		\floatname{algorithm}{算法}
-		\caption{基于PCA的信息可信度评估}
-		\label{PCA_model}
-		\renewcommand{\algorithmicrequire}{\textbf{输入：}}
-		\renewcommand{\algorithmicensure}{\textbf{输出：}}
-		\begin{algorithmic}[1]
-			\Require $\bm{f}^{c}_{0}$，$\bm{F}^{c}_{W}$，保留主成分数$n$
-			\Ensure 标签$label\in \{0,1\}$
-			\State 对所有特征向量应用PCA，保留前$n$个主成分$\bm{o}^{c}_{i} \gets PCA(\bm{f}^{c}_{i}, n)$（$i = 0,1,\ldots,k$）
-			\State 计算$\bm{F}^{c}_{W}$中各向量的平均距离$\mu$和标准差$\sigma$
-			\State 计算阈值$thr = {\mu} / {\sigma}$
-			\If {$\min_{1<j\le k} \|\bm{o}^{c}_{0} - \bm{o}^{c}_{j} \|_2 > thr$}
-			\State $ label \gets 1 $
-			\Else
-			\State $ label \gets 0 $
-			\EndIf
-		\end{algorithmic}
-	\end{spacing}
-\end{algorithm}
-
-\section{代码表示}
-
-%据悉以下语言被lstlisting支持：Awk, bash, Basi4, C#, C++, C, Delphi, erlang, Fortran, GCL, Haskell, HTML, Java, JVMIS, Lisp, Logo, Lua, make, Mathematica, Matlab, Objective C , Octave, Pascal, Perl, PHP, Prolog,  Python, R, Ruby, SAS, Scilab, sh, SHELXL, Simula, SQL, tcl, TeX, VBScript, Verilog, VHDL, XML, XSLT
-%遗憾的是，JavaScript不被支持，请上网搜索支持该语言的方法
-
-\subsection{直接书写代码在.tex中}
-下面的代码\ref{plus}是用Python编写的加法函数。
-
-\begin{lstlisting}[language=Python, caption=加法, label=plus, tabsize=2]  
-def plusFunc(a, b):
-	return a + b 
-\end{lstlisting}
-
-\subsection{引用代码文件}
-下面的代码\ref{recursion}是用Python文件中引入的倒序打印$x$到$1$的函数，请查看code文件夹。
-
-\lstinputlisting[language=Python, caption=倒序打印数字, label=recursion, tabsize=2]{code/recursion.py}
-
-\section{列表样式}
-
-\subsection{使用圆点作为项目符号}
-
-\begin{itemize}
-	\item \textbf{第一章为基础模块示例}，是的，本章的名字就是基础模块示例，正如你看到这个样子。
-	\item \textbf{第二章为不存在}，是的，其实它不存在。
-\end{itemize}
-
-\subsection{使用数字作为项目符号}
-
-\begin{enumerate}
-	\item \textbf{第一章为基础模块示例}，是的，本章的名字就是基础模块示例，正如你看到这个样子。
-	\item \textbf{第二章为不存在}，是的，其实它不存在。
-\end{enumerate}
-
-\subsection{句中数字编号列表样式}
-
-\begin{enumerate*}
-	\item \textbf{第一章为基础模块示例}，是的，本章的名字就是基础模块示例，正如你看到这个样子；
-	\item \textbf{第二章为不存在}，是的，其实它不存在。
-\end{enumerate*}
-
-\chapter{相关技术介绍}
-\section{我不得不再添加一点内容}
-\section{尽管这些章节一点正文都没有}
-\section{是的}
-\section{真的没有}
-\section{我已经不知道说什么了}
-\section{如果有，我们就祝愿一下学校教务处什么时候转变一下思维}
-\section{把控制格式这种事情往前做}
-\section{不要总是觉得折磨学生是合理的}
-\section{你拿着教学管理岗位的工资}
-\section{你需要折磨一下你自己才对}
-\section{不要觉得我对别人要求太高，对自己太低}
-\section{我对自己要求低的话也不至于想要修订这份模板}
 %%%%%%%%%%%%%%%%%%%%%%% Main Area ENDs Here %%%%%%%%%%%%%%%%%%%%%%%%
 %\let\cleardoublepage=\cleardoublepagebak
 
@@ -712,7 +601,6 @@ def plusFunc(a, b):
 	% Thanks to page
 	\clearpage
 	\chapter{致\qquad{}谢}
-	% \chapter{系统需求分析与概要设计}
 	\normalsize\thankwords
 
 	% Appendix
