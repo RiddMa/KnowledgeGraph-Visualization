@@ -75,9 +75,9 @@
 
 \section{软件工程方法}
 
-由于本项目为单人完成，且系统整体结构较为复杂，故采用原型开发与敏捷开发\footnote{http://agilemanifesto.org/iso/zhchs/manifesto.html}相结合的方式，先开发最简可行产品（Minimum Viable Product, MVP）验证核心概念，在此基础上不断细化细节、完善代码、扩展功能。同时，因为单人项目难以在前期进行完善的需求分析与系统设计，采用敏捷开发的方式可以增强灵活性。
+由于本项目为单人完成，且系统整体结构较为复杂，故采用原型开发与敏捷开发\cite{manifesto_agile_dev}相结合的方式，先开发最简可行产品\cite{minimum_viable_product}（Minimum Viable Product, MVP）验证核心概念，在此基础上不断细化细节、完善代码、扩展功能。同时，因为单人项目难以在前期进行完善的需求分析与系统设计，采用敏捷开发的方式可以增强灵活性。
 
-例如，本项目立项初期技术选型，计划使用较为成熟的 Java Springboot 框架搭建后端服务。在之后的开发中发现，由于该项目对数据库操作需求较高，其他子系统使用 Python 而后端使用 Springboot 意味着需要使用 Python 和 Java 分别编写两套代码用于控制数据库驱动，增加无意义的项目复杂度、拖慢开发进度。得益于敏捷开发思想“响应变化高于遵循计划”等方针，本项目在知识图谱构建子系统的原型开发完成时即更改后端使用 Python Flask 进行开发。
+例如，本项目立项初期技术选型，计划使用较为成熟的 Java Springboot 框架搭建后端服务。在之后的开发中发现，由于该项目对数据库操作需求较高，其他子系统使用 Python 而后端使用 Springboot 意味着需要使用 Python 和 Java 分别编写两套代码用于控制数据库驱动，增加无意义的项目复杂度、拖慢开发进度。得益于敏捷开发思想“响应变化高于遵循计划”等方针，本项目在知识图谱构建子系统的原型开发完成时即更改后端使用 Python Flask 进行开发，从而保证软件质量的同时提升开发效率。
 
 \chapter{技术选型分析}
 
@@ -103,7 +103,7 @@ Pandas\footnote{https://pandas.pydata.org/} 是适用于 Python 语言的数据�
 
 \section{知识图谱构建子系统}
 
-采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。//TODO
+采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。实体构建与关系生成技术将在章节 \ref{知识图谱构建子系统} \nameref{知识图谱构建子系统}展开。
 
 \subsection{Ray}
 
@@ -125,7 +125,7 @@ MongoDB\footnote{https://www.mongodb.com/} 是一个 C++ 语言编写的基于�
 
 \subsection{Neo4j}
 
-Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，社区版本采用 GPLv3 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加“影响”、“具有”、“攻击”、“被攻击”、“父级”、“子级”等关系，形成知识网络图谱。
+Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目前全球范围内最受欢迎、使用人数最多的图数据库，社区版本采用 GPLv3 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加“影响”、“具有”、“攻击”、“被攻击”、“父级”、“子级”等关系，形成知识网络图谱。
 
 \section{后端服务子系统}
 
@@ -371,7 +371,7 @@ Neo4j 数据库在系统中主要发挥互联网安全信息漏洞知识图谱�
 
 异构数据管线负责接收其对应的数据解析器传来的数据，提取其中需要的信息进行格式转换等处理，填充固定格式的 Python Dictionary，再调用持久化子系统中的数据库控制器对象，将请求原始数据与 Dictionary 分别存储至不同的 MongoDB 数据库集合（Collection）中持久化存储，形成原始数据，完成数据采集工作。
 
-\subsection{知识图谱构建子系统}
+\subsection{知识图谱构建子系统\label{知识图谱构建子系统}}
 
 主要实现知识图谱构建服务，包含实体生成模块、基于规则的关系生成模块、关系融合模块。
 
@@ -462,7 +462,7 @@ APScheduler 调度模块：//TODO
 
 \section{工具模块}
 
-\subsection{根目录模块 bot{\_}root{\_}dir.py}
+\subsection{根目录模块实现 bot{\_}root{\_}dir.py}
 
 本模块位于项目根目录下。\lstinline[style = python]|get_bot_root_dir()| 方法使用 pathlib 的 \lstinline[style = python]|Path(__file__).parent| 方法获得项目根目录的路径，使得本项目内代码全部使用平台无关的相对路径，从而能在 Linux、macOS、Windows 等多种系统平台运行，保证可移植性。
 
@@ -470,7 +470,7 @@ APScheduler 调度模块：//TODO
 
 本系统所有涉及文件系统的模块都依赖于此模块。
 
-\subsection{日志模块 logger{\_}factory.py}
+\subsection{日志模块实现 logger{\_}factory.py}
 
 在 Python Logging 模块基础上重新实现了自定义的日志功能。具有 \lstinline|init_log_dir(), setup_logger(), mylogger(), loggers={}| 等方法和属性。
 
@@ -478,7 +478,7 @@ APScheduler 调度模块：//TODO
 
 \lstinline|setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None)| 是一个工厂函数，创建一个新的 Logger 对象，根据参数设置 \lstinline|FileHandler(), StreamHandler()|，支持自定义日志路径、文件名称和不同 Handler 使用不同记录等级。
 
-\lstinline[style = python]|mylogger()| 实现 logger 对象的单例模式。利用 Python 模块引入为单例的特性，使得在同一模块内多次调用相同 \lstinline[style = python]|<name>| 的 \lstinline[style = python]|mylogger()| 会返回相同的 Logger 对象。当第一次调用 \lstinline|mylogger(<name>)| 时，会调用 \lstinline|setup_logger()| 创建一个新的 Logger 对象，并且将其保存在全局变量 loggers 字典内。之后调用同样的 \lstinline|mylogger(<name>)| 时，会根据 \lstinline|<name>| 从 loggers 字典查找对应的 Logger 对象并返回。
+\lstinline[style = python]|mylogger()| 实现 logger 对象的单例模式\cite{singleton_design_pattern}。利用 Python 模块引入为单例的特性，使得在同一模块内多次调用相同 \lstinline[style = python]|<name>| 的 \lstinline[style = python]|mylogger()| 会返回相同的 Logger 对象。当第一次调用 \lstinline|mylogger(<name>)| 时，会调用 \lstinline|setup_logger()| 创建一个新的 Logger 对象，并且将其保存在全局变量 loggers 字典内。之后调用同样的 \lstinline|mylogger(<name>)| 时，会根据 \lstinline|<name>| 从 loggers 字典查找对应的 Logger 对象并返回。
 
 在一个模块内首次调用 \lstinline[style = python]|mylogger(<name>)| 会初始化日志，添加日志的文件控制器与标准输出控制器，并且设定输出日志文件位置，以“本模块名+当前时分秒”命名。后续再次调用 \lstinline[style = python]|mylogger(<name>).log()| 会使用首次创建的 logger 对象进行日志记录。
 
@@ -492,12 +492,12 @@ APScheduler 调度模块：//TODO
 
 每个 Spider 继承自\lstinline[style = python]|scrapy.Spider|类，重写了父类的 \lstinline[style = python]|__init__(), start_requests(),  parse()| 方法。
 
-\subsubsection{{\_\_}init{\_\_}()}
+\subsubsection{{\_\_}init{\_\_}()实现}
 % \subsubsection{\textunderscore \textunderscore init\textunderscore \textunderscore}
 
 \lstinline[style = python]|__init__()| 方法完成 Spider 类的初始化工作。在调用父类的 \lstinline|super.__init__()| 方法之后，调用本系统基于 Python Logging 模块重新自定义封装的 \lstinline[style = python]|mylogger(<name>)| 函数初始化 logger。
 
-\subsubsection{start{\_}requests()}
+\subsubsection{start{\_}requests()实现}
 % \begin{lstlisting}[style = python]
 % 	for x in range(101):
 % 		print('fizz'[x%3*4:] + 'buzz'[x%5*4:] or x)
@@ -511,7 +511,7 @@ APScheduler 调度模块：//TODO
 
 对于采用 JavaScript 动态加载页面的站点如 exploit-db.com，使用将 playwright 无头浏览器与 Scrapy 框架集成的 scrapy-playwright 库，对爬取到的 HTML 页面及其 JavaScript 代码进行渲染，将渲染生成的 DOM 返回给 Spider 的 \lstinline[style = python]|parse()| 方法。
 
-\subsubsection{parse()}
+\subsubsection{parse()实现}
 
 \lstinline[style = python]|parse()| 方法实现对请求返回数据的解析。
 
@@ -557,7 +557,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 \end{lstlisting}
 几个方法。
 
-\subsubsection{init{\_}nodes()}
+\subsubsection{init{\_}nodes()实现}
 
 \lstinline|init_nodes(vul_num, asset_num, exploit_num)| 方法接受可选参数漏洞数量、资产数量、利用代码数量，若参数不为零，则将数据根据并行度参数分割并行处理，使用 \lstinline|ray.get()| 方法等待并行处理结束。示例代码如下：
 \begin{lstlisting}[style = python]
@@ -567,7 +567,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 若不传入漏洞数量等参数，默认使用单线程串行处理。
 
-\subsubsection{init{\_}vul{\_}ray()\label{subsubsec:vul}}
+\subsubsection{init{\_}vul{\_}ray()实现\label{subsubsec:vul}}
 
 \lstinline|init_vul_ray(skip, _limit)| 方法用于生成漏洞实体结点。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
 
@@ -577,15 +577,15 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 将以上循环体内代码包裹在 \lstinline|try...except...finally...| 语句内保证正确处理异常并且程序不会意外中断。此外，在处理开始、循环体中间、处理结束均使用前述日志模块的 \lstinline|mylogger()| 方法进行日志输出。
 
-\subsubsection{init{\_}asset{\_}ray()}
+\subsubsection{init{\_}asset{\_}ray()实现}
 
 \lstinline|init_asset_ray(skip, _limit)| 方法用于生成资产实体结点。参数作用同 \nameref{subsubsec:vul} 章节，代码实现与 \nameref{subsubsec:vul} 章节所述类似。
 
-\subsubsection{init{\_}exploit{\_}ray()}
+\subsubsection{init{\_}exploit{\_}ray()实现}
 
 \lstinline|init_exploit_ray(skip, _limit)| 方法用于生成漏洞利用实体结点。参数作用同 \nameref{subsubsec:vul} 章节，代码实现与 \nameref{subsubsec:vul} 章节所述类似。
 
-\subsubsection{init{\_}asset{\_}family{\_}ray()}
+\subsubsection{init{\_}asset{\_}family{\_}ray()实现}
 
 \lstinline|init_exploit_ray(skip, _limit)| 方法用于生成资产家族实体结点。参数作用同 \nameref{subsubsec:vul} 章节。
 
@@ -603,7 +603,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 \end{lstlisting}
 几个方法。
 
-\subsubsection{init{\_}rels()}
+\subsubsection{init{\_}rels()实现}
 
 \lstinline|init_rels(vul_num, exploit_num)| 方法接受可选参数漏洞数量、利用代码数量，若参数不为零，则将数据根据并行度参数分割并行处理，使用 \lstinline|ray.get()| 方法等待并行处理结束。示例代码如下：
 \begin{lstlisting}[style = python]
@@ -614,9 +614,9 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 若不传入漏洞数量等参数，默认使用单线程串行处理。
 
-\subsubsection{create{\_}rel{\_}vaf{\_}ray()}
+\subsubsection{create{\_}rel{\_}vaf{\_}ray()实现}
 
-\lstinline|create_rel_vaf_ray(skip, _limit)| 方法用于生成漏洞实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+\lstinline|vaf| 表示 Vulnerability 和 AssetFamily。\lstinline|create_rel_vaf_ray(skip, _limit)| 方法用于生成漏洞实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
 
 根据漏洞实体结点属性中存储的受影响资产正则匹配信息，若按照“对于每个正则表达式，匹配知识图谱中符合规则的资产实体结点，为漏洞实体结点与资产实体结点添加两条关系边”的最细粒度做法，知识图谱中的 120 万个结点将生成超过 1 亿条边，且全图正则匹配无法有效利用建立在属性域上的索引，本项目的性能需求是无法接受的。
 
@@ -624,17 +624,29 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 为了进一步加速匹配，把正则表达式中 \lstinline|.*| 之前的固定模式串切割成子串，使用该固定模式串向数据库进行 \lstinline|STARTS WITH| 查询，将返回的查询结果在 Python 中进行正则匹配进一步精确筛选。由于 Neo4j 数据库查询时支持 \lstinline|STARTS WITH| 子句使用属性域索引，采用此种方法查询，使得查询速度提高了 100 倍以上。
 
-\subsection{关系融合}
+\subsubsection{create{\_}rel{\_}afa{\_}ray()实现}
+
+\lstinline|afa| 表示 AssetFamily 和 Asset。\lstinline|create_rel_afa_ray(skip, _limit)| 方法用于生成资产实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+
+对于每个漏洞实体结点，遍历其受影响资产正则匹配表达式列表，对每个正则匹配表达式，通过寻找其前缀获得其属于的资产家族，调用持久化子系统数据库控制器对象的 \lstinline|add_rel_cql_afa()| 方法，为该资产结点和资产家族结点之间添加“资产家族结点是资产结点父级”、“资产结点是资产家族结点子级”两个关系。
+
+\subsubsection{create{\_}rel{\_}evaf{\_}ray()实现}
+
+\lstinline|evaf| 表示 Exploit 和 Vulnerability 和 AssetFamily。\lstinline|create_rel_evaf_ray()| 方法用于生成漏洞利用代码结点与漏洞实体结点之间的关系边，并且从这条关系与漏洞实体结点指向的受影响资产家族结点，推理出漏洞利用代码结点与资产家族结点之间的关系。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+
+遍历漏洞利用代码结点，对于带有 cve id 属性的结点，从图谱中查询对应 cve id 的漏洞实体结点。为漏洞利用结点与漏洞实体结点之间添加“漏洞利用利用漏洞”、“漏洞被漏洞利用利用”两个关系。再从漏洞实体结点出发，寻找所有受影响的资产家族结点。根据“漏洞影响资产家族”关系边上的属性，为漏洞利用结点与资产家族结点添加“漏洞利用针对资产家族”、“资产家族被漏洞利用针对”两个关系，属性继承自前述关系边属性。
+
+\subsection{关系融合实现}
 
 关系融合模块作为适配使用深度学习模型进行命名实体识别结点生成与关系抽取方案的模块，当前仅在系统数据加工管线中留有接口，以备未来扩展需要。当前系统的结构化数据实体与关系生成已经实现实体结点和关系的消除二义性，因此关系融合模块暂未实现。
 
-\section{持久化子系统}
+\section{持久化子系统实现}
 
 持久化子系统利用 Python 默认引入模块默认为单例的特性，使用饿汉模式\cite{}实现灵活的单例数据库控制器类，分别为 \lstinline|class MyMongo| 与 \lstinline|class MyNeo|。
 
 饿汉模式灵活之处在于，在单线程运行场景下，可直接引入在 \lstinline|db.py| 内实例化的数据库控制器对象，如 \lstinline|mg = MyMongo(), neo = MyNeo()|，实现单例模式。而在多线程运行场景下，可以引入 \lstinline|class MyMongo| 与 \lstinline|class MyNeo| 类，并在每个线程内分别实例化。
 
-\subsection{MyMongo 类}
+\subsection{MyMongo 类实现}
 
 实现的方法如下：
 \begin{lstlisting}[style = python]
@@ -652,7 +664,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 \end{lstlisting}
 其中所有 get 方法的可选参数为空时，返回全部数据的一个迭代器指针。
 
-\subsection{MyNeo 类}
+\subsection{MyNeo 类实现}
 
 实现的方法如下：
 \begin{lstlisting}[style = python]
@@ -671,17 +683,17 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	close_db() # 关闭数据库连接，释放资源
 \end{lstlisting}
 
-\section{后端服务子系统}
+\section{后端服务子系统实现}
 
-\subsection{create{\_}app.py}
+\subsection{create{\_}app.py 实现}
 
-创建 Flask App 实例的工厂函数。主要包含创建 Flask 实例、挂载中间件、注册蓝图等步骤。
+创建 Flask App 实例的工厂函数\cite{factory_method_design_pattern}。主要包含创建 Flask 实例、挂载中间件、注册蓝图等步骤。
 
-\subsection{graph.py}
+\subsection{graph.py 实现}
 
 知识图谱相关 API 的蓝图。向 Flask 注册 \lstinline|/api/graph/| 路径下的 API，并且实现这些 API 对应的功能。主要实现了以下方法：
 \begin{lstlisting}[style = python]
-	assemble_graph_data(assets = (), vuls = (), exploits = (), rels = ()) # 生成绘图数据
+	assemble_graph_data(assets=(), vuls=(), exploits=(), rels=()) # 生成绘图数据
 	retrieve_graph_stats() # 获取知识图谱统计数据
 	label_to_id_field(label) # 通过字典映射转换，将标签字符串转换为索引属性域字符串
 	get_symbol_size(_type, cnt) # 计算结点在可视化力引导图中显示的大小
@@ -690,15 +702,85 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	search_graph(keyword) # 根据关键字搜索知识图谱
 \end{lstlisting}
 
-\subsubsection{/api/graph/}
+\subsubsection{/api/graph/ 实现}
 
 获取知识图谱统计数据。调用持久化子系统的数据库控制器对象的 \lstinline|get_session( ).read_transaction( )| 方法，向数据库提交一个读事务。读事务 \lstinline|work(tx)| 中定义查询的 CQL 语句，并调用 transaction 对象的 \lstinline|tx.run()| 方法运行查询。查询获得漏洞数量、受影响资产类型及数量、漏洞利用代码数量及类型等信息。调用绘图数据生成方法，生成结果数据，返回给前端。
 
-\subsubsection{api/graph/<limit>}
+\subsubsection{/api/graph/<limit> 实现}
 
-获取<limit>个漏洞结点及与之相关的结点与关系绘图数据。为防止数据量过大，实际查询将取<limit>与 200 间的较小值。根据经验数据，返回结点和关系数量不超过一万个。调用绘图数据生成方法，获得各类节点
+获取<limit>个漏洞结点及与之相关的结点与关系绘图数据。为防止数据量过大，实际查询将取<limit>与 200 间的较小值。根据经验数据，返回结点和关系数量不超过一万个。调用绘图数据生成方法，获得各类节点及关系绘图数据，返回给前端。
+
+\subsubsection{/api/graph/search/<keyword> 实现}
+
+根据关键字搜索知识图谱。根据关键字类型，判断搜索内容属于漏洞、资产、利用代码或是关系。将搜索到的结点/关系及其相关联（关系路径长度为 1）的结点或关系返回，调用绘图数据生成方法获得绘图所需数据，返回给前端。
 
 \section{前端子系统}
+
+\subsection{项目结构}
+
+\dirtree{%
+	.1 /.
+	.2 public\DTcomment{公用静态文件目录}.
+	.2 src\DTcomment{源代码目录}.
+	.3 api\DTcomment{Vue Axios 网络控制器配置目录}.
+	.4 graph.api.js\DTcomment{图相关 API 实现}.
+	.4 httpClient.js\DTcomment{单例 Axios HTTP 客户端}.
+	.3 assets\DTcomment{静态资产目录}.
+	.3 components\DTcomment{Vue 模板组件目录}.
+	.4 EntryList.vue\DTcomment{可复用的两栏列表组件}.
+	.4 KnowledgeGraph.vue\DTcomment{可复用的全屏可视化力引导图组件}.
+	.4 StatsGraph.vue\DTcomment{可复用的扇形统计图组件}.
+	.3 plugins\DTcomment{Vuetify 插件目录}.
+	.4 vuetify.js\DTcomment{Vuetify 配置文件}.
+	.3 router\DTcomment{Vue Router 路由配置目录}.
+	.4 index.js\DTcomment{Vue Router 路由配置}.
+	.3 store\DTcomment{Vuex 仓库配置目录}.
+	.4 modules\DTcomment{Vuex 模块配置目录}.
+	.5 net.js\DTcomment{网络控制器 Vuex 模块}.
+	.4 store.js\DTcomment{Vuex 仓库根模块}.
+	.3 utils\DTcomment{工具目录}.
+	.4 langZH.js\DTcomment{ECharts 中文本地化配置文件}.
+	.4 tooltipConfig.js\DTcomment{ECharts tooltip 格式化工具}.
+	.3 views\DTcomment{视图目录}.
+	.4 Welcome.vue\DTcomment{登录首屏欢迎界面视图}.
+	.4 Dashboard.vue\DTcomment{控制台视图}.
+	.4 Visualization.vue\DTcomment{可视化视图}.
+	.4 Search.vue\DTcomment{搜索视图}.
+	.4 About.vue\DTcomment{关于视图}.
+	.3 App.vue\DTcomment{根组件，描述页面框架结构及基础功能}.
+	.3 main.js\DTcomment{向页面引入并注册 Vue 组件}.
+	.3 registerServiceWorkder.js\DTcomment{注册 ServiceWorkder，实现 PWA}.
+	.2 .env\DTcomment{环境变量}.
+	.2 package.json\DTcomment{npm 配置文件}.
+	.2 babel.config.js\DTcomment{babel 配置文件}.
+	.2 vue.config.js\DTcomment{vue 配置文件}.
+	.2 eslintrc.js\DTcomment{eslint 配置文件}.
+	.2 browserslistrc\DTcomment{支持的浏览器配置文件}.
+}
+
+\subsection{控制台视图实现\label{控制台视图实现}}
+
+控制台视图采用 Flex 流式卡片布局，通过设置 CSS 样式断点，每个卡片根据当前设备屏幕分辨率自动调节宽度。例如，宽度为 \lstinline|lg| 时，界面布局为每行 3 列卡片。宽度为 \lstinline|md| 时，界面布局为每行 2 列卡片。宽度为 \lstinline|sm| 时，为每行 1 列卡片。
+
+卡片中使用 \lstinline|EntryList| 组件显示知识图谱统计信息，辅以 \lstinline|StatsGraph| 组件显示可视化扇形图。图示见章节 \ref{控制台视图测试} \nameref{控制台视图测试}。
+
+\lstinline|EntryList| 与 \lstinline|StatsGraph| 使用 Vuex 的 \lstinline|mapState()| 计算属性作为组件属性，组件内部为 \lstinline|props| 添加 \lstinline|watch| 侦听器，实现数据响应式动态更新。
+
+\lstinline|Dashboard.vue| 在 \lstinline|mounted()| 时会通过 Vuex 仓库的 \lstinline|this.$store.dispatch()| 发出一个异步 I/O Action 请求，向后端请求知识图谱的统计数据。此时前端界面会优先加载，由默认空值或零值填充列表和统计图。当 Axios 请求回调时，Vuex Action 会向 Vuex Store 提交数据产生的更改。这引起各个视图或组件内计算属性值变化，侦听器触发，执行回调函数，调用 ECharts 实例对象的 \lstinline|setOption(option)| 方法，从而动态更新数据。
+
+\subsection{可视化视图实现\label{可视化视图实现}}
+
+可视化视图使用 ECharts 呈现一个全屏的可视化力引导图，鼠标按住或手指拖拽可以移动视图，鼠标按住或手指拖拽图中结点可以移动结点位置。图示可见章节 \ref{可视化视图测试} \nameref{可视化视图测试}。
+
+可视化视图同样采用来自 Vuex Store 的计算属性作为数据源，实现动态数据更新。在切换视图时，为节省内存 ECharts 实例会被销毁，但绘图数据保留在 Vuex Store。再次切换回可视化视图时，会优先加载缓存的绘图数据，节省网络带宽、减轻后端压力、加快加载速度。
+
+\subsection{搜索视图实现}
+
+搜索视图包含一个悬浮搜索框，显示在容器的左上角。在搜索框输入关键词并按下回车，发出异步 I/O 请求并等待返回绘图数据。可视化显示流程与上述章节 \ref{可视化视图实现} \nameref{可视化视图实现}相似。
+
+\subsection{关于视图实现}
+
+关于视图包含一些基本文字说明，使用 Flex 进行排版。
 
 \chapter{系统测试}
 
@@ -789,7 +871,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \section{前端子系统测试}
 
-\subsection{控制台视图}
+\subsection{控制台视图测试\label{控制台视图测试}}
 
 图\ref{pictures/Vis_Dashboard_Info.png}所示为控制台概览。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载控制台界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
 
@@ -797,7 +879,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{控制台视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
 
-\subsection{可视化视图}
+\subsection{可视化视图测试\label{可视化视图测试}}
 
 图\ref{pictures/Vis_Full.png}所示为知识图谱概览。从 localhost 后端 /api/graph/100 端口加载数据，实际返回 1070 个结点、2035 条关系边，根据瀑布流图可看出，通过刷新页面冷加载可视化力引导图耗时约 1300ms，且加载过程中有加载指示器提示正在加载，用户体验较好。如图\ref{pictures/Vis_Waterfall.png}所示。
 
@@ -813,13 +895,13 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
 
-\subsection{搜索视图}
+\subsection{搜索视图测试}
 
-图\ref{}所示为搜索视图。搜索视图提供一个悬浮搜索框，允许用户对知识图谱进行精确查询。输入查询关键字并按下回车，后端服务将搜索整个知识图谱查找关键字相关信息，并以绘图数据形式将结果返回前端。前端随即调用 ECharts 可视化库展示数据。
+图\ref{}所示为搜索视图。搜索视图提供一个悬浮搜索框，允许用户对知识图谱进行精确查询。输入查询关键字并按下回车将发送异步 I/O 请求，后端服务将搜索整个知识图谱查找关键字相关信息，并将绘图数据返回前端。前端回调使用 ECharts 可视化库绘制力引导图展示数据。
 
 % \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
 
-\subsection{关于视图}
+\subsection{关于视图测试}
 
 图\ref{}所示为关于视图。关于视图清晰地展示了本系统名称、功能、作者、使用指南等信息。
 
