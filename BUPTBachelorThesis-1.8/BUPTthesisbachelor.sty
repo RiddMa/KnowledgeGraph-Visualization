@@ -330,7 +330,7 @@ pdfborder=001, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
     breaklines=true,           % 自动断行
     breakatwhitespace=true,   
     basewidth={0.5em,0.35em},
-    frame=single,              %单线边框，注释掉则无边框
+    % frame=single,              %单线边框，注释掉则无边框
     numbers=left,               %行号位于左侧
     numberbychapter=true,
 %    xleftmargin=.5em,
@@ -344,6 +344,8 @@ pdfborder=001, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
 \usepackage{listings}
 \lstdefinestyle{lfonts}{
   basicstyle   = \footnotesize\ttfamily\wuhao,
+  breaklines=true,           % 自动断行
+  breakatwhitespace=true,   
   extendedchars=true,
   stringstyle  = \color{purple},
   keywordstyle = \color{blue!60!black}\bfseries,
@@ -367,6 +369,8 @@ pdfborder=001, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
   frame            = tb,
   framesep         = \fboxsep,
   framexleftmargin = 20pt,
+  framextopmargin=2pt,
+  framexbottommargin=2pt,
 }
 \lstdefinestyle{lgeneral}{
   style = lfonts,
