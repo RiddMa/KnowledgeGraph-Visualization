@@ -460,7 +460,96 @@ APScheduler 调度模块：//TODO
 
 \chapter{系统实现}
 
-% 这里该写什么？
+\section{工具模块}
+
+\subsection{根目录模块 bot{\_}root{\_}dir.py}
+
+本模块位于项目根目录下。\lstinline[style = python]|get_bot_root_dir()| 方法使用 pathlib 的 \lstinline[style = python]|Path(__file__).parent| 方法获得项目根目录的路径，使得本项目内代码全部使用平台无关的相对路径，从而能在 Linux、macOS、Windows 等多种系统平台运行，保证可移植性。
+
+本模块内包含许多路径相关的方法，如 \lstinline|get_source_data_dir(), get_cve_data_dir(), get_log_dir()| 等。这些方法接受字符串形式的路径参数，返回 \lstinline|Path| 对象。通过传入参数，控制系统生成的文件存放的位置，若目录不存在，则会自动创建所需目录。
+
+本系统所有涉及文件系统的模块都依赖于此模块。
+
+\subsection{日志模块 logger{\_}factory.py}
+
+在 Python Logging 模块基础上重新实现了自定义的日志功能。具有 \lstinline|init_log_dir(), setup_logger(), mylogger(), loggers={}| 等方法和属性。
+
+\lstinline|init_log_dir()| 接受字符串路径可选参数，初始化日志记录路径。若参数为空，则使用默认路径。
+
+\lstinline|setup_logger(name, log_folder=None, lvl_file=None, lvl_stdout=None)| 是一个工厂函数，创建一个新的 Logger 对象，根据参数设置 \lstinline|FileHandler(), StreamHandler()|，支持自定义日志路径、文件名称和不同 Handler 使用不同记录等级。
+
+\lstinline[style = python]|mylogger()| 实现 logger 对象的单例模式。利用 Python 模块引入为单例的特性，使得在同一模块内多次调用相同 \lstinline[style = python]|<name>| 的 \lstinline[style = python]|mylogger()| 会返回相同的 Logger 对象。当第一次调用 \lstinline|mylogger(<name>)| 时，会调用 \lstinline|setup_logger()| 创建一个新的 Logger 对象，并且将其保存在全局变量 loggers 字典内。之后调用同样的 \lstinline|mylogger(<name>)| 时，会根据 \lstinline|<name>| 从 loggers 字典查找对应的 Logger 对象并返回。
+
+在一个模块内首次调用 \lstinline[style = python]|mylogger(<name>)| 会初始化日志，添加日志的文件控制器与标准输出控制器，并且设定输出日志文件位置，以“本模块名+当前时分秒”命名。后续再次调用 \lstinline[style = python]|mylogger(<name>).log()| 会使用首次创建的 logger 对象进行日志记录。
+
+\subsection{环境配置文件 secret.py}
+
+以 Python 变量的形式存储 MongoDB 与 Neo4j 数据库的用户名、密码、数据库名、连接 url 等信息，和一些私有 API 的密钥等信息。此文件被 \lstinline|.gitignore|，不会同步到远程仓库。
+
+\section{数据采集子系统}
+
+\subsection{Spider 模块实现}
+
+每个 Spider 继承自\lstinline[style = python]|scrapy.Spider|类，重写了父类的 \lstinline[style = python]|__init__(), start_requests(),  parse()| 方法。
+
+\subsubsection{{\_\_}init{\_\_}()}
+% \subsubsection{\textunderscore \textunderscore init\textunderscore \textunderscore}
+
+\lstinline[style = python]|__init__()| 方法完成 Spider 类的初始化工作。在调用父类的 \lstinline|super.__init__()| 方法之后，调用本系统基于 Python Logging 模块重新自定义封装的 \lstinline[style = python]|mylogger(<name>)| 函数初始化 logger。
+
+\subsubsection{start{\_}requests()}
+% \begin{lstlisting}[style = python]
+% 	for x in range(101):
+% 		print('fizz'[x%3*4:] + 'buzz'[x%5*4:] or x)
+% 		print('Hello world!') yield scrapy.Request(url=url, callback=self.parse) yield scrapy.Request(url=url, callback=self.parse)
+% \end{lstlisting}
+\lstinline[style = python]|start_requests()| 方法描述发起请求的步骤。
+
+对于需要 cve id 索引的 Spider 如 \lstinline[style = python]|CveDetailSpider(scrapy.Spider)|，使用 Pandas 库的 \lstinline[style = python]|read_csv()| 方法，设置 \verb|chunksize| 数值和 \verb|iterator=True|，分块迭代读取 csv 文件。对每一行 cve id，生成所需 url 并使用 \lstinline[style = python]|yield scrapy.Request(url=url, callback=self.parse)| 发出请求。
+
+对于需要从爬取页面中获得下一页 url 的 Spider 如 \lstinline[style = python]|EdbSpider(scrapy.Spider)|，\linebreak \lstinline[style = python]|start_request()| 方法中仅指定初始页面发出请求，在解析收到的 response 时处理下一页面的链接，并发出请求。
+
+对于采用 JavaScript 动态加载页面的站点如 exploit-db.com，使用将 playwright 无头浏览器与 Scrapy 框架集成的 scrapy-playwright 库，对爬取到的 HTML 页面及其 JavaScript 代码进行渲染，将渲染生成的 DOM 返回给 Spider 的 \lstinline[style = python]|parse()| 方法。
+
+\subsubsection{parse()}
+
+\lstinline[style = python]|parse()| 方法实现对请求返回数据的解析。
+
+对于返回数据为 HTML 文档类型，使用 BeautifulSoup 库加载 DOM 进行解析。使用 \lstinline[style = python]|soup.select_one()| 方法配合 CSS 选择器提取所需标签的内容。对于需要在页面上查找下一请求 url 的站点，使用 \lstinline[style = python]|yield scrapy.Request()| 方法发出请求。将解析出的数据封装在 \lstinline[style = python]|scrapy.Item| 类中，使用 \lstinline[style = python]|yield item| 方法将数据传递给对应数据管线。
+
+对于返回数据为 JSON 类型，使用 \lstinline[style = python]|response.json()| 获取返回数据，将其作为参数实例化 Item 对象，传递给 JSON 数据管线。
+
+对于单个请求返回数据为 Gz 压缩的 xml 类型，使用工具模块 \lstinline[style = python]|gz.py| 的 \lstinline[style = python]|un_gz()| 方法解压文件得到 xml，并使用 lxml 模块的 \lstinline[style = python]|etree.iterparse(filepath, tag='')| 方法迭代遍历该 xml 文件，填充 item，最终调用持久化子系统的数据库控制对象提供的 \lstinline[style = python]|save_cpe()| 方法存储。
+
+将以上代码段包裹在 Python 的 \lstinline|try...except...finally...| 语句内，使日志模块能正常 \lstinline|catch| 抛出的错误，并使程序不中断继续运行。
+
+\subsection{Item Pipeline 模块实现}
+
+每个 Pipeline 类实现一个 \lstinline[style = python]|process_item()| 方法，同时在 Spider 的 \lstinline[style = python]|custom_settings| 内设置对应的 Pipeline 类。Scrapy Engine 将 Spider 内 \lstinline[style = python]|yield item| 发送给 Pipeline 对象进行处理。
+
+GzPipeline 负责处理压缩成 Gzip 格式的 cve 与 cpe xml 文件。将其解压并返回解压后文件的路径。
+
+NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化子系统的数据库控制对象提供的 \lstinline|save_nvd_src()| 方法存储原始数据，使用 \lstinline|save_nvd()| 方法存储处理过的数据。
+
+其余 Pipeline 功能类似，根据爬取站点不同，实现有所不同。
+
+\subsection{其他模块实现}
+
+\begin{itemize}
+	\item \lstinline|scrapy.cfg|：存放 Scrapy 项目设置选项，如默认设置文件、项目名称等。
+	\item \lstinline|settings.py|：Python 变量形式存放 Scrapy 爬虫设置选项，如并发度、请求延时、User-Agent 等。
+	\item \lstinline|crawl_runner| 目录：包含 \lstinline|crawl_cpe.py, crawl_nvd.py, crawl_edb.py| 等。使用\linebreak \lstinline|scrapy.cmdline.execute()| 方法运行爬虫程序。可以被调度模块调用实现全自动化爬虫。
+\end{itemize}
+
+
+
+\section{知识图谱构建子系统}
+
+\section{持久化子系统}
+
+\section{后端服务子系统}
+
+\section{前端子系统}
 
 \chapter{系统测试}
 
@@ -521,7 +610,7 @@ APScheduler 调度模块：//TODO
 
 \buptfigure[width=\textwidth]{pictures/DB_Rels.png}{数据库查询关系数量}{pictures/DB_Rels.png}
 
-\section{关系融合}
+\subsection{关系融合}
 
 本系统设计上，结构化数据生成的漏洞实体具有 cve id 属性作为唯一标识；资产实体具有 cpe23uri 属性作为唯一标识；漏洞利用代码实体具有 edb-id 属性作为唯一标识。且在数据库控制器对象的方法中，使用 MERGE 等 CQL 子句保证不会向数据库插入重复的实体或属性。因此当前知识图谱内并不会出现语义相同的不同实体或关系。
 

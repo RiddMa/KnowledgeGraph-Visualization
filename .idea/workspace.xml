@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper chapter 4">
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="commit pics">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/BUPTthesisbachelor.sty" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/BUPTthesisbachelor.sty" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
     </list>
@@ -48,7 +49,7 @@
       <workItem from="1644501811375" duration="645000" />
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
-      <workItem from="1652364854856" duration="5361000" />
+      <workItem from="1652364854856" duration="6280000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -92,7 +93,21 @@
       <option name="project" value="LOCAL" />
       <updated>1652539199743</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="update paper chapter 5">
+      <created>1652625109718</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1652625109718</updated>
+    </task>
+    <task id="LOCAL-00008" summary="commit pics">
+      <created>1652625124664</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1652625124664</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -114,6 +129,8 @@
     <MESSAGE value="update paper chapter 2" />
     <MESSAGE value="update paper chapter 3" />
     <MESSAGE value="update paper chapter 4" />
-    <option name="LAST_COMMIT_MESSAGE" value="update paper chapter 4" />
+    <MESSAGE value="update paper chapter 5" />
+    <MESSAGE value="commit pics" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit pics" />
   </component>
 </project>
