@@ -123,16 +123,29 @@
 
 % (2)期刊中的文献
 % [序号] 作者.文献名称.期刊名称.卷号（期号）.年,月:页码范围.
-@article{false_news_spread_2018,
-  title   = {The spread of true and false news online},
-  author  = {Vosoughi, Soroush and Roy, Deb and Aral, Sinan},
-  journal = {Science},
-  volume  = {359},
-  number  = {6380},
-  pages   = {1146-1151},
-  year    = {2018},
-  month   = {3}
+@article{aftergood_cybersecurity_2017,
+  abstract   = {Steven Aftergood weighs up an analysis of the fierce conflict destabilizing the Internet.},
+  author     = {Aftergood, Steven},
+  copyright  = {2017 Nature Publishing Group, a division of Macmillan Publishers Limited. All Rights Reserved.},
+  doi        = {10.1038/547030a},
+  issn       = {1476-4687},
+  journal    = {Nature},
+  keywords   = {Government, Information technology, Politics, Society},
+  language   = {en},
+  month      = jul,
+  note       = {Number: 7661 Publisher: Nature Publishing Group},
+  number     = {7661},
+  pages      = {30--31},
+  shorttitle = {Cybersecurity},
+  title      = {Cybersecurity: {The} cold war online},
+  url        = {https://www.nature.com/articles/547030a},
+  urldate    = {2022-05-17},
+  volume     = {547},
+  year       = {2017},
+  bdsk-url-1 = {https://www.nature.com/articles/547030a},
+  bdsk-url-2 = {https://doi.org/10.1038/547030a}
 }
+
 
 % 以下类型未在bst文件中验证过，如果需要请自行修改bst文件……
 
@@ -140,27 +153,10 @@
 % [序号] 作者.论文题目.见(英文用In).主编.论文集名.出版地.出版年:页码范围.
 % 本模板没有实现“主编”部分，因为“见”和“论文集名”分离实在是很诡异的事情，且很多事情我们得到的bibTeX不含主编
 % 中文需要加language={Chinese}字段，才会把"In"换成"见"
-@inproceedings{Yang2012Automatic,
-  title        = {Automatic detection of rumor on Sina Weibo},
-  author       = {Yang, Fan and Liu, Yang and Yu, Xiaohui and Yang, Min},
-  booktitle    = {Proceedings of the ACM SIGKDD Workshop on Mining Data Semantics},
-  pages        = {1--7},
-  year         = {2012},
-  address      = {New York, NY, USA},
-  organization = {ACM}
-}
 
 % (4)学位论文（格式已验证）
 % [序号] 作者.题目.[学位论文](英文用[Dissertation]).保存地点.保存单位:年份.
 % 中文需要使用language={Chinese}字段，英文输入language={}
-@masterthesis{周兴2017基于深度学习的谣言检测及模式挖掘,
-  title    = {基于深度学习的谣言检测及模式挖掘},
-  author   = {周兴},
-  school   = {中国科学院大学},
-  year     = {2017},
-  language = {Chinese}
-}
-
 
 % (5)专利
 % [序号] 专利申请者.题目.国别.专利文献种类.专利号.批准日期.
@@ -171,36 +167,90 @@
 
 %(7)在线资料
 
-
-
 @electronic{manifesto_agile_dev,
   title        = {Manifesto for Agile Software Development},
+  organization = {The Agile Manifesto},
+  year         = {2001},
   howpublished = {online},
+  refdate      = {2022-05-17},
   url          = {http://agilemanifesto.org/iso/zhchs/manifesto.html}
 }
 
 @electronic{minimum_viable_product,
   title        = {Minimum Viable Product: a guide},
+  organization = {Eric Ries},
+  year         = {2009},
   howpublished = {online},
+  refdate      = {2022-05-17},
   url          = {http://www.startuplessonslearned.com/2009/08/minimum-viable-product-guide.html}
 }
 
 @electronic{singleton_design_pattern,
   title        = {Singleton Design Pattern},
+  organization = {SourceMaking.com},
+  year         = {2022},
   howpublished = {online},
+  refdate      = {2022-05-17},
   url          = {https://sourcemaking.com/design_patterns/singleton}
 }
 
 @electronic{factory_method_design_pattern,
   title        = {Factory Method Design Pattern},
+  organization = {SourceMaking.com},
+  year         = {2022},
   howpublished = {online},
+  refdate      = {2022-05-17},
   url          = {https://sourcemaking.com/design_patterns/factory_method}
 }
 
 
-%(8)不属于任何上述类别的资料，指导手册中无规定，使用默认设置
-@misc{thulac,
-  author = {Sun, Maosong and Chen, Xinxiong and Zhang, Kaixu and Guo, Zhipeng and Liu, Zhiyuan},
-  title  = {THULAC: An Efficient Lexical Analyzer for Chinese},
-  year   = {2016}
+@electronic{download_cve_list,
+  title        = {Download CVE List},
+  organization = {The MITRE Corporation},
+  year         = {2022},
+  howpublished = {online},
+  refdate      = {2022-05-17},
+  url          = {https://cve.mitre.org/data/downloads/index.html}
 }
+
+@electronic{nvd_cpe_statistics,
+  title        = {Official Common Platform Enumeration (CPE) Dictionary Statistics},
+  organization = {NVD},
+  year         = {2022},
+  howpublished = {online},
+  refdate      = {2022-05-17},
+  url          = {https://nvd.nist.gov/products/cpe/statistics}
+}
+
+@electronic{vuldb_stats,
+  title        = {VulDB Stats},
+  organization = {vuldb.com},
+  year         = {2022},
+  howpublished = {online},
+  refdate      = {2022-05-17},
+  url          = {https://vuldb.com/zh/?stats}
+}
+
+@electronic{libre_software,
+  title        = {What is Free Software?},
+  organization = {Free Software Foundation, Inc.},
+  year         = {2021},
+  howpublished = {online},
+  refdate      = {2022-05-17},
+  url          = {https://www.gnu.org/philosophy/free-sw.en.html}
+}
+
+
+@electronic{gpl_v3,
+  title        = {The GNU General Public License v3.0},
+  organization = {Free Software Foundation, Inc.},
+  year         = {2021},
+  howpublished = {online},
+  refdate      = {2022-05-17},
+  url          = {https://www.gnu.org/licenses/gpl-3.0.html}
+}
+
+
+https://www.gnu.org/philosophy/free-sw.zh-cn.html
+
+%(8)不属于任何上述类别的资料，指导手册中无规定，使用默认设置

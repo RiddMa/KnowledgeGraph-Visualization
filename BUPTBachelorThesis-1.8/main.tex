@@ -54,13 +54,54 @@
 % \end{definition}
 % 这段先放着
 
-近年来，随着互联网产业迅速发展，互联网安全漏洞问题的显著性也急剧增加。公共漏洞和暴露(Common Vulnerabilities and Exposures, CVE)等权威漏洞数据档案库的数据显示，自 1999 年该漏洞库库首次披露安全漏洞以来，互联网安全漏洞年新增数量呈增长趋势。2019 年全年，新增漏洞两万余个；2020 年全年新增漏洞三万五千余个。随着现代软件系统复杂度提升、互联网加速漏洞信息传播，对攻击者而言，不仅漏洞攻击的学习成本和实施难度下降，其可以利用的漏洞数量也明显增多；对企业与开发者而言，随着开源化逐渐成为一种潮流趋势，各类计算机软硬件与互联网产品对开源项目的依赖性随之提高。正如近期 Java Log4j 日志组件漏洞造成全球互联网范围的大规模信息安全问题，计算机与互联网产业蓬勃发展的同时，也面临与日俱增的信息安全挑战。
+近年来，随着互联网产业迅速发展，互联网安全漏洞问题的显著性也急剧增加。公共漏洞和暴露(Common Vulnerabilities and Exposures, CVE)等权威漏洞数据档案库的数据显示\cite{download_cve_list}\cite{nvd_cpe_statistics}，自 1999 年该漏洞库库首次披露安全漏洞以来，互联网安全漏洞年新增数量呈增长趋势。2019 年全年，新增漏洞两万余个；2020 年全年新增漏洞三万五千余个。随着现代软件系统复杂度提升、互联网加速漏洞信息传播，对攻击者而言，不仅漏洞攻击的学习成本和实施难度下降，其可以利用的漏洞数量也明显增多\cite{vuldb_stats}；对企业与开发者而言，随着开源化逐渐成为一种潮流趋势，各类计算机软硬件与互联网产品对开源项目的依赖性随之提高。正如近期 Java Log4j 日志组件漏洞造成全球互联网范围的大规模信息安全问题，计算机与互联网产业蓬勃发展的同时，也面临与日俱增的信息安全挑战。
+
+\subsection{国内外研究现状}
+
+网络安全意指一组用于保护计算机、网络、程序与数据免受攻击、未授权访问、篡改、破坏的技术与步骤\cite{aftergood_cybersecurity_2017}。提供详实可靠的漏洞信息可以有效地帮助互联网安全研究人员进行网络安全研究，以应对可能存在的攻击和利用。针对互联网漏洞数据，主要分为公开数据库与商业项目。
+
+\subsubsection{公开数据库}
+
+如 cve.mitre.org、nvd.nist.gov、vuldb.com 等。
+
+\begin{itemize}
+	\item 优势：
+	      \begin{itemize}
+		      \item 数据更新及时，CVE 与 CPE 为官方数据源
+		      \item 开放数据库，人人可获取
+	      \end{itemize}
+	\item 劣势：
+	      \begin{itemize}
+		      \item 无知识图谱，不具备可视化功能，仅提供 JSON 或 CSV 文件格式存储关系型数据
+		      \item 按照 CVE ID 索引漏洞信息，难以发现漏洞之间联系
+		      \item 信息分散在多个站点，难以整合，为研究人员带来不便
+	      \end{itemize}
+\end{itemize}
+
+\subsubsection{商业项目}
+
+如百度安全知识图谱\footnote{https://anquan.baidu.com/product/skg}、绿盟安全知识图谱\footnote{https://www.nsfocus.com.cn/html/2022/209{\_}0510/163.html}等。
+
+\begin{itemize}
+	\item 优势：
+	      \begin{itemize}
+		      \item 成熟的企业级解决方案与技术支持
+		      \item 具备知识图谱的可视化功能
+	      \end{itemize}
+	\item 劣势：
+	      \begin{itemize}
+		      \item 数据不开放，对安全研究人员及软件开发者意义有限
+		      \item 价格高昂
+	      \end{itemize}
+\end{itemize}
 
 \subsection{项目意义}
 
 本课题针对上述问题，提出一种漏洞知识图谱可视化系统。基于爬虫抽取、知识图谱、图数据库、可视化前端等技术，对多种数据源的互联网公开漏洞数据，包括漏洞描述及风险评估、受影响资产、可利用代码及补丁等信息进行收集与分析，通过对异构数据源抽取的数据进行实体构建、关系构建、关系融合等处理，在图数据库中建立漏洞本体信息及其之间的关联信息，从而形成具有一定知识结构的知识图谱。基于该漏洞知识图谱，搭建基于 B/S 架构的可视化系统，提供易于使用的接口、用户友好的 UI 界面呈现漏洞知识图谱信息、进行创建统计图表、知识筛选等操作。
 
-本系统采用自动化的方式，实现对漏洞信息的持续收集与整理，极大节省了人力资源的消耗。结合抽取关键信息建立互联网信息安全本体、对漏洞间关联性进行分析、构建漏洞知识图谱，将分散的漏洞信息转化为相互联系的图结构，本系统将为开发者提供项目依赖安全性参考、为计算机信息安全研究人员提供逻辑清晰、直观易于理解的统计数据与服务支撑，促进构建更高效安全的互联网环境。
+本系统采用自动化的方式，实现对漏洞信息的持续收集与整理，极大节省了人力资源的消耗。结合抽取关键信息建立互联网信息安全本体、对漏洞间关联性进行分析、构建漏洞知识图谱，将分散的漏洞信息转化为相互联系的图结构，本系统将为开发者提供项目依赖安全性参考、为计算机信息安全研究人员提供逻辑清晰、直观易于理解的统计数据与服务支撑。
+
+本系统作为自由软件\cite{libre_software}发布，使用 GPLv3\cite{gpl_v3}协议授权，自由与开放促进构建更高效安全的互联网环境。
 
 \section{开发目标}
 
@@ -78,6 +119,10 @@
 由于本项目为单人完成，且系统整体结构较为复杂，故采用原型开发与敏捷开发\cite{manifesto_agile_dev}相结合的方式，先开发最简可行产品\cite{minimum_viable_product}（Minimum Viable Product, MVP）验证核心概念，在此基础上不断细化细节、完善代码、扩展功能。同时，因为单人项目难以在前期进行完善的需求分析与系统设计，采用敏捷开发的方式可以增强灵活性。
 
 例如，本项目立项初期技术选型，计划使用较为成熟的 Java Springboot 框架搭建后端服务。在之后的开发中发现，由于该项目对数据库操作需求较高，其他子系统使用 Python 而后端使用 Springboot 意味着需要使用 Python 和 Java 分别编写两套代码用于控制数据库驱动，增加无意义的项目复杂度、拖慢开发进度。得益于敏捷开发思想“响应变化高于遵循计划”等方针，本项目在知识图谱构建子系统的原型开发完成时即更改后端使用 Python Flask 进行开发，从而保证软件质量的同时提升开发效率。
+
+\section{授权与许可证}
+
+本系统作为自由软件\cite{libre_software}发布，使用 GPLv3\cite{gpl_v3}协议授权。
 
 \chapter{技术选型分析}
 
@@ -285,9 +330,9 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 \subsection{系统总体设计}
 
-系统数据流图如图\ref{CyKG_DataFlowGraph}所示。
+系统数据流图如图\ref{pictures/CyKG_DataFlowGraph_Vertical-中文.png}所示。
 
-\buptfigure[width=\textwidth]{pictures/CyKG_DataFlowGraph-中文.png}{系统数据流图}{CyKG_DataFlowGraph}
+\buptfigure[width=\textwidth]{pictures/CyKG_DataFlowGraph_Vertical-中文.png}{系统数据流图}{pictures/CyKG_DataFlowGraph_Vertical-中文.png}
 
 系统输入为来自多个数据源\footnote{cvedetails.com、cve.mitre.org、cpe.mitre.org、nvd.nist.gov、exploit-db.com 等。}的异构信息安全漏洞数据，分别经过数据采集子系统、知识图谱构建子系统、后端服务子系统、前端子系统的加工，最终流出系统，呈现给用户。其中：
 
@@ -339,7 +384,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 数据采集服务：通过生成索引、爬虫、数据清洗，向持久化层输入数据。数据采集服务在持久化层存储的数据包括用于指引爬虫生成新链接的索引、爬虫从各数据源爬取得到的 HTML 文档、JSON 等原始数据用于存档、经过数据管线处理得到的可用于下一步构建知识图谱的 JSON 格式化数据。数据采集服务与持久化层 MongoDB 进行交互，是系统数据输入介面。
 
-知识图谱构建服务：从 MongoDB 数据库读取格式化数据，经过实体生成、关系生成等步骤，构建互联网信息安全漏洞的知识图谱。知识图谱构建服务与持久化层 MongoDB 和 Neo4j 进行交互，实现原始数据的加工，将图谱相关结点、关系、属性数据存储至 Neo4j 数据库中。//TODO
+知识图谱构建服务：从 MongoDB 数据库读取格式化数据，经过实体生成、关系生成等步骤，构建互联网信息安全漏洞的知识图谱。知识图谱构建服务与持久化层 MongoDB 和 Neo4j 进行交互，实现原始数据的加工，将图谱相关结点、关系、属性数据存储至 Neo4j 数据库中。
 
 后端服务：与表示层通过 RESTful API 交互，获取存取数据、服务调度等用户指令。与持久化层 Neo4j 数据库进行加护，读取知识图谱相关结点、关系、属性数据，将其通过 HTTPS 协议传递给表示层。此外，后端服务还具有调度功能，通过 APScheduler 调度逻辑层其他服务的运行，从而保障整个系统正常运转。
 
@@ -389,7 +434,7 @@ Web API 访问点由 Flask 支持，使用 Flask 的 Blueprint 功能对注册�
 
 绘图数据生成模块将存储在 Neo4j 数据库中的知识图谱数据转化为 ECharts 绘图库可以使用的数据格式。
 
-APScheduler 调度模块：//TODO
+APScheduler 调度模块：通过调用数据采集子系统和知识图谱构建子系统提供的 Runner 方法，实现爬虫、更新图谱的定时运行。
 
 \subsection{前端子系统}
 
@@ -401,13 +446,22 @@ APScheduler 调度模块：//TODO
 
 \subsection{数据库设计}
 
-图\ref{CyKG_Entity-Mongo}所示为 MongoDB 数据模式图。//TODO
+图\ref{CyKG_Entity-Mongo}所示为 MongoDB 数据模式图。由于 MongoDB 支持动态 DDL，因此数据库在本项目开发后期共有 7 个集合。
+\begin{itemize}
+	\item cpe：存储从 XML 解析的 cpe 资产数据。
+	\item edb{\_}html：存储从 exploit-db.com 爬虫获得的 HTML 原始数据。
+	\item edb{\_}json：存储从 exploit-db.com HTML 数据处理得到的 JSON 数据。
+	\item cve{\_}html：存储从 cvedetails.com 爬虫获得的 HTML 原始数据。
+	\item cve{\_}json：存储从 cvedetails.com HTML 数据处理得到的 JSON 数据。
+	\item nvd{\_}json{\_}src：存储从 nvd.nist.gov 数据接口获得的 JSON 原始数据。
+	\item nvd{\_}json：存储从 nvd.nist.gov JSON 数据处理得到的 JSON 数据。
+\end{itemize}
 
-\buptfigure[height=0.5\textheight]{pictures/CyKG_Entity-Mongo.png}{MongoDB 数据模式图}{CyKG_Entity-Mongo}
+\buptfigure[height=0.95\textheight]{pictures/CyKG_Entity-Mongo.png}{MongoDB 数据模式图}{CyKG_Entity-Mongo}
 
-图\ref{CyKG_Entity}所示为 Neo4j 数据模式图，同时也是知识图谱实体与关系模式图。
+图\ref{CyKG_Entity-Neo}所示为 Neo4j 数据模式图，同时也是知识图谱实体与关系模式图。
 
-\buptfigure[height=0.5\textheight]{pictures/CyKG_Entity.png}{Neo4j 数据模式图}{CyKG_Entity}
+\buptfigure[width=\textwidth]{pictures/CyKG_Entity-Neo.png}{Neo4j 数据模式图}{CyKG_Entity-Neo}
 
 \subsection{系统接口设计}
 
@@ -440,21 +494,41 @@ APScheduler 调度模块：//TODO
 
 \subsubsection{类图}
 
-\ref{CyKG_Class-DataCollection}
+图\ref{CyKG_Class-DataCollection}所示为数据采集子系统类图。其中 \lstinline|Item| 的数据模式与 MongoDB 里同名集合模式相同。
+
+\lstinline|Spider| 类继承自 \lstinline|scrapy.spider| 类，包含异构数据源站点爬虫实现，内置请求生成器及异构数据解析器。
+
+\lstinline|Item| 类为 Scrapy 内置数据对象，可用于定义数据模型并且在 \lstinline|Spider| 与 \lstinline|Pipeline| 间传递信息。
+
+\lstinline|Pipeline| 类为异构数据管线。\lstinline|GzFilePipeline| 继承自 \lstinline|scrapy.FilePipeline| 数据管线，其他管线为单独实现。
 
 \buptfigure[width=\textwidth]{pictures/CyKG_Class-DataCollection.png}{数据采集子系统类图}{CyKG_Class-DataCollection}
 
-\ref{CyKG_Class-KnowledgeGraphGeneration}
+图\ref{CyKG_Class-KnowledgeGraphGeneration}所示为知识图谱构建子系统类图。
+
+\lstinline|init_kg()| 为模块的函数入口，可被调度系统调用进行图谱更新。其中 \lstinline|init_nodes(), init_rels()| 为支持 Ray 框架的并行化函数，它们内部各自又实现了生成漏洞结点、生成资产结点、生成漏洞到资产家族关系等一系列并行化函数，用于并发构建知识图谱。
+
+\lstinline|VulnEntity| 则实现了一个互联网安全漏洞本体类。
 
 \buptfigure[width=\textwidth]{pictures/CyKG_Class-KnowledgeGraphGeneration.png}{知识图谱构建子系统类图}{CyKG_Class-KnowledgeGraphGeneration}
 
-\ref{CyKG_Class-Backend}
+图\ref{pictures/CyKG_Class-Database.png}所示为持久化子系统类图。
 
-\buptfigure[width=\textwidth]{pictures/CyKG_Class-Backend.png}{后端服务子系统类图}{CyKG_Class-Backend}
+持久化子系统主要包含 \lstinline|MyMongo, MyNeo| 两个数据库控制器类。使用自带连接池，实现若干用于读写数据库的方法。
+
+\buptfigure[height=0.7\textheight]{pictures/CyKG_Class-Database.png}{持久化子系统类图}{pictures/CyKG_Class-Database.png}
+
+图\ref{CyKG_Class-Backend}所示为后端服务子系统类图。
+
+\lstinline|Flask| 对象中注册了 \lstinline|CORS| 中间件，包含 \lstinline|User, Graph| 两个模块化的蓝图。\lstinline|User| 蓝图注册用户相关 API，\lstinline|Graph| 蓝图注册知识图谱相关 API。
+
+\lstinline|GraphDataGenerator| 是一个通用的绘图数据生成器。
+
+\buptfigure[height=0.35\textheight]{pictures/CyKG_Class-Backend.png}{后端服务子系统类图}{CyKG_Class-Backend}
 
 \subsubsection{功能时序图}
 
-\ref{CyKG_Sequence-UserSequence}
+图\ref{CyKG_Sequence-UserSequence}所示为通用状态下用户操作前端发起请求的时序图。
 
 \buptfigure[width=\textwidth]{pictures/CyKG_Sequence-UserSequence.png}{用户请求功能时序图}{CyKG_Sequence-UserSequence}
 
