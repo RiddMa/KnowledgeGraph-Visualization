@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update chap 6">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_OrgChart-中文.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_OrgChart-中文.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_StructureChart-中文.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_StructureChart-中文.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Usecase.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Usecase.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" afterDir="false" />
-    </list>
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="polished paper" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,7 +44,7 @@
       <workItem from="1644501811375" duration="645000" />
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
-      <workItem from="1652364854856" duration="10193000" />
+      <workItem from="1652364854856" duration="10231000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -131,7 +123,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652712161233</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="polished paper">
+      <created>1652797848080</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1652797848080</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +156,7 @@
     <MESSAGE value="commit pics" />
     <MESSAGE value="update chap5" />
     <MESSAGE value="update chap 6" />
-    <option name="LAST_COMMIT_MESSAGE" value="update chap 6" />
+    <MESSAGE value="polished paper" />
+    <option name="LAST_COMMIT_MESSAGE" value="polished paper" />
   </component>
 </project>
