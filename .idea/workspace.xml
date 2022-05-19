@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/quotes_spider.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CVE_Bot/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KnowledgeGraph-Visualization.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/csv_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/csv_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/items.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/example.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/spiders/cve_detail.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/xml_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/CVE_Bot/utils/xml_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" beforeDir="false" afterPath="$PROJECT_DIR$/CVE_Bot/bot_root_dir.py" afterDir="false" />
-    </list>
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="polished paper" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,6 +12,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="24vCj2FMM30ndjgUBxWiO8hmoGk" />
   <component name="ProjectViewState">
@@ -34,6 +26,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -45,10 +42,121 @@
       <option name="presentableId" value="Default" />
       <updated>1644501810237</updated>
       <workItem from="1644501811375" duration="645000" />
+      <workItem from="1651713074514" duration="7000" />
+      <workItem from="1651713094650" duration="35000" />
+      <workItem from="1652364854856" duration="10231000" />
     </task>
+    <task id="LOCAL-00001" summary="add paper">
+      <created>1652366968240</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1652366968240</updated>
+    </task>
+    <task id="LOCAL-00002" summary="update paper chapter 2">
+      <created>1652422902488</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1652422902488</updated>
+    </task>
+    <task id="LOCAL-00003" summary="update paper chapter 3">
+      <created>1652439066213</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1652439066213</updated>
+    </task>
+    <task id="LOCAL-00004" summary="update paper chapter 4">
+      <created>1652452970410</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1652452970410</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update paper chapter 4">
+      <created>1652525437889</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1652525437889</updated>
+    </task>
+    <task id="LOCAL-00006" summary="update paper chapter 4">
+      <created>1652539199743</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1652539199743</updated>
+    </task>
+    <task id="LOCAL-00007" summary="update paper chapter 5">
+      <created>1652625109718</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1652625109718</updated>
+    </task>
+    <task id="LOCAL-00008" summary="commit pics">
+      <created>1652625124664</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1652625124664</updated>
+    </task>
+    <task id="LOCAL-00009" summary="update chap5">
+      <created>1652673886031</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1652673886031</updated>
+    </task>
+    <task id="LOCAL-00010" summary="update chap5">
+      <created>1652690588733</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1652690588733</updated>
+    </task>
+    <task id="LOCAL-00011" summary="update chap 6">
+      <created>1652712161233</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1652712161233</updated>
+    </task>
+    <task id="LOCAL-00012" summary="polished paper">
+      <created>1652797848080</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1652797848080</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add paper" />
+    <MESSAGE value="update paper chapter 2" />
+    <MESSAGE value="update paper chapter 3" />
+    <MESSAGE value="update paper chapter 4" />
+    <MESSAGE value="update paper chapter 5" />
+    <MESSAGE value="commit pics" />
+    <MESSAGE value="update chap5" />
+    <MESSAGE value="update chap 6" />
+    <MESSAGE value="polished paper" />
+    <option name="LAST_COMMIT_MESSAGE" value="polished paper" />
   </component>
 </project>
