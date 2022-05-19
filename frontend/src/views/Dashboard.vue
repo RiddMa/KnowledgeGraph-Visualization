@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid id="graph-container" class="ma-0" style="height: 95vh">
-    <v-row>
+  <v-container fluid id="graph-container" class="content-container-wide">
+    <v-row class="px-6 pt-2">
       <v-col>
         <h1>{{ translation.graph_overview }}</h1>
       </v-col>
@@ -264,8 +264,8 @@ export default {
       return arr;
     },
   },
-  async mounted() {
-    await this.$store.dispatch("fetchGraphStats");
+  mounted() {
+    this.$store.dispatch("fetchGraphStats");
     // if (this.graphData === undefined) {
     //   await this.$store.dispatch("fetchGraphData", 20);
     // }
@@ -273,3 +273,4 @@ export default {
   },
 };
 </script>
+<style src="../styles/base.css" scoped></style>

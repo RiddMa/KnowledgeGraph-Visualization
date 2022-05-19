@@ -241,6 +241,8 @@ def get_node_category(type_list):
 @bp.route('/<limit>')
 # returned Node: id, labels, items()
 def retrieve_graph(limit):
+    t0 = time.time()
+
     def work(tx, _limit):
         cql_vuln = "match (v:Vulnerability) return v.cve_id as cve_id limit $limit"
         result = tx.run(cql_vuln, limit=_limit).data()
@@ -333,6 +335,7 @@ def retrieve_graph(limit):
 
     limit = min(200, int(limit))
     res = neo.get_session().read_transaction(work, limit)
+    print("time elapsed:" + str(time.time() - t0))
     return res
 
 

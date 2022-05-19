@@ -5,7 +5,7 @@
         <v-card class="pa-6">
           <v-row no-gutters>
             <v-col>
-              <h2>Search</h2>
+              <h2>搜索</h2>
             </v-col>
           </v-row>
           <v-row no-gutters>
@@ -14,6 +14,8 @@
               append-icon="mdi-magnify"
               @keydown.enter="search()"
               @click:append="search()"
+              placeholder="支持 cve_id, edb_id, cpe23uri"
+              clearable
             >
             </v-text-field>
           </v-row>

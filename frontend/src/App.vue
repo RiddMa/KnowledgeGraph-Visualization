@@ -55,9 +55,14 @@ export default {
   },
 };
 </script>
+<style src="./styles/base.css" scoped></style>
 <style>
 .vis-graph {
   width: 100%;
   height: 100%;
+}
+.content-container{
+  max-width: 800px;
+  min-height: 95vh;
 }
 </style>
