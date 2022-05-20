@@ -1,5 +1,5 @@
 <template>
-  <v-list class="mx-0 mt-2 mb-0 pa-0">
+  <v-list class="mx-0 mt-2 mb-0 pa-0 text-body-1">
     <v-row v-for="entry in stats" :key="entry.name" class="px-0 py-2 ma-0">
       <!--      <v-col sm="12" md="8" class="ma-0 pa-0">-->
       <v-col cols="8" md="7" class="ma-0 pa-0">

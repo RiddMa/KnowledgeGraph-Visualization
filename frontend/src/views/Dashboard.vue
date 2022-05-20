@@ -1,17 +1,17 @@
 <template>
   <v-container fluid id="graph-container" class="content-container-wide">
-    <v-row class="px-6 pt-2">
+    <v-row class="px-6 pt-6 mb-0 pb-0">
       <v-col>
-        <h1>{{ translation.graph_overview }}</h1>
+        <p class="text-h3 ma-0">{{ translation.graph_overview }}</p>
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row class="mt-0 pt-0">
       <v-col cols="12" sm="12" md="6" lg="4">
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
             <v-col>
-              <h2>{{ translation["vul"] }}</h2>
+              <p class="text-h4">{{ translation["vul"] }}</p>
             </v-col>
           </v-row>
           <entry-list
@@ -32,10 +32,10 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="4">
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
-            <v-col class="shrink" style="min-width: 120px">
-              <h2>{{ translation["asset"] }}</h2>
+            <v-col class="shrink" style="min-width: 180px">
+              <p class="text-h4">{{ translation["asset"] }}</p>
             </v-col>
             <v-col class="ma-0 px-0">
               <v-btn-toggle dense v-model="assetChartToggle" mandatory>
@@ -58,10 +58,10 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="12" md="6" lg="4">
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
             <v-col>
-              <h2>{{ translation["exploit"] }}</h2>
+              <p class="text-h4">{{ translation["exploit"] }}</p>
             </v-col>
           </v-row>
           <entry-list
@@ -117,10 +117,10 @@
 
     <v-row>
       <v-col>
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
             <v-col>
-              <h2>{{ translation.threat_info }}</h2>
+              <p class="text-h4">{{ translation.threat_info }}</p>
             </v-col>
           </v-row>
           <v-row>
@@ -133,10 +133,10 @@
 
     <v-row>
       <v-col>
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
             <v-col>
-              <h2>{{ translation.latest_vul }}</h2>
+              <p class="text-h4">{{ translation.latest_vul }}</p>
             </v-col>
           </v-row>
           <v-row>
@@ -145,10 +145,10 @@
         </v-card>
       </v-col>
       <v-col>
-        <v-card class="pa-6">
+        <v-card class="pa-6" outlined raised>
           <v-row>
             <v-col>
-              <h2>{{ translation.latest_exploit }}</h2>
+              <p class="text-h4">{{ translation.latest_exploit }}</p>
             </v-col>
           </v-row>
           <v-row>

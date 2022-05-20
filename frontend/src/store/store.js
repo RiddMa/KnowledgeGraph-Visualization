@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import net from "@/store/modules/net";
 import _, { range } from "lodash";
+import view from "@/store/modules/view";
 
 Vue.use(Vuex);
 
@@ -85,5 +86,5 @@ export default new Vuex.Store({
     },
   },
   actions: {},
-  modules: { net: net },
+  modules: { net: net, view: view },
 });

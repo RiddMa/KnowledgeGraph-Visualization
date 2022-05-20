@@ -227,23 +227,23 @@ def create_rel_vaf_ray(skip, _limit):
     vul_cnt = 0
     for vuln_node in cursor:
         rel_cnt = 0
-        props = json.loads(vuln_node['props'])
-        for op_dict in props['assets']:
-            try:
-                if op_dict['operator'] == 'OR':
-                    for match in op_dict['cpe_match']:
-                        if match['vulnerable']:
-                            prefix = match['cpe23Uri'][:match['cpe23Uri'].find('*')]
-                            rel_cnt += neo.add_rel_cql_vaf(cve_id=vuln_node['cve_id'], cpe23uri=prefix,
-                                                           asset_uri=match['cpe23Uri'])
-            except BaseException as e:
-                mylogger_p('init_kg').error(e, exc_info=True)
-            finally:
-                pass
+        # props = json.loads(vuln_node['props'])
+        # for op_dict in props['assets']:
+        #     try:
+        #         if op_dict['operator'] == 'OR':
+        #             for match in op_dict['cpe_match']:
+        #                 if match['vulnerable']:
+        #                     rel_cnt += neo.add_rel_cql_vaf(cve_id=vuln_node['cve_id'], cpe23uri=match['cpe23Uri'])
+        #     except BaseException as e:
+        #         mylogger_p('init_kg').error(e, exc_info=True)
+        #     finally:
+        #         pass
+        neo.add_rel_cql_vaf_cnt(cve_id=vuln_node['cve_id'])
         vul_cnt += 1
         mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
         if vul_cnt % 50 == 0:
-            mylogger_p('init_kg').info(f'.skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities')
+            mylogger_p('init_kg').info('{:.0f}%'.format(
+                vul_cnt / _limit * 100) + f', .skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities')
     neo.close_db()
     mylogger_p('timer').info(
         f'create_rel_vaf_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
@@ -337,12 +337,13 @@ def create_rel_evaf_ray(skip, _limit):
     mylogger_p('timer').info('Start create_rel_ve')
 
     neo = MyNeo()
-    if skip or _limit:
+    if skip or _limit:  # skip may be 0!!!
         mylogger_p('timer').info(f'create_rel_evaf_ray().skip({skip}) with limit {_limit} start')
         cursor = NodeMatcher(neo.graph).match("Exploit").skip(skip).limit(_limit)
     else:
         mylogger_p('timer').info(f'create_rel_evaf_ray() start')
         cursor = NodeMatcher(neo.graph).match("Exploit")
+
     for exploit_node in cursor:
         cve_ids = exploit_node['cve_ids']
         for cve_id_no in cve_ids:
@@ -537,27 +538,28 @@ def init_rels(vuln_num=0, exploit_num=0):
     ray.init(ignore_reinit_error=True)
     mylogger_p('init_kg').info('Start Relationship init')
 
-    if vuln_num:
+    if vuln_num and exploit_num:
         arr = []
         '''Ensure Vulnerability---Family relationships'''
-        # arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-        #        range(0, vuln_num, get_step(vuln_num))])
-        '''Ensure Family---Asset relationships'''
-        arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+        arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
                     range(0, vuln_num, get_step(vuln_num))])
+        '''Ensure Family---Asset relationships'''
+        # arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+        #             range(0, vuln_num, get_step(vuln_num))])
         ray.get(arr)
+        # arr = [create_rel_evaf_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
+        #        range(0, exploit_num, get_step(exploit_num))]
+        # ray.get(arr)
     else:
         rel_vaf = create_rel_vaf_ray.remote()
         rel_afa = create_rel_afa_ray.remote()
         ray.get([rel_vaf, rel_afa])
+        rel_evaf = create_rel_evaf_ray.remote()
+        ray.get([rel_evaf])
 
-    # if exploit_num:
-    #     arr = [create_rel_EVAF_ray.remote(skip=i, _limit=step) for i in range(0, exploit_num, step)]
-    #     ray.get(arr)
-
-    mylogger_p('init_kg').info('Finished Node init')
+    mylogger_p('init_kg').info('Finished relationship init')
     mylogger_p('timer').info(
-        f'ray.get([vuln_id, asset_id, exploit_id]) runtime = {datetime.now() - rel_start_time}')
+        f'init_rels() runtime = {datetime.now() - rel_start_time}')
 
 
 if __name__ == "__main__":

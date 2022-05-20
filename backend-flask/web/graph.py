@@ -353,11 +353,20 @@ def test(limit):
 
 @bp.route('/search/<keyword>')
 def search_graph(keyword):
-    def work(tx, limit_):
-        cql1 = "match (asset:Asset)-[has]->(vuln:Vulnerability{cve_id:'" + keyword + "'}) return asset,has,vuln"
-        cql2 = "match (vuln:Vulnerability{cve_id:'" + keyword + "'})-[cause]->(exploit:Attack) return exploit,cause,vuln"
-        result = tx.run(cql1).data()
+    def search_cve(tx):
+        cql1 = "match (asset:Asset)-[has]->(vuln:Vulnerability{cve_id:$keyword'}) return asset,has,vuln"
+        # cql2 = "match (vuln:Vulnerability{cve_id:'" + keyword + "'})-[cause]->(exploit:Attack) return exploit,cause,vuln"
+        result = tx.run(cql1,keyword=keyword).data()
         return assemble_graph_data(result)
 
-    res = neo.get_session().read_transaction(work, keyword)
+    def search_cpe(tx):
+        pass
+
+
+    if keyword.startswith('CVE'):
+        res = neo.get_session().read_transaction(search_cve, keyword)
+    elif keyword.startswith('cpe'):
+        res = neo.get_session().read_transaction(search_cve, keyword)
+    else:
+        res = ''
     return res
