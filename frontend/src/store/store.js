@@ -1,13 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import net from "@/store/modules/net";
-import _, { range } from "lodash";
 import view from "@/store/modules/view";
+import moment from "moment";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    username: "未登录",
+    isLoggedIn: false,
+    mmt: moment,
+    datetime: moment(),
+    lastUpdate: moment(),
     graph: {},
     graphData: {},
     graphStatsOrder: {},
@@ -83,6 +88,12 @@ export default new Vuex.Store({
     },
     setGraphStats(state, data) {
       state.graphStats = data;
+    },
+    setDatetime(state) {
+      state.datetime = state.mmt();
+    },
+    setLastUpdate(state, datetime) {
+      state.lastUpdate = datetime;
     },
   },
   actions: {},

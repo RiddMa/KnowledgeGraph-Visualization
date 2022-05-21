@@ -1,11 +1,11 @@
 const view = {
   state: {
-    visShowSideBar: true,
+    visSidePanelActive: true,
   },
   getters: {},
   mutations: {
     setVisShowSideBar(state, show) {
-      state.visShowSideBar = show;
+      state.visSidePanelActive = show;
     },
   },
   actions: {},

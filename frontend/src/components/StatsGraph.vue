@@ -102,8 +102,10 @@ export default {
       }
     },
     onResize() {
-      console.log(window.innerWidth, window.innerHeight);
-      this.graph[this.graphId].resize();
+      // console.log(window.innerWidth, window.innerHeight);
+      if(this.graph[this.graphId]){
+        this.graph[this.graphId].resize();
+      }
     },
   },
   mounted() {

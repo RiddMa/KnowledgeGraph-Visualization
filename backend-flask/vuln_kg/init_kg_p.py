@@ -4,10 +4,10 @@ from datetime import datetime
 import ray
 
 from db import MyNeo, mg
-from logger_factory import mylogger_p
-
+from logger_factory import mylogger_p, log_vul_cnt, rel_vul_str, ray_timer_str, rel_exploit_str, log_exploit_cnt
 
 # limit = 100000
+from vuln_kg.util import str_percent
 
 
 @ray.remote
@@ -38,7 +38,7 @@ def init_vuln_ray(skip, _limit):
             mylogger_p('init_kg').info(f'Processed {cnt} vulnerabilities')
 
     _mg.client.close()
-    mylogger_p('timer').info(f'init_vuln_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
+    mylogger_p('timer').info(ray_timer_str('init_vuln_ray()', skip, _limit, start))
     return 0
 
 
@@ -198,9 +198,9 @@ def create_rel_va_ray(skip, _limit):
             finally:
                 pass
         vul_cnt += 1
-        mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
+        mylogger_p('init_kg').info(rel_vul_str(rel_cnt, vuln_node["cve_id"]))
         if vul_cnt % 50 == 0:
-            mylogger_p('init_kg').info(f'Processed {vul_cnt} vulnerabilities')
+            mylogger_p('init_kg').info(log_vul_cnt(skip, _limit, vul_cnt))
     neo.close_db()
     mylogger_p('timer').info(f'create_rel_va_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
     return 0
@@ -227,26 +227,24 @@ def create_rel_vaf_ray(skip, _limit):
     vul_cnt = 0
     for vuln_node in cursor:
         rel_cnt = 0
-        # props = json.loads(vuln_node['props'])
-        # for op_dict in props['assets']:
-        #     try:
-        #         if op_dict['operator'] == 'OR':
-        #             for match in op_dict['cpe_match']:
-        #                 if match['vulnerable']:
-        #                     rel_cnt += neo.add_rel_cql_vaf(cve_id=vuln_node['cve_id'], cpe23uri=match['cpe23Uri'])
-        #     except BaseException as e:
-        #         mylogger_p('init_kg').error(e, exc_info=True)
-        #     finally:
-        #         pass
+        props = json.loads(vuln_node['props'])
+        for op_dict in props['assets']:
+            try:
+                if op_dict['operator'] == 'OR':
+                    for match in op_dict['cpe_match']:
+                        if match['vulnerable']:
+                            rel_cnt += neo.add_rel_cql_vaf(cve_id=vuln_node['cve_id'], cpe23uri=match['cpe23Uri'])
+            except BaseException as e:
+                mylogger_p('init_kg').error(e, exc_info=True)
+            finally:
+                pass
         neo.add_rel_cql_vaf_cnt(cve_id=vuln_node['cve_id'])
         vul_cnt += 1
-        mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
+        mylogger_p('init_kg').info(rel_vul_str(rel_cnt, vuln_node["cve_id"]))
         if vul_cnt % 50 == 0:
-            mylogger_p('init_kg').info('{:.0f}%'.format(
-                vul_cnt / _limit * 100) + f', .skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities')
+            mylogger_p('init_kg').info(log_vul_cnt(skip, _limit, vul_cnt))
     neo.close_db()
-    mylogger_p('timer').info(
-        f'create_rel_vaf_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
+    mylogger_p('timer').info(ray_timer_str('create_rel_vaf_ray()', skip, _limit, start))
     return 0
 
 
@@ -283,12 +281,11 @@ def create_rel_afa_ray(skip, _limit):
             finally:
                 pass
         vul_cnt += 1
-        mylogger_p('init_kg').info(f'Created {rel_cnt} relationships for {vuln_node["cve_id"]}')
+        mylogger_p('init_kg').info(rel_vul_str(rel_cnt, vuln_node["cve_id"]))
         if vul_cnt % 50 == 0:
-            mylogger_p('init_kg').info(f'.skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities')
+            mylogger_p('init_kg').info(log_vul_cnt(skip, _limit, vul_cnt))
     neo.close_db()
-    mylogger_p('timer').info(
-        f'create_rel_afa_ray().skip({skip}) with limit {_limit} runtime = {datetime.now() - start}')
+    mylogger_p('timer').info(ray_timer_str('create_rel_afa_ray()', skip, _limit, start))
     return 0
 
 
@@ -334,7 +331,7 @@ def create_rel_evaf_ray(skip, _limit):
     from db import MyNeo
     from py2neo import NodeMatcher, RelationshipMatcher
     start = datetime.now()
-    mylogger_p('timer').info('Start create_rel_ve')
+    mylogger_p('timer').info('Start create_rel_evaf_ray()')
 
     neo = MyNeo()
     if skip or _limit:  # skip may be 0!!!
@@ -343,18 +340,27 @@ def create_rel_evaf_ray(skip, _limit):
     else:
         mylogger_p('timer').info(f'create_rel_evaf_ray() start')
         cursor = NodeMatcher(neo.graph).match("Exploit")
-
+    e_cnt = 0
     for exploit_node in cursor:
         cve_ids = exploit_node['cve_ids']
+        r_cnt = 0
         for cve_id_no in cve_ids:
             cve_id = f'CVE-{cve_id_no}'
             vuln_node = neo.get_node('Vulnerability', cve_id=cve_id).first()
             if vuln_node is not None:
-                neo.add_relationship(start=exploit_node, type_='Exploits', end=vuln_node)
-                neo.add_relationship(start=vuln_node, type_='Exploited_by', end=exploit_node)
-                RelationshipMatcher(neo.graph).match([vuln_node], r_type='Affects')
+                r_cnt += neo.add_rel_cql_ev(edb_id=exploit_node['edb_id'], cve_id=cve_id)
+                cpe_list = neo.get_rel_cql_vaf(cve_id=cve_id)
+                for rel in cpe_list:
+                    # for cpe23uri in rel['assets']:
+                    r_cnt += neo.add_rel_cql_eaf(edb_id=exploit_node['edb_id'], cpe23uri=rel['target'],
+                                                 assets=rel['assets'], asset_cnt=rel['cnt'])
+        mylogger_p('init_kg').info(rel_exploit_str(rel_cnt=r_cnt, edb_id=exploit_node['edb_id']))
+        e_cnt += 1
+        if e_cnt % 50 == 0:
+            mylogger_p('init_kg').info(log_exploit_cnt(skip=skip, _limit=_limit, e_cnt=e_cnt))
+
     neo.close_db()
-    mylogger_p('timer').info(f'create_rel_eva_ray() runtime = {datetime.now() - start}')
+    mylogger_p('timer').info(ray_timer_str('create_rel_evaf_ray()', skip, _limit, start))
     return 0
 
 
@@ -540,16 +546,16 @@ def init_rels(vuln_num=0, exploit_num=0):
 
     if vuln_num and exploit_num:
         arr = []
-        '''Ensure Vulnerability---Family relationships'''
-        arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-                    range(0, vuln_num, get_step(vuln_num))])
-        '''Ensure Family---Asset relationships'''
+        # '''Ensure Vulnerability---Family relationships'''
+        # arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+        #             range(0, vuln_num, get_step(vuln_num))])
+        # '''Ensure Family---Asset relationships'''
         # arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
         #             range(0, vuln_num, get_step(vuln_num))])
-        ray.get(arr)
-        # arr = [create_rel_evaf_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
-        #        range(0, exploit_num, get_step(exploit_num))]
         # ray.get(arr)
+        arr = [create_rel_evaf_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
+               range(0, exploit_num, get_step(exploit_num))]
+        ray.get(arr)
     else:
         rel_vaf = create_rel_vaf_ray.remote()
         rel_afa = create_rel_afa_ray.remote()

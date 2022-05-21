@@ -8,6 +8,7 @@ import re
 from py2neo import NodeMatcher, RelationshipMatcher
 
 # from db import neo
+from db import neo
 
 if __name__ == '__main__':
     # print(f"Neo4j stat:\n{get_node_stats()}")
@@ -59,6 +60,8 @@ if __name__ == '__main__':
     #         pass
 
     # neo.add_rel_cql_vaf_cnt('CVE-2015-6435')
-    a = 'cpe:2.3:a:cisco:unified_computing_system:->CVE-2015-6435'.split('->')
-    b = a[1] + '->' + a[0]
-    pass
+    # a = 'cpe:2.3:a:cisco:unified_computing_system:->CVE-2015-6435'.split('->')
+    # b = a[1] + '->' + a[0]
+    # pass
+
+    neo.get_rel_cql_vaf('CVE-2014-1859')

@@ -305,9 +305,10 @@ class MyNeo:
                 mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{cpe23uri}")
             return num
 
-    def get_rel_cql_vaf(self, cve_id, cpe23uri):
+    def get_rel_cql_vaf(self, cve_id):
         def get_rel(tx):
-            pass
+            cql = 'MATCH (v:Vulnerability {cve_id:$cve_id})-[r]->(af:Family) RETURN r.assets as assets,r.asset_cnt as cnt, af.cpe23uri as target'
+            return tx.run(cql, cve_id=cve_id).data()
 
         with self.get_session() as session:
             res = session.read_transaction(get_rel)
@@ -415,6 +416,13 @@ class MyNeo:
             return num
 
     def add_rel_cql_ev(self, edb_id, cve_id):
+        """
+        Exploit-[r]-Vulnerability
+        :param edb_id:
+        :param cve_id:
+        :return:
+        """
+
         def work(tx):
             cql = 'MATCH (e:Exploit) WHERE e.edb_id = $edb_id ' \
                   'MATCH (v:Vulnerability) WHERE v.cve_id = $cve_id ' \
@@ -434,22 +442,29 @@ class MyNeo:
                 mylogger('db').info(f"Exist relationship {cve_id}<-[r]->{edb_id}")
                 return 0
 
-    def add_rel_cql_eaf(self, edb_id, cpe23uri):
+    def add_rel_cql_eaf(self, edb_id, cpe23uri, assets, asset_cnt):
+        """
+        Exploit-[r]-AssetFamily
+        :param edb_id:
+        :param cpe23uri:
+        :return:
+        """
+
         def work(tx):
             cql = 'MATCH (e:Exploit) WHERE e.edb_id = $edb_id ' \
-                  'MATCH (af:Asset:Family) WHERE v.cve_id = $cve_id ' \
-                  'MERGE (e)-[r1:Exploits {rid:$rid1}]->(v) ' \
-                  'MERGE (v)-[r2:ExploitedBy {rid:$rid2}]->(e)'
+                  'MATCH (af:Asset:Family) WHERE af.cpe23uri = $cpe23uri ' \
+                  'MERGE (e)-[r1:Attacks {rid:$rid1,assets:$assets,asset_cnt:$asset_cnt}]->(af) ' \
+                  'MERGE (af)-[r2:AttackedBy {rid:$rid2,assets:$assets,asset_cnt:$asset_cnt}]->(e)'
             return tx.run(cql, edb_id=edb_id, cpe23uri=cpe23uri, rid1=f'{edb_id}->{cpe23uri}',
-                          rid2=f'{cpe23uri}->{edb_id}')
+                          rid2=f'{cpe23uri}->{edb_id}', asset_cnt=asset_cnt, assets=assets)
 
         with self.get_session() as session:
             num = session.write_transaction(work)._summary.counters.relationships_created
             if num:  # if num == 1 then 2 edges created, weird though
                 mylogger('db').info(
-                    f"Added relationship {cpe23uri}-[ExploitedBy]->{edb_id}")
+                    f"Added relationship {cpe23uri}-[AttackedBy]->{edb_id}")
                 mylogger('db').info(
-                    f"Added relationship {cpe23uri}<-[Exploits]-{edb_id}")
+                    f"Added relationship {cpe23uri}<-[Attacks]-{edb_id}")
                 return 2
             else:
                 mylogger('db').info(f"Exist relationship {cpe23uri}<-[r]->{edb_id}")
@@ -501,7 +516,11 @@ class MyNeo:
         self.get_session().run("CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)")
         self.get_session().run("CREATE INDEX rel_exploits_index IF NOT EXISTS FOR ()-[r:Exploits]-() ON (r.rid)")
         self.get_session().run(
-            "CREATE INDEX rel_exploited_by_index IF NOT EXISTS FOR ()-[r:Exploited_by]-() ON (r.rid)")
+            "CREATE INDEX rel_exploited_by_index IF NOT EXISTS FOR ()-[r:ExploitedBy]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_parent_of_index IF NOT EXISTS FOR ()-[r:ParentOf]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_child_of_index IF NOT EXISTS FOR ()-[r:ChildOf]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_attacks_index IF NOT EXISTS FOR ()-[r:Attacks]-() ON (r.rid)")
+        self.get_session().run("CREATE INDEX rel_attacked_by_index IF NOT EXISTS FOR ()-[r:AttackedBy]-() ON (r.rid)")
         mylogger('db').info('Checked rel_index for neo4j')
         # cql_affects = "CREATE INDEX rel_affects_index IF NOT EXISTS FOR ()-[r:Affects]-() ON (r.rid)"
         # self.get_session().run(cql_affects)

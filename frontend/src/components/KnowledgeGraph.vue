@@ -1,101 +1,188 @@
 <template>
   <v-container fluid class="fill-height">
     <div :id="graphId" class="vis-graph"></div>
+    <!--    <v-card-->
+    <!--      v-if="visSidePanelActive"-->
+    <!--      v-click-outside="onCloseSidePanel"-->
+    <!--      id="overlay"-->
+    <!--      class="sidePanel pa-0"-->
+    <!--      outlined-->
+    <!--      raised-->
+    <!--    >-->
     <v-card
-      v-if="this.visShowSideBar"
+      v-if="visSidePanelActive"
       id="overlay"
       class="sidePanel pa-0"
       outlined
       raised
     >
-      <v-btn class="closePanelButton">关闭</v-btn>
-      <!--      <v-virtual-scroll></v-virtual-scroll>-->
-      <v-row v-if="dataType === 'Vulnerability'" class="scroll-card my-0 ml-4 mr-2 pa-0">
-        <v-col class="py-6">
-          <p class="text-h5 sidePanelTitle">
-            漏洞 / {{ this.sideBarData["vuln"]["cve_id"] }}
-          </p>
-          <p class="text-h6 sidePanelContent">基础信息</p>
-          <p class="text-body-1 sidePanelContent">
-            数据格式版本：{{ this.sideBarData["version"] }}
-          </p>
-          <p class="text-body-1 sidePanelContent">
-            数据更新日期：{{ mmt(this.sideBarData["timestamp"]).format() }}
-          </p>
-          <p class="text-body-1 sidePanelContent">
-            数据更新日期：{{
-              mmt(this.sideBarData["vuln"]["last_update_date"]).format()
-            }}
-          </p>
-          <p class="text-body-1 sidePanelContent">
-            数据更新日期：{{
-              mmt(this.sideBarData["vuln"]["publish_date"]).format()
-            }}
-          </p>
-          <p class="text-body-1 sidePanelContent">
-            描述：{{ this.sideBarData["vuln"]["desc"] }}
-          </p>
-          <p class="text-body-1 sidePanelContent">
-            CWE 类型：{{ this.sideBarData["vuln"]["cwe_id"] }}
-          </p>
-          <p class="text-h6 sidePanelContent">风险评估</p>
-          <v-row v-if="this.sideBarData['vuln']['impact']['baseMetricV3']">
-            <v-col> </v-col>
-          </v-row>
-          <v-row
-            v-else-if="this.sideBarData['vuln']['impact']['baseMetricV2']"
-            class="ma-0 pa-0"
-          >
-            <v-col class="mt-2 pa-0">
-              <v-row>
-                <v-col cols="6">
-                  <span class="text-body-1 sidePanelContent">
-                    综合指数：{{ this.cvss["cvssV2"]["baseScore"] }} /
-                    {{ this.cvss["severity"] }}
-                  </span>
-                </v-col>
-                <v-col cols="3">
-                  <span class="text-body-1 sidePanelContent">
-                    利用指数：{{ this.cvss["exploitabilityScore"] }}
-                  </span>
-                </v-col>
-                <v-col cols="3">
-                  <span class="text-body-1 sidePanelContent">
-                    影响指数：{{ this.cvss["impactScore"] }}
-                  </span>
-                </v-col>
-              </v-row>
+      <div v-if="dataType === 'Vulnerability'" class="sidePanelDiv">
+        <v-btn class="closePanelButton" fab small @click="onCloseSidePanel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-row class="my-0 ml-4 mr-2 pa-0">
+          <v-col class="py-6">
+            <p class="text-h5 sidePanelTitle">漏洞</p>
+            <p class="text-body-1 sidePanelContent">
+              {{ this.sideBarData["vuln"]["cve_id"] }}
+              <v-divider class="mt-2"></v-divider>
+            </p>
+            <p></p>
+            <p class="text-h6 sidePanelContent">基础信息</p>
+            <p class="text-body-1 sidePanelContent">
+              数据格式版本：{{ this.sideBarData["version"] }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              数据更新日期：{{ mmt(this.sideBarData["timestamp"]).format() }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              数据更新日期：{{
+                mmt(this.sideBarData["vuln"]["last_update_date"]).format()
+              }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              数据更新日期：{{
+                mmt(this.sideBarData["vuln"]["publish_date"]).format()
+              }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              描述：{{ this.sideBarData["vuln"]["desc"] }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              CWE 类型：{{ this.sideBarData["vuln"]["cwe_id"] }}
+            </p>
+            <p class="text-h6 sidePanelContent">风险评估</p>
+            <v-row v-if="this.sideBarData['vuln']['impact']['baseMetricV3']">
+              <v-col> </v-col>
+            </v-row>
+            <v-row
+              v-else-if="this.sideBarData['vuln']['impact']['baseMetricV2']"
+              class="ma-0 pa-0"
+            >
+              <v-col class="mt-2 pa-0">
+                <v-row no-gutters class="ma-0 pa-0">
+                  <v-col>
+                    <span class="text-body-1 sidePanelContent">
+                      综合指数：{{ this.cvss["cvssV2"]["baseScore"] }} /
+                      {{ this.cvss["severity"] }}
+                    </span>
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col>
+                    <span class="text-body-1 sidePanelContent">
+                      利用指数：{{ this.cvss["exploitabilityScore"] }}
+                    </span>
+                  </v-col>
+                  <v-col>
+                    <span class="text-body-1 sidePanelContent">
+                      影响指数：{{ this.cvss["impactScore"] }}
+                    </span>
+                  </v-col>
+                </v-row>
+                <p class="text-body-1 sidePanelContent">
+                  CVSS 向量：{{ this.cvss["cvssV2"]["vectorString"] }}
+                </p>
+              </v-col>
+            </v-row>
+            <p v-else class="text-body-1 sidePanelContent">暂无内容</p>
+            <p class="text-h6 sidePanelContent">参考资料</p>
+            <v-row
+              v-for="ref in this.sideBarData['vuln']['references']"
+              v-bind:key="ref['name']"
+              class="ma-0 pa-0"
+            >
+              <v-col class="mt-2 pa-0">
+                <p class="text-body-1 ma-0 pa-0">
+                  链接：<a :href="ref['url']">{{ ref["url"] }}</a>
+                </p>
+                <p class="text-body-1 ma-0 pa-0">
+                  来源：{{ ref["refsource"] }}
+                </p>
+                <v-row no-gutters>
+                  <v-col v-if="ref['tags'].length > 0" class="grow text-body-1">
+                    标签：<span v-for="tag in ref['tags']" v-bind:key="tag"
+                      >{{ tag }},&nbsp;
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </div>
 
-              <p class="text-body-1 sidePanelContent">
-                CVSS 向量：{{ this.cvss["cvssV2"]["vectorString"] }}
-              </p>
-            </v-col>
-          </v-row>
-          <p v-else class="text-body-1 sidePanelContent">暂无内容</p>
-          <p class="text-h6 sidePanelContent">参考资料</p>
-          <v-row
-            v-for="ref in this.sideBarData['vuln']['references']"
-            v-bind:key="ref['name']"
-            class="ma-0 pa-0"
-          >
-            <v-col class="mt-2 pa-0">
-              <span
-                >链接：<a :href="ref['url']">{{ ref["url"] }}</a></span
+      <div v-if="dataType === 'Family'" class="sidePanelDiv">
+        <v-btn class="closePanelButton" fab small @click="onCloseSidePanel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-row class="my-0 ml-4 mr-2 pa-0">
+          <v-col class="py-6">
+            <p class="text-h5 sidePanelTitle">资产家族</p>
+            <p class="text-body-1 sidePanelContent">
+              {{ this.sideBarData["cpe23uri"] }}
+              <v-divider class="mt-2"></v-divider>
+            </p>
+            <p class="text-h6 sidePanelContent">基础信息</p>
+            <p class="text-body-1 sidePanelContent">数据格式版本：CPE 2.3</p>
+            <p class="text-body-1 sidePanelContent">
+              制造商：{{ this.sideBarData["vendor"] }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              产品：{{ this.sideBarData["product"] }}
+            </p>
+            <v-row no-gutters>
+              <v-col
+                v-if="this.sideBarData['type'].length > 0"
+                class="mt-2 pa-0 text-body-1"
               >
-              <v-row>
-                <v-col cols="4">
-                  <span>来源：{{ ref["refsource"] }}</span>
-                </v-col>
-                <v-col v-if="ref['tags'].length > 0">
-                  标签：<span v-for="tag in ref['tags']" v-bind:key="tag">
-                    {{ tag }},&nbsp;
-                  </span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+                标签：<span
+                  v-for="tag in this.sideBarData['type']"
+                  v-bind:key="tag"
+                  >{{ tag }},&nbsp;
+                </span>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </div>
+
+      <div v-if="dataType === 'Asset'" class="sidePanelDiv">
+        <v-btn class="closePanelButton" fab small @click="onCloseSidePanel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-row class="my-0 ml-4 mr-2 pa-0">
+          <v-col class="py-6">
+            <p class="text-h5 sidePanelTitle">资产</p>
+            <p class="text-body-1 sidePanelContent">
+              {{ this.sideBarData["cpe23uri"] }}
+              <v-divider class="mt-2"></v-divider>
+            </p>
+            <p class="text-h6 sidePanelContent">基础信息</p>
+            <p class="text-body-1 sidePanelContent">
+              数据格式版本：CPE 2.3
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              数据更新日期：{{ mmt(this.sideBarData["timestamp"]).format() }}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              资产名称：{{this.sideBarData['title']}}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              类型：{{this.sideBarData['field']['part']}}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              制造商：{{this.sideBarData['field']['vendor']}}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              产品：{{this.sideBarData['field']['product']}}
+            </p>
+            <p class="text-body-1 sidePanelContent">
+              版本：{{this.sideBarData['field']['version']}}
+            </p>
+          </v-col>
+        </v-row>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -145,7 +232,7 @@ export default {
     ...mapState({
       graph: (state) => state.graph,
       graphData: (state) => state.graphData,
-      visShowSideBar: (state) => state.view.visShowSideBar,
+      visSidePanelActive: (state) => state.view.visSidePanelActive,
     }),
     cvssType() {
       if (!this.sideBarData) {
@@ -178,7 +265,7 @@ export default {
       if (!this.graphData[this.graphId]) {
         await this.$store.dispatch("fetchGraphData", {
           name: this.graphId,
-          limit: 15,
+          limit: 50,
         });
       }
       let option = {
@@ -251,7 +338,7 @@ export default {
               color: "source",
             },
             emphasis: {
-              focus: "adjacency",
+              // focus: "adjacency",
               lineStyle: {
                 width: 10,
               },
@@ -289,11 +376,6 @@ export default {
       }
     },
     onNodeSelected(params) {
-      // console.log(
-      //   this.graphData[this.graphId].nodes[
-      //     params.fromActionPayload.dataIndexInside
-      //   ]
-      // );
       this.$store.commit("setVisShowSideBar", true);
       this.sideBarData =
         this.graphData[this.graphId].nodes[
@@ -301,8 +383,19 @@ export default {
         ];
       if (this.sideBarData.type.includes("Vulnerability")) {
         this.dataType = "Vulnerability";
+        this.sideBarData = JSON.parse(this.sideBarData.props);
+      } else if (this.sideBarData.type.includes("Family")) {
+        this.dataType = "Family";
+        let splitUri = this.sideBarData["cpe23uri"].split(":");
+        this.sideBarData["vendor"] = splitUri[3];
+        this.sideBarData["product"] = splitUri[4];
+      } else if (this.sideBarData.type.includes("Asset")) {
+        this.dataType = "Asset";
+        this.sideBarData = JSON.parse(this.sideBarData.props);
+      } else if (this.sideBarData.type.includes("Exploit")) {
+        this.dataType = "Exploit";
       }
-      this.sideBarData = JSON.parse(this.sideBarData.props);
+      console.log(this.sideBarData);
     },
     onEdgeSelected(params) {
       this.sideBarData =
@@ -313,6 +406,9 @@ export default {
     onResize() {
       // console.log(window.innerWidth, window.innerHeight);
       this.graph[this.graphId].resize();
+    },
+    onCloseSidePanel() {
+      this.$store.commit("setVisShowSideBar", false);
     },
   },
 
@@ -341,8 +437,11 @@ knowledge-graph,
   position: absolute;
 }
 #overlay {
-  max-width: 600px;
-  height: 90vh;
+  max-width: 500px;
+  max-height: 90vh !important;
+}
+.sidePanelTitle {
+  margin: 0;
 }
 .sidePanelContent {
   margin: 6px 0 0 0;
@@ -356,12 +455,13 @@ knowledge-graph,
   line-clamp: 1;
   -webkit-box-orient: vertical;
 }
-.scroll-card {
-  height: 100%;
+.sidePanelDiv {
+  max-height: 89vh;
   overflow-y: auto;
 }
-.closePanelButton{
-  position: relative;
-  
+.closePanelButton {
+  position: absolute;
+  top: 16px;
+  right: 24px;
 }
 </style>

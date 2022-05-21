@@ -2,165 +2,14 @@
   <v-container fluid id="graph-container" class="content-container-wide">
     <v-row class="px-6 pt-6 mb-0 pb-0">
       <v-col>
-        <p class="text-h3 ma-0">{{ translation.graph_overview }}</p>
+        <p class="text-h3 ma-0">控制台</p>
       </v-col>
     </v-row>
 
     <v-row class="mt-0 pt-0">
       <v-col cols="12" sm="12" md="6" lg="4">
         <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col>
-              <p class="text-h4">{{ translation["vul"] }}</p>
-            </v-col>
-          </v-row>
-          <entry-list
-            :entry-translate="translation"
-            :stats="this.graphStats.vul"
-          />
-          <!--          <v-row class="mt-2 mb-0 mx-0 pa-0">-->
-          <!--            <v-col class="ma-0 pa-0">-->
-          <stats-graph
-            graph-id="stats-graph-vul"
-            type="vul"
-            :nodes="this.getVulChartData()"
-            class="mt-4"
-            style="height: 260px"
-          ></stats-graph>
-          <!--            </v-col>-->
-          <!--          </v-row>-->
         </v-card>
-      </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4">
-        <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col class="shrink" style="min-width: 180px">
-              <p class="text-h4">{{ translation["asset"] }}</p>
-            </v-col>
-            <v-col class="ma-0 px-0">
-              <v-btn-toggle dense v-model="assetChartToggle" mandatory>
-                <v-btn>显示家族</v-btn>
-                <v-btn>显示资产</v-btn>
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
-          <entry-list
-            :entry-translate="translation"
-            :stats="this.graphStats.asset"
-          />
-          <stats-graph
-            graph-id="stats-graph-asset-family"
-            type="asset"
-            :nodes="this.selectAssetChartData()"
-            class="mt-4"
-            style="height: 260px"
-          ></stats-graph>
-        </v-card>
-      </v-col>
-      <v-col cols="12" sm="12" md="6" lg="4">
-        <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col>
-              <p class="text-h4">{{ translation["exploit"] }}</p>
-            </v-col>
-          </v-row>
-          <entry-list
-            :entry-translate="translation"
-            :stats="this.graphStats.exploit"
-          />
-          <stats-graph
-            graph-id="stats-graph-exploit"
-            type="asset"
-            :nodes="this.getExploitChartData()"
-            class="mt-4"
-            style="height: 260px"
-          ></stats-graph>
-        </v-card>
-      </v-col>
-      <!--      <v-col sm="12" md="6" lg="4">-->
-      <!--        <v-card class="pa-6">-->
-      <!--          <v-row>-->
-      <!--            <v-col>-->
-      <!--              &lt;!&ndash;              <h2>Vulnerability</h2>&ndash;&gt;-->
-      <!--              <h2>{{ translation.vul }}</h2>-->
-      <!--            </v-col>-->
-      <!--          </v-row>-->
-      <!--          <entry-list :entry-translate="translation" :vul-stats="vulStats" />-->
-      <!--        </v-card>-->
-      <!--      </v-col>-->
-      <!--      <v-col cols="12" sm="12" md="6" lg="4">-->
-      <!--        <v-card class="pa-6">-->
-      <!--          <v-row>-->
-      <!--            <v-col>-->
-      <!--              &lt;!&ndash;              <h2>Asset</h2>&ndash;&gt;-->
-      <!--              <h2>{{ translation.asset }}</h2>-->
-      <!--            </v-col>-->
-      <!--          </v-row>-->
-      <!--          <entry-list :entry-translate="translation" :vul-stats="assetStats" />-->
-      <!--        </v-card>-->
-      <!--      </v-col>-->
-      <!--      <v-col cols="12" sm="12" md="6" lg="4">-->
-      <!--        <v-card class="pa-6">-->
-      <!--          <v-row>-->
-      <!--            <v-col>-->
-      <!--              &lt;!&ndash;              <h2>Exploit</h2>&ndash;&gt;-->
-      <!--              <h2>{{ translation.exploit }}</h2>-->
-      <!--            </v-col>-->
-      <!--          </v-row>-->
-      <!--          <entry-list-->
-      <!--            :entry-translate="translation"-->
-      <!--            :vul-stats="exploitStats"-->
-      <!--          />-->
-      <!--        </v-card>-->
-      <!--      </v-col>-->
-    </v-row>
-
-    <v-row>
-      <v-col>
-        <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col>
-              <p class="text-h4">{{ translation.threat_info }}</p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col> 排行</v-col>
-            <v-col> 图示</v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col>
-        <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col>
-              <p class="text-h4">{{ translation.latest_vul }}</p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col> 排行</v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-      <v-col>
-        <v-card class="pa-6" outlined raised>
-          <v-row>
-            <v-col>
-              <p class="text-h4">{{ translation.latest_exploit }}</p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col> 列表</v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-col>
-        <div id="2d-graph"></div>
       </v-col>
     </v-row>
   </v-container>
@@ -174,7 +23,6 @@ import StatsGraph from "@/components/StatsGraph";
 
 export default {
   name: "Dashboard",
-  components: { StatsGraph, EntryList },
   data: () => ({
     assetChartToggle: 0,
     showAssetFamily: true,
@@ -186,9 +34,6 @@ export default {
       graphStatsOrder: (state) => state.graphStatsOrder,
       graphData: (state) => state.graphData,
       overviewStats: (state) => state.graphStats,
-      // vulStats: (state) => state.graphStats.vul,
-      // assetStats: (state) => state.graphStats.asset,
-      // exploitStats: (state) => state.graphStats.exploit,
     }),
   },
   methods: {
