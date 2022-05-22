@@ -124,7 +124,7 @@
 
 本系统作为自由软件\cite{libre_software}发布，使用 GPLv3\cite{gpl_v3}协议授权。
 
-\chapter{技术选型分析}
+\chapter{相关技术介绍}
 
 根据系统开发目标，可将系统层次结构从信息处理逻辑上分为三个层次：用于持久化存储信息的持久化层，用于对信息进行采集、处理、传输的逻辑层，用于面向用户展示信息的表示层；从功能上分为五个子系统：数据采集子系统、知识图谱构建子系统、持久化子系统、后端服务子系统、前端服务子系统。
 
@@ -150,6 +150,26 @@ Pandas\footnote{https://pandas.pydata.org/} 是适用于 Python 语言的数据�
 
 采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。实体构建与关系生成技术将在章节 \ref{知识图谱构建子系统} \nameref{知识图谱构建子系统}展开。
 
+\subsection{知识图谱概念}
+
+近年来，使用知识图谱表达人类知识结构受到了学术界与工业界的极大关注。知识图谱是事实、实体的构成、关系和语义的结构化表达，是一种用图表示的数据结构。通过存储实体结点与结点之间的关系，旨在积累并表达现实世界的知识。\cite{ji_survey_2022}
+
+知识图谱的图结点代表我们所研究的实体，实体可以是现实世界的对象或抽象的概念。实体结点之间的边代表实体之间的关系，以及实体的语义描述，它们的关系具有类型和明确定义的属性。\cite{ji_survey_2022}用于存储知识图谱数据的图遵从基于图结构的数据模型，如有向的边标记图或属性图。\cite{hogan_knowledge_2022}
+
+通常以三元组的形式表达知识图谱结构，即
+$$G=(Entity_{head}, Relation, Entity_{tail})$$
+$Entity_{head}$为三元组$G$的头实体，是关系的起点。$Entity_{tail}$为三元组$G$的尾实体，是关系的终点。$Relation$则表示$Entity_{head}$到$Entity_{tail}$的语义化关系。\cite{hogan_knowledge_2022}
+
+知识图谱在信息检索中的应用价值主要在于，它能通过推理实现概念检索，以图形化的方式，向用户展示经过分类整理的结构化知识，从而使人从人工筛选、过滤数据寻找答案的模式中解放出来。在漏洞数据库的基础上，构建漏洞知识图谱，挖掘互联网信息安全漏洞内在特性、关联关系等价值，有助于多维度、全方位地理解安全漏洞关系。
+
+\subsection{知识图谱构建过程}
+
+知识图谱主要包含开放知识图谱和领域知识图谱。开放知识图谱如 Wikipedia、Freebase、DBpedia 等，往往采用自底向上方法构建。而互联网信息安全漏洞知识图谱属于领域知识图谱，适宜采用自顶向下构建方法，即通过人工整理出领域知识图谱的实体及关系模型图，进行实体和关系的抽取与知识图谱的构建。在安全漏洞领域中，预先定义的实体与关系模型能极大提高知识图谱的构建质量及应用效率。\cite{zhang_survey_2021}
+
+实体抽取：又称命名实体识别（Named Entity Recognition, NER），主要分为基于规则的方法、基于传统机器学习的方法、基于深度学习的方法\cite{zhou_survey_2020}，后两者主要用于解决从自然语言文本中抽取未预定义格式信息的问题。本项目相关安全漏洞领域实体具有明确名称与格式，适宜采用基于规则的方法提取。未来系统扩展如博客、新闻等小部分自然语言数据源，可采用基于深度学习的方法如 CNN-Bi-LSTM-CRF 等模型进行命名实体识别。
+
+关系抽取（Relationship Extraction, RE）：主要分为基于传统规则和模板的方法、基于传统机器学习的方法、基于深度学习的方法\cite{zhou_survey_2020}。安全漏洞领域实体如漏洞、资产、利用等类别较少且具备明确语义关系，因此采用基于传统规则的关系抽取方法。
+
 \subsection{Ray}
 
 Ray\footnote{https://docs.ray.io/en/latest/} 是一个开源的通用分布式计算框架，由加州大学伯克利分校的 RISE 实验室开发，为构建分布式应用提供了一个简单、通用的 API。Ray 提供了运行机器学习工作流的 Ray ML 工具箱、运行分布式应用的 Ray Core 核心框架、部署大规模工作负载的 Ray Cluster 集群等，具有通用的分布式计算抽象以及优秀的性能。
@@ -166,7 +186,7 @@ Ray\footnote{https://docs.ray.io/en/latest/} 是一个开源的通用分布式�
 
 MongoDB\footnote{https://www.mongodb.com/} 是一个 C++ 语言编写的基于分布式文件存储的开源文档型数据库系统，是最受欢迎的 NoSQL 数据库。MongoDB 基于 JSON/BSON 格式的文档存储，相较传统 SQL 数据库可以表示灵活的数据结构；具备动态 DDL 能力、没有强 Schema 约束的特性使其支持开发者进行快速迭代；提供基于内存的快速数据查询，实现高并发计算性能；提供数据分片能力，分布式扩展性强。
 
-本项目需求从异构数据源采集互联网信息安全漏洞数据，导致数据格式繁多，在项目初期规定数据锁采用的 Schema 格式将大幅增加数据转换工作量，并不现实。因此，传统 SQL 关系型数据库并不适合本项目的开发需求。而 MongoDB 提供面向文档的 JSON 存储，适配互联网爬虫数据采集需求。同时，JSON 文件具备良好的序列化能力，且与本项目后端服务子系统 RESTful API 所需的 Application/JSON Response 相匹配。更进一步地，MongoDB 具有优秀的分布式能力。综上原因，采用 MongoDB 作为存储知识图谱所用原始数据的数据库。
+本项目需求从异构数据源采集互联网信息安全漏洞数据，导致数据格式繁多，在项目初期规定数据所采用的 Schema 格式将大幅增加数据转换工作量，并不现实。因此，传统 SQL 关系型数据库并不适合本项目的开发需求。而 MongoDB 提供面向文档的 JSON 存储，适配互联网爬虫数据采集需求。同时，JSON 文件具备良好的序列化能力，且与本项目后端服务子系统 RESTful API 所需的 Application/JSON Response 相匹配。更进一步地，MongoDB 具有优秀的分布式能力。综上原因，采用 MongoDB 作为存储知识图谱所用原始数据的数据库。
 
 \subsection{Neo4j}
 
@@ -221,8 +241,12 @@ Apache ECharts\footnote{https://echarts.apache.org/en/index.html}（下称 EChar
 \section{外部数据流分析}
 
 \begin{itemize}
-	\item 系统输入：来自多种数据源的漏洞相关异构信息数据，包括 html 文件、csv 文件、json 文件、xml 文件等。
-	\item 系统输出：以文本、统计表、统计图、交互式可视化图等形式呈现的知识图谱信息。
+	\item 系统输入：来自多种数据源的漏洞相关异构信息数据，包括 HTML 文件、CSV 文件、JSON 文件、XML 文件等。
+	\item 系统输出：
+	      \begin{itemize}
+		      \item 以文本、统计表、统计图、交互式可视化图等形式呈现的知识图谱信息。
+		      \item 系统自身运行状态等统计信息。
+	      \end{itemize}
 \end{itemize}
 
 \section{功能性需求分析}
@@ -231,11 +255,11 @@ Apache ECharts\footnote{https://echarts.apache.org/en/index.html}（下称 EChar
 
 本系统需要构建互联网信息安全漏洞相关的知识图谱，为此需要一定的数据源提供整个系统的输入。由于安全感知态势千变万化、CVE 漏洞数据时刻更新，本系统需要实现自动化数据采集功能，向数据库中动态添加数据，而非将现有数据一次性导入。调研筛选出待爬取的网站有：
 \begin{itemize}
-	\item cvedetails.com，一个以表格形式简单聚合 cve 漏洞信息的网站。
-	\item cve.mitre.org，一个官方发布 cve 漏洞命名的网站。
-	\item cpe.mitre.org，一个官方发布 cpe 资产信息的网站。
-	\item nvd.nist.gov，一个发布 cve 详细风险评估及受影响 cpe 资产统计的数据库。
-	\item exploit-db.com，一个提供漏洞利用代码的数据库。
+	\item cvedetails.com，一个以表格形式简单聚合 CVE 漏洞信息的网站；
+	\item cve.mitre.org，一个官方发布 CVE 漏洞命名的网站；
+	\item cpe.mitre.org，一个官方发布 CPE 资产信息的网站；
+	\item nvd.nist.gov，一个发布 CVE 详细风险评估及受影响 CPE 资产统计的数据库；
+	\item exploit-db.com，一个提供漏洞利用代码的数据库；
 \end{itemize}
 
 \subsection{漏洞数据处理}
@@ -243,12 +267,6 @@ Apache ECharts\footnote{https://echarts.apache.org/en/index.html}（下称 EChar
 数据采集得到的输入数据不满足构建漏洞知识图谱所需数据结构或模式。例如：cvedetails.com 采集到的数据为 HTML 文档，而其中有效信息分散在 HTML DOM 树中；nvd.nist.gov 提供官方 JSON API 接口，采集得到的数据为 JSON 格式，但包含版本控制数据等与漏洞本身无关的信息；在 cve.mitre.org 得到的数据为独立 csv 文件，等。因此需要实现从采集到的数据转化为知识图谱数据的处理过程。
 
 \subsection{知识图谱构建}
-
-知识图谱是一种用图表示的数据结构，旨在积累并表达现实世界的知识。知识图谱的图结点代表我们所研究的实体，结点之间的边代表实体之间的关系。用于存储知识图谱数据的图遵从基于图结构的数据模型，如有向的边标记图或属性图。\cite{hogan_knowledge_2022}
-
-知识图谱的一种通用表示形式是三元组形式，即
-$$G=(Entity_{head}, Relation, Entity_{tail})$$
-$Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$的尾实体，$Relation$则表示$Entity_{head}$到$Entity_{tail}$的关系。
 
 \subsubsection{实体生成}
 
@@ -260,7 +278,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 在有向边标记知识图谱中的关系通常只具有一些简洁的标签（$label$），代表$head$结点是$tail$结点的$label$。\cite{hogan_knowledge_2022}通过这种方式，可以将复杂的关系拆分成若干串简单关系链组成的网络。
 
-对于已有的实体结点，需要为结点之间添加关系，以反映它们在现实世界中的联系。这一步骤既可以在实体生成时执行一个多次迭代的算法计算节点之间的关系，也可以在所有实体生成完毕后按照某一索引（在此情况下，是 cve id）对结点进行遍历生成关系。
+对于已有的实体结点，需要为结点之间添加关系，以反映它们在现实世界中的联系。这一步骤既可以在实体生成时执行一个多次迭代的算法计算节点之间的关系，也可以在所有实体生成完毕后按照某一索引（在此情况下，是 cve{\_}id）对结点进行遍历生成关系。
 
 \subsubsection{关系融合}
 
@@ -284,7 +302,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 \subsection{日志功能}
 
-缺乏日志功能将无法跟踪系统运行轨迹，给运维带来困难。记录清晰定位准确的日志系统有效提升开发效率，对于较复杂系统而言是不可或缺的需求。
+缺乏日志功能将无法跟踪系统运行轨迹，给运维带来困难。记录清晰定位准确的日志系统有效提升开发效率，对于较复杂系统而言是不可或缺的需求。此外，日志功能可以提供系统运行状态有效信息，后端通过获取日志中的信息返回给前端，可以使用户获知当前系统运行状态。
 
 \section{非功能性需求分析}
 
@@ -298,26 +316,34 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 \section{用户视角的需求分析}
 
+用户分为普通用户与管理员两类。由于本漏洞知识图谱数据为自动采集权威数据源生成，手动修改数据意义不显著。管理员主要特权为可以通过前端界面，控制后端服务子系统的 APScheduler 调度服务运行状态，从而实现手动开始或停止数据采集子系统、知识图谱构建子系统的运行。
+
 \begin{itemize}
-	\item 查看控制台
+	\item 查看概览视图
 	      \begin{itemize}
 		      \item 查看图谱统计数据
 		      \item 查看图谱统计图表
+		      \item 利用代码执行类型百分比统计
+		      \item 按时间排序的最近漏洞信息、趋势统计
 	      \end{itemize}
-	\item 查看知识图谱
+	\item 查看可视化视图
 	      \begin{itemize}
 		      \item 拖拽浏览图谱
-		      \item 点击结点或关系查看详情
+		      \item 点击结点或关系，弹出面板查看详情
 	      \end{itemize}
-	\item 搜索实体
+	\item 搜索实体并查看知识图谱
 	      \begin{itemize}
 		      \item 搜索漏洞
 		      \item 搜索资产
 		      \item 搜索代码利用
 		      \item 搜索关系
 	      \end{itemize}
-	\item 利用代码执行类型百分比统计；
-	\item 按时间排序的最近漏洞信息、趋势统计；
+	\item 查看控制台视图
+	      \begin{itemize}
+		      \item 查看系统运行状态
+		      \item 控制系统运行状态（仅管理员）
+	      \end{itemize}
+	\item 查看关于视图：获取系统说明、使用指南信息
 \end{itemize}
 
 根据上述需求，图\ref{CyKG_Usecase}即为本系统用户视角需求分析的用例图。
@@ -346,13 +372,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 	\item 知识图谱构建子系统的加工细化为：
 	      \begin{enumerate}
 		      \item 实体生成：通过基于规则的或基于深度学习模型的方法，对前述爬虫得到的原始数据进行命名实体识别，提取所需实体，及其相关属性。从 nvd.nist.gov 获取的漏洞数据区块提取 cve 条目的 cve id 与危险等级等属性、从资产区块提取受影响资产的 cpe23uri 匹配属性、从 exploit-db.com 爬取的页面中提取漏洞利用代码、代码类型、影响平台等属性。
-		      \item 关系生成：为实体结点之间添加关系，从若干孤立结点形成网状结构。本加工步骤利用前述不同实体类别隐含的逻辑关系进行关系生成。如：
-		            \begin{itemize}
-			            \item 资产$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产
-			            \item 资产$-[$是子级$]->$资产家族，资产家族$-[$是父级$]->$资产
-			            \item 利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码
-			            \item 利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码
-		            \end{itemize}
+		      \item 关系生成：为实体结点之间添加关系，从若干孤立结点形成网状结构。本加工步骤利用前述不同实体类别隐含的逻辑关系进行关系生成。
 		      \item 关系融合：消除具有二义性的实体结点与关系边，仅需留有接口。
 	      \end{enumerate}
 	\item 后端服务子系统的加工细化为：
@@ -372,7 +392,7 @@ $Entity_{head}$为三元组$G$中的头实体，$Entity_{tail}$为三元组$G$�
 
 系统层次结构图如图\ref{CyKG_StructureChart}所示。系统可以分为三层：表示层、逻辑层、持久化层。表示层包含前端用户界面；持久化层包含 Neo4j 与 MongoDB 两个数据库；逻辑层包含后端服务、知识图谱构建服务、数据采集服务。借鉴微服务思想，逻辑层之间各服务通过持久化层传递数据，减少服务间耦合度。
 
-\buptfigure[width=\textwidth]{pictures/CyKG_StructureChart-中文.png}{系统层次结构设计图}{CyKG_StructureChart}
+\buptfigure[width=0.8\textwidth]{pictures/CyKG_StructureChart-中文.png}{系统层次结构设计图}{CyKG_StructureChart}
 
 \subsubsection{表示层}
 
@@ -420,9 +440,54 @@ Neo4j 数据库在系统中主要发挥互联网安全信息漏洞知识图谱�
 
 主要实现知识图谱构建服务，包含实体生成模块、基于规则的关系生成模块、关系融合模块。
 
-实体生成模块目前包含基于规则的实体生成子模块，未来可引入基于深度学习模型的自然语言实体生成子模块。实体生成模块从原始数据中提取资产类型、属性等信息，调用持久化子系统的数据库控制对象将结点存入 Neo4j 数据库。具体而言，分为漏洞结点生成、资产结点生成、利用代码结点生成三部分，分别生成漏洞结点、资产结点与资产家族结点、利用代码结点。
+\subsubsection{本体定义}
 
-基于规则的关系生成模块利用不同类型实体间隐含的联系，在 Neo4j 数据库中匹配对应结点，在两个结点间生成对应的边，并为其添加属性。因知识图谱中预计将有一百万个结点，使用最细粒度将每个漏洞结点与每个资产结点连接将产生超过一亿条边，这对于本项目的性能要求而言是不现实的。因此，关系生成模块会使用前述步骤生成的资产家族结点，在漏洞结点与漏洞结点所包含的受影响资产列表中的每条正则匹配项所匹配到的资产对应的资产家族之间添加关系。为了维持该关系指向资产的语义准确，将匹配到的资产列表作为属性添加到该关系边之上。
+采用自顶向下方法构建信息安全漏洞领域知识图谱，首先需定义信息安全漏洞本体。与信息安全漏洞相关概念及术语如下：
+\begin{itemize}
+	\item Vulnerability：漏洞或脆弱性，指计算机信息系统在需求、设计、实现、配置等方面的缺陷，漏洞被利用会导致计算机信息系统在数据的保密性、完整性、可用性、访问控制等方面面临威胁。\cite{cnnvd_vul_category}
+	\item Asset：资产，信息技术系统、软甲和软件包等产品统称为资产。CPE 项目列举官方资产列表。
+	\item Exploit：对漏洞的利用代码，通常是程序片段，提供对漏洞利用的概念验证。
+	\item CVE：公共漏洞和暴露，提供一个命名字典，为广泛认同的信息安全漏洞或已经暴露的弱点给出一个公共名称，收集各种信息安全弱点及漏洞并给予编号以便于公众查阅。\cite{cve_intro}
+	\item CPE：通用平台枚举，是信息技术系统、软件和软件包的结构化命名方案。基于统一资源标识符（URI）的通用语法，CPE 提供一个官方 CPE 产品字典，枚举商定的官方 CPE 名称列表。\cite{cpe_intro}
+	\item CWE：通用弱点枚举，是一个社区开发的具有安全影响的常见软硬件弱点类型列表。标准化分类列举描述软硬件实现、代码、设计或架构中的缺陷、故障、漏洞或其他错误。\cite{cwe_intro}
+	\item CVSS：通用漏洞评分系统，提供一种评分方法来捕捉漏洞的主要特征并反映其严重性。评分可以转换为定性的表示（高、中、低等）。\cite{cvss_intro}
+\end{itemize}
+
+图\ref{pictures/CyKG_Entity-Ontology.png}所示为信息安全漏洞本体，给出了实体定义及关系定义。分为  漏洞 Vulnerability、资产 Asset、利用 Exploit 三类实体，图中给出每类实体作为索引的属性域，该属性具有唯一性。 三类实体之间利用不同类型实体间隐含的联系定义关系边连接，详见下述章节 \ref{实体生成} \nameref{实体生成}与 \ref{关系生成} \nameref{关系生成}。
+
+\buptfigure[width=0.8\textwidth]{pictures/CyKG_Entity-Ontology.png}{信息安全漏洞本体定义}{pictures/CyKG_Entity-Ontology.png}
+
+\subsubsection{实体生成\label{实体生成}}
+
+目前包含基于规则的实体生成子模块，未来可引入基于深度学习模型的自然语言实体生成子模块。基于规则的实体生成模块应用自顶向下人工构建的互联网信息安全漏洞本体规则，从结构化数据抽取实体及其属性。前述数据采集子系统获得的结构化数据，经处理后包含根据规则定义的属性域，如下：
+\begin{itemize}
+	\item 漏洞：\lstinline|cve_id|
+	\item 资产：\lstinline|cpe23uri|
+	\item 利用代码：\lstinline|edb_id|
+\end{itemize}
+
+生成方法根据属性域，区分实体类型，调用相应方法从文档提取属性，调用持久化子系统的数据库控制对象将结点存入 Neo4j 数据库。来自不同数据源的实体存储在 MongoDB 不同集合中，如来自 NVD JSON API 的数据存储于 \lstinline|nvd_json| 集合中。针对每个数据库集合，在 Python 中实现一个实体生成方法。如 \lstinline|nvd_json| 集合对应方法为遍历数据库存储的文档，对于每个文档，提取其 \lstinline|cve_id, cwe_id, desc, impact{}, references[], publish_date, last_update_date, version, timestamp| 作为 Vulnerability 实体的属性，提取其 \lstinline|cpe23uri| 作为 Asset 实体的属性。对于仅包含资产信息的 \lstinline|cpe| 集合，将每个文档生成一个 Asset 实体，并与已经存在的 \lstinline|cpe23uri| 相同的实体融合。
+
+\subsubsection{关系生成\label{关系生成}}
+
+基于规则的关系生成模块根据信息安全漏洞本体所表示关系，在 Neo4j 数据库中匹配对应结点，在两个结点间生成对应的边，并为其添加属性：
+\begin{itemize}
+	\item 资产$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产
+	\item 利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码
+	\item 漏洞$-[$被利用$]->$漏洞代码，利用代码$-[$利用$]->$漏洞
+\end{itemize}
+
+因知识图谱中预计将有一百万个结点，使用最细粒度将每个漏洞结点与每个资产结点连接将产生超过一亿条边，这对于本项目的性能要求而言是不现实的。因此，关系生成模块会使用前述步骤生成的资产家族结点，在漏洞结点与漏洞结点所包含的受影响资产列表中的每条正则匹配项所匹配到的资产对应的资产家族之间添加关系。为了维持该关系指向资产的语义准确，将匹配到的资产列表作为属性添加到该关系边之上：
+\begin{itemize}
+	\item 资产家族$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产家族
+	\item 资产$-[$是子级$]->$资产家族，资产家族$-[$是父级$]->$资产
+	\item 利用代码$-[$攻击$]->$资产家族，资产家族$-[$被攻击$]->$利用代码
+	\item 利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码
+\end{itemize}
+
+如此可将构建图谱所需关系从亿级降低到百万级，在不损失语义的情况下有效提高查询效率，减小数据库体积。
+
+\subsubsection{关系融合}
 
 关系融合模块作为适配使用深度学习模型进行命名实体识别结点生成与关系抽取方案的模块，当前仅在系统数据加工管线中留有接口，以备未来扩展需要。当前系统的结构化数据实体与关系生成已经实现实体结点和关系的消除二义性，因此无需实现关系融合模块。
 
@@ -440,7 +505,15 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 前端子系统负责管理用户运行时相关数据、通过 UI 向用户展示信息。使用 Vue.js 的 MVVM 架构，主要包含视图与模型两个组成部分。
 
-视图包含控制台、可视化、搜索、关于四部分。控制台视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。可视化视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。搜索视图只是用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。关于视图展示本系统相关信息及用户指南。
+视图包含概览、可视化、搜索、控制台、关于五部分。
+
+\begin{itemize}
+	\item 概览视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。
+	\item 可视化视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。
+	\item 搜索视图支持用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。
+	\item 控制台视图向用户展示当前系统运行状态，如数据更新日期、当前系统正在运行的任务、任务进度等。管理员用户可以手动控制各个任务的开始或停止。
+	\item 关于视图展示本系统介绍信息及用户指南。
+\end{itemize}
 
 模型主要包含 Vuex 数据控制器、Axios 网络控制器两部分。Vuex 数据控制器统一管理前端子系统的数据与状态，是前端子系统的“Single Source of Truth”，为视图的响应式显示提供数据源，还包含在前端对数据进行简单处理功能。Axios 网络控制器封装一个 httpCliet 对象，以及若干与后端通信的方法。Vuex 数据控制器可以调用 Axios 网络控制器，从后端获取数据，更新 Vuex Store 中的状态。
 
@@ -465,7 +538,7 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 \subsection{系统接口设计}
 
-图\ref{api_table}展示了系统接口设计。
+表\ref{api_table}展示了系统接口设计。
 \begin{bupttable}{系统接口设计}{api_table}
 	\begin{tabularx}{\textwidth}{llX}
 		\toprule
@@ -817,6 +890,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	.4 tooltipConfig.js\DTcomment{ECharts tooltip 格式化工具}.
 	.3 views\DTcomment{视图目录}.
 	.4 Welcome.vue\DTcomment{登录首屏欢迎界面视图}.
+	.4 Overview.vue\DTcomment{概览视图}.
 	.4 Dashboard.vue\DTcomment{控制台视图}.
 	.4 Visualization.vue\DTcomment{可视化视图}.
 	.4 Search.vue\DTcomment{搜索视图}.
@@ -832,11 +906,11 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	.2 browserslistrc\DTcomment{支持的浏览器配置文件}.
 }
 
-\subsection{控制台视图实现\label{控制台视图实现}}
+\subsection{概览视图实现\label{概览视图实现}}
 
-控制台视图采用 Flex 流式卡片布局，通过设置 CSS 样式断点，每个卡片根据当前设备屏幕分辨率自动调节宽度。例如，宽度为 \lstinline|lg| 时，界面布局为每行 3 列卡片。宽度为 \lstinline|md| 时，界面布局为每行 2 列卡片。宽度为 \lstinline|sm| 时，为每行 1 列卡片。
+概览视图采用 Flex 流式卡片布局，通过设置 CSS 样式断点，每个卡片根据当前设备屏幕分辨率自动调节宽度。例如，宽度为 \lstinline|lg| 时，界面布局为每行 3 列卡片。宽度为 \lstinline|md| 时，界面布局为每行 2 列卡片。宽度为 \lstinline|sm| 时，为每行 1 列卡片。
 
-卡片中使用 \lstinline|EntryList| 组件显示知识图谱统计信息，辅以 \lstinline|StatsGraph| 组件显示可视化扇形图。图示见章节 \ref{控制台视图测试} \nameref{控制台视图测试}。
+卡片中使用 \lstinline|EntryList| 组件显示知识图谱统计信息，辅以 \lstinline|StatsGraph| 组件显示可视化扇形图。图示见章节 \ref{概览视图测试} \nameref{概览视图测试}。
 
 \lstinline|EntryList| 与 \lstinline|StatsGraph| 使用 Vuex 的 \lstinline|mapState()| 计算属性作为组件属性，组件内部为 \lstinline|props| 添加 \lstinline|watch| 侦听器，实现数据响应式动态更新。
 
@@ -945,13 +1019,13 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \section{前端子系统测试}
 
-\subsection{控制台视图测试\label{控制台视图测试}}
+\subsection{概览视图测试\label{概览视图测试}}
 
-图\ref{pictures/Vis_Dashboard_Info.png}所示为控制台概览。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载控制台界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
+图\ref{pictures/Vis_Dashboard_Info.png}所示为概览视图。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载概览界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
 
-\buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Info.png}{控制台视图预览}{pictures/Vis_Dashboard_Info.png}
+\buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Info.png}{概览视图预览}{pictures/Vis_Dashboard_Info.png}
 
-\buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{控制台视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
+\buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{概览视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
 
 \subsection{可视化视图测试\label{可视化视图测试}}
 
