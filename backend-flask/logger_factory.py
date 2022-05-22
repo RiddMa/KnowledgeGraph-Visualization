@@ -3,6 +3,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from vuln_kg.util import str_percent
+
 
 def init_log_dir(folder_name: str = ''):
     """
@@ -139,6 +141,26 @@ def mylogger_p(name, log_folder=None) -> logging.Logger:
         loggers[name] = setup_logger(name, log_folder=global_log_dir, lvl_file=logging.INFO, lvl_stdout=logging.INFO)
     loggers['root'].debug('Using created logger')  # NOTE THIS IS DEBUG LEVEL!
     return loggers[name]
+
+
+def log_vul_cnt(skip, _limit, vul_cnt):
+    return f'{str_percent(vul_cnt, _limit)}.skip({skip}).limit({_limit}) processed {vul_cnt} vulnerabilities'
+
+
+def rel_vul_str(rel_cnt, cve_id):
+    return f'Created {rel_cnt} rels for vul {cve_id}'
+
+
+def ray_timer_str(func_name, skip, _limit, start):
+    return f'{func_name}.skip({skip}) with limit {_limit} runtime = {datetime.now() - start}'
+
+
+def rel_exploit_str(rel_cnt, edb_id):
+    return f'Created {rel_cnt} rels for exploit {edb_id}'
+
+
+def log_exploit_cnt(skip, _limit, e_cnt):
+    return f'{str_percent(e_cnt, _limit)}.skip({skip}).limit({_limit}) processed {e_cnt} exploits'
 
 
 if __name__ == "__main__":

@@ -1,0 +1,10 @@
+.content-container {
+  max-width: 1024px;
+  min-height: 95vh;
+  margin-bottom: 48px;
+}
+
+.content-container-wide {
+  min-height: 95vh;
+  margin-bottom: 48px;
+}

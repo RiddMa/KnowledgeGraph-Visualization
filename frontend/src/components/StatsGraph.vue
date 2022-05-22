@@ -1,5 +1,5 @@
 <template>
-  <div :id="graphId" class="vis-graph"></div>
+  <div :id="graphId" class="vis-graph" v-resize="onResize"></div>
 </template>
 
 <script>
@@ -10,7 +10,11 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import { mapState } from "vuex";
 import localeCfg from "@/utils/langZH.ts";
-import { fullVizFormatter, kgStatsFormatter } from "@/utils/tooltipConfig";
+import {
+  fullVizFormatter,
+  kgStatsFormatter,
+} from "@/utils/eChartsTooltipConfig";
+import _ from "lodash";
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -97,9 +101,20 @@ export default {
         this.graph[this.graphId].setOption(option);
       }
     },
+    onResize() {
+      // console.log(window.innerWidth, window.innerHeight);
+      if(this.graph[this.graphId]){
+        this.graph[this.graphId].resize();
+      }
+    },
   },
   mounted() {
     this.drawStatsGraph();
+    window.addEventListener("resize", _.debounce(this.onResize, 300));
+  },
+  beforeDestroy() {
+    this.graph[this.graphId].dispose();
+    window.removeEventListener("resize", _.debounce(this.onResize, 300));
   },
   watch: {
     nodes: function () {
