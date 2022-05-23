@@ -63,5 +63,15 @@ if __name__ == '__main__':
     # a = 'cpe:2.3:a:cisco:unified_computing_system:->CVE-2015-6435'.split('->')
     # b = a[1] + '->' + a[0]
     # pass
-
-    neo.get_rel_cql_vaf('CVE-2014-1859')
+    a = {'1': 1}
+    b = {'2': 2}
+    c = {'3': 3}
+    d = {'3': 3}
+    a = {**a, **b, **c, **d}
+    print(a)
+    b = {}
+    c = {}
+    d = {}
+    a = {**a, **b, **c, **d}
+    print(a)
+    # neo.get_rel_cql_vaf('CVE-2014-1859')

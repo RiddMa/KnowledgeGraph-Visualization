@@ -6,6 +6,7 @@ from flask import Blueprint
 
 from db import neo, mg
 from web.data_converter import assemble_graph_data, _retrieve_graph_stats, _retrieve_graph_w_limit
+from web.search_provider import basic_neo_search
 
 bp = Blueprint('graph', __name__, url_prefix='/api/graph')
 
@@ -46,20 +47,4 @@ def test(limit):
 
 @bp.route('/search/<keyword>')
 def search_graph(keyword):
-    def search_cve(tx):
-        cql1 = "match (asset:Asset)-[has]->(vuln:Vulnerability{cve_id:$keyword'}) return asset,has,vuln"
-        # cql2 = "match (vuln:Vulnerability{cve_id:'" + keyword + "'})-[cause]->(exploit:Attack) return exploit,cause,vuln"
-        result = tx.run(cql1,keyword=keyword).data()
-        return assemble_graph_data(result)
-
-    def search_cpe(tx):
-        pass
-
-
-    if keyword.startswith('CVE'):
-        res = neo.get_session().read_transaction(search_cve, keyword)
-    elif keyword.startswith('cpe'):
-        res = neo.get_session().read_transaction(search_cve, keyword)
-    else:
-        res = ''
-    return res
+    return basic_neo_search(keyword)
