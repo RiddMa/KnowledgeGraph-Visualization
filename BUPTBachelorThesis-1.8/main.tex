@@ -767,7 +767,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \lstinline|init_vul_ray(skip, _limit)| 方法用于生成漏洞实体结点。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。伪代码：
 \begin{lstlisting}[style=lgeneral]
-	cursor = mongo.get_nvd() # 获取 MongoDB 数据库查询指针
+	cursor = mongo.get_nvd().skip(skip).limit(_limit) # 获取 MongoDB 数据库查询指针
 	for doc in cursor:
 		try:
 			doc = split_properties(doc, api_ver=doc['api_ver']) # 根据 API 版本，提取属性
@@ -797,7 +797,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 该方法与 \lstinline|init_asset_ray()| 方法为串行依赖关系，需要在其之后执行。调用 \lstinline|NodeMatcher().match()| 方法，从知识图谱中匹配全部资产结点，返回一个迭代指针对象。迭代遍历全部结点，对 cpe23uri 资产类型、制造商、产品名称都相同的节点，认为它们同属一个家族。为每个家族不重复地创建一个资产家族实体结点，存入知识图谱。伪代码：
 \begin{lstlisting}[style=lgeneral]
-	cursor = neo.match('Asset') # 查询 Neo4j 所有资产结点，返回迭代指针
+	cursor = neo.match('Asset').skip(skip).limit(_limit) # 查询 Neo4j 所有资产结点，返回迭代指针
 	for asset_node in cursor:
 		try:
 			_neo.add_asset_family_node(asset_node['cpe23uri']) # 根据资产结点的 cpe23uri 向图谱不重复地添加资产家族
@@ -818,7 +818,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 \end{lstlisting}
 几个方法。
 
-\subsubsection{init{\_}rels() 实现}
+\subsubsection{关系生成的实现 init{\_}rels()}
 
 \lstinline|init_rels(vul_num, exploit_num)| 方法接受可选参数漏洞数量、利用代码数量，若参数不为零，则将数据根据并行度参数分割并行处理，使用 \lstinline|ray.get()| 方法等待并行处理结束。示例代码如下：
 \begin{lstlisting}[style=lgeneral]
@@ -834,25 +834,56 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 若不传入漏洞数量等参数，默认使用单线程串行处理。
 
-\subsubsection{create{\_}rel{\_}vaf{\_}ray() 实现}
+\subsubsection{漏洞 - 资产家族关系生成的实现 create{\_}rel{\_}vaf{\_}ray()\label{subsubsec:rel_vaf}}
 
-\lstinline|vaf| 表示 Vulnerability 和 AssetFamily。\lstinline|create_rel_vaf_ray(skip, _limit)| 方法用于生成漏洞实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+\lstinline|vaf| 表示 Vulnerability 和 AssetFamily。\lstinline|create_rel_vaf_ray(skip, _limit)| 方法用于生成漏洞实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。伪代码：
+\begin{lstlisting}[style=lgeneral]
+	cursor = neo.match("Vulnerability").skip(skip).limit(_limit) # 查询 Neo4j 所有资产结点，返回迭代指针
+	for vuln_node in cursor:
+		rel_cnt = 0 # 匹配资产的计数器
+		props = json.loads(vuln_node['props']) # 读取序列化存储的属性域
+		for op_dict in props['assets']:
+			try:
+				if op_dict['operator'] == 'OR':
+					for match in op_dict['cpe_match']:
+						if match['vulnerable']:
+							rel_cnt += neo.add_rel_cql_vaf(cve_id=vuln_node['cve_id'], cpe23uri=match['cpe23Uri']) # 为一条 cpe23uri 进行匹配，并记录匹配数量
+			except BaseException as e:
+				# 异常处理
+		neo.add_rel_cql_vaf_cnt(cve_id=vuln_node['cve_id']) # 为关系边增加资产计数器属性
+	neo.close_db() # 释放数据库连接
+\end{lstlisting}
 
 根据漏洞实体结点属性中存储的受影响资产正则匹配信息，若按照“对于每个正则表达式，匹配知识图谱中符合规则的资产实体结点，为漏洞实体结点与资产实体结点添加两条关系边”的最细粒度做法，知识图谱中的 120 万个结点将生成超过 1 亿条边，且全图正则匹配无法有效利用建立在属性域上的索引，本项目的性能需求是无法接受的。
 
-因此，采用“对于每个正则表达式，匹配知识图谱中符合规则的资产家族实体结点，为漏洞实体结点与资产家族实体结点添加两条关系边，并把真实受影响资产列表存储在关系边属性上”的方法，可以在不改变使用效果的前提下，有效降低构建图谱所需的边数。
+因此，采用“对于每个正则表达式，匹配知识图谱中符合规则的资产家族实体结点，为漏洞实体结点与资产家族实体结点添加两条关系边，并把真实受影响资产列表存储在关系边属性上”的方法，可以在不改变使用效果的前提下，将构建图谱所需的边数从亿级降低到百万级，提升运行效率、减小数据库体积。
 
 为了进一步加速匹配，把正则表达式中 \lstinline|.*| 之前的固定模式串切割成子串，使用该固定模式串向数据库进行 \lstinline|STARTS WITH| 查询，将返回的查询结果在 Python 中进行正则匹配进一步精确筛选。由于 Neo4j 数据库查询时支持 \lstinline|STARTS WITH| 子句使用属性域索引，采用此种方法查询，使得查询速度提高了 100 倍以上。
 
-\subsubsection{create{\_}rel{\_}afa{\_}ray() 实现}
+\subsubsection{资产家族 - 资产关系生成的实现 create{\_}rel{\_}afa{\_}ray()}
 
-\lstinline|afa| 表示 AssetFamily 和 Asset。\lstinline|create_rel_afa_ray(skip, _limit)| 方法用于生成资产实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+\lstinline|afa| 表示 AssetFamily 和 Asset。\lstinline|create_rel_afa_ray(skip, _limit)| 方法用于生成资产实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。伪代码与章节 \ref{subsubsec:rel_vaf} \nameref{subsubsec:rel_vaf} 类似。
 
 对于每个漏洞实体结点，遍历其受影响资产正则匹配表达式列表，对每个正则匹配表达式，通过寻找其前缀获得其属于的资产家族，调用持久化子系统数据库控制器对象的 \lstinline|add_rel_cql_afa()| 方法，为该资产结点和资产家族结点之间添加“资产家族结点是资产结点父级”、“资产结点是资产家族结点子级”两个关系。
 
-\subsubsection{create{\_}rel{\_}evaf{\_}ray() 实现}
+\subsubsection{利用 - 漏洞 - 资产家族关系生成的实现 create{\_}rel{\_}evaf{\_}ray()}
 
-\lstinline|evaf| 表示 Exploit 和 Vulnerability 和 AssetFamily。\lstinline|create_rel_evaf_ray()| 方法用于生成漏洞利用代码结点与漏洞实体结点之间的关系边，并且从这条关系与漏洞实体结点指向的受影响资产家族结点，推理出漏洞利用代码结点与资产家族结点之间的关系。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。
+\lstinline|evaf| 表示 Exploit 和 Vulnerability 和 AssetFamily。\lstinline|create_rel_evaf_ray()| 方法用于生成漏洞利用代码结点与漏洞实体结点之间的关系边，并且从这条关系与漏洞实体结点指向的受影响资产家族结点，推理出漏洞利用代码结点与资产家族结点之间的关系。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。伪代码：
+\begin{lstlisting}[style=lgeneral]
+	cursor = neo.match("Exploit").skip(skip).limit(_limit) # 查询 Neo4j 所有利用代码结点，返回迭代指针
+	for exploit_node in cursor:
+		cve_ids = exploit_node['cve_ids'] # 获得利用代码对应的 CVE 漏洞编号列表
+		r_cnt = 0 # 匹配资产的计数器
+		for cve_id_no in cve_ids:
+			cve_id = f'CVE-{cve_id_no}'
+			vuln_node = neo.get_node('Vulnerability', cve_id=cve_id).first() # 查找 cve_id 对应的漏洞实体结点
+			if vuln_node is not None:
+				r_cnt += neo.add_rel_cql_ev(edb_id=exploit_node['edb_id'], cve_id=cve_id) # 向图谱中加入利用 - 漏洞关系
+				cpe_list = neo.get_rel_cql_vaf(cve_id=cve_id) # 获取受影响资产列表
+				for rel in cpe_list: # 遍历受影响资产列表
+					r_cnt += neo.add_rel_cql_eaf(edb_id=exploit_node['edb_id'], cpe23uri=rel['target'], assets=rel['assets'], asset_cnt=rel['cnt']) # 向图谱中加入利用 - 资产家族关系
+	neo.close_db() # 释放数据库连接
+\end{lstlisting}
 
 遍历漏洞利用代码结点，对于带有 cve id 属性的结点，从图谱中查询对应 cve id 的漏洞实体结点。为漏洞利用结点与漏洞实体结点之间添加“漏洞利用利用漏洞”、“漏洞被漏洞利用利用”两个关系。再从漏洞实体结点出发，寻找所有受影响的资产家族结点。根据“漏洞影响资产家族”关系边上的属性，为漏洞利用结点与资产家族结点添加“漏洞利用针对资产家族”、“资产家族被漏洞利用针对”两个关系，属性继承自前述关系边属性。
 
@@ -905,34 +936,45 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \section{后端服务子系统实现}
 
-\subsection{create{\_}app.py 实现}
+\lstinline|create_app.py| 为创建 Flask App 实例的工厂函数\cite{factory_method_design_pattern}。主要包含创建 Flask 实例、挂载中间件、注册蓝图等步骤。
 
-创建 Flask App 实例的工厂函数\cite{factory_method_design_pattern}。主要包含创建 Flask 实例、挂载中间件、注册蓝图等步骤。
-
-\subsection{graph.py 实现}
+\subsection{知识图谱 API 实现 graph.py}
 
 知识图谱相关 API 的蓝图。向 Flask 注册 \lstinline|/api/graph/| 路径下的 API，并且实现这些 API 对应的功能。主要实现了以下方法：
 \begin{lstlisting}[style=lgeneral]
-	assemble_graph_data(assets=(), vuls=(), exploits=(), rels=()) # 生成绘图数据
+	_convert_node(entry, i, node_map) # 从知识图谱结点数据结构，转换为绘图数据结点数据结构
+	_convert_link(entry, i, rel_map) # 从知识图谱关系数据结构，转换为绘图数据关系数据结构
+	_retrieve_v_af(cve_id) # 查询漏洞 - 资产家族结点与关系
+	_retrieve_af_a(cpe23uri) # 查询资产家族 - 资产结点与关系
+	_retrieve_e_af(edb_id) # 查询利用 - 资产家族结点与关系
+	_retrieve_e_v(edb_id) # 查询利用 - 漏洞结点与关系
+	……等等
+	_label_to_id_field(label) # 通过字典映射，将标签字符串转换为索引属性域字符串
+	_get_symbol_size(_type, cnt) # 计算结点在可视化力引导图中显示的大小
+	_get_node_category(type_list) # 根据结点的标签列表，选出主要标签
+
 	retrieve_graph_stats() # 获取知识图谱统计数据
-	label_to_id_field(label) # 通过字典映射转换，将标签字符串转换为索引属性域字符串
-	get_symbol_size(_type, cnt) # 计算结点在可视化力引导图中显示的大小
-	get_node_category(type_list) # 根据结点的标签列表，选出主要标签
 	retrieve_graph(limit) # 获取<limit>个漏洞结点及与之相关的结点与关系绘图数据
 	search_graph(keyword) # 根据关键字搜索知识图谱
 \end{lstlisting}
 
-\subsubsection{/api/graph/ 实现}
+\subsubsection{知识图谱统计数据 API 实现 /api/graph/}
 
-获取知识图谱统计数据。调用持久化子系统的数据库控制器对象的 \lstinline|get_session( ).read_transaction( )| 方法，向数据库提交一个读事务。读事务 \lstinline|work(tx)| 中定义查询的 CQL 语句，并调用 transaction 对象的 \lstinline|tx.run()| 方法运行查询。查询获得漏洞数量、受影响资产类型及数量、漏洞利用代码数量及类型等信息。调用绘图数据生成方法，生成结果数据，返回给前端。
+获取知识图谱统计数据。调用持久化子系统的数据库控制器对象的 \lstinline|get_session().read_transaction()| 方法，向数据库提交一个读事务。读事务 \lstinline|work(tx)| 中定义查询的 CQL 语句，并调用 transaction 对象的 \lstinline|tx.run()| 方法运行查询。查询获得漏洞数量、受影响资产类型及数量、漏洞利用代码数量及类型等信息。调用绘图数据生成方法，生成结果数据，返回给前端。
 
-\subsubsection{/api/graph/<limit> 实现}
+\subsubsection{知识图谱可视化数据 API 实现 /api/graph/<limit>}
 
-获取<limit>个漏洞结点及与之相关的结点与关系绘图数据。为防止数据量过大，实际查询将取<limit>与 200 间的较小值。根据经验数据，返回结点和关系数量不超过一万个。调用绘图数据生成方法，获得各类节点及关系绘图数据，返回给前端。
+获取<limit>个漏洞结点及与之相关的结点与关系绘图数据。为防止数据量过大，实际查询将取<limit>与 200 间的较小值。根据经验数据，返回结点和关系数量不超过一万个。调用绘图数据生成方法，获得各类结点及关系绘图数据，返回给前端。
 
-\subsubsection{/api/graph/search/<keyword> 实现}
+需要返回的结点和关系有：漏洞结点、资产家族结点、资产结点、利用结点、漏洞 - 资产家族关系、漏洞 - 利用关系、资产 - 资产家族关系、漏洞 - 资产家族关系。由于长关系链可以拆解成三元组形式，因此对于任意查询，仅需要实现查询各种三元组的方法、将三元组融合的方法即可。
+
+\subsubsection{知识图谱搜索 API 实现 /api/graph/search/<keyword>}
 
 根据关键字搜索知识图谱。根据关键字类型，判断搜索内容属于漏洞、资产、利用代码或是关系。将搜索到的结点/关系及其相关联（关系路径长度为 1）的结点或关系返回，调用绘图数据生成方法获得绘图所需数据，返回给前端。
+
+\buptfigure[width=0.8\textwidth]{pictures/Impl_Backend.png}{知识图谱搜索 API 流程图}{pictures/Impl_Backend.png}
+
+\ref{pictures/Impl_Backend.png}采用模块化设计，
 
 \section{前端子系统}
 
