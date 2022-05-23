@@ -5,7 +5,7 @@
   >
     <v-row class="grow ma-0 pa-0">
       <v-col class="grow ma-0 pa-0">
-        <knowledge-graph></knowledge-graph>
+        <knowledge-graph :graph-id="graphId"></knowledge-graph>
       </v-col>
       <!--      <v-col v-if="visShowSideBar">-->
       <!--        -->
@@ -20,16 +20,21 @@ import { mapState } from "vuex";
 export default {
   name: "Visualization",
   components: { KnowledgeGraph },
-  data: () => ({}),
+  data: () => ({
+    graphId: "vis-graph",
+  }),
   computed: {
     ...mapState({}),
   },
-  mounted() {},
+  mounted() {
+    console.log("fetch");
+    this.$store.dispatch("fetchGraphData", {
+      name: this.graphId,
+      limit: 20,
+    });
+  },
 };
 </script>
 
-<style>
-.full-screen {
-  height: calc(100vh - 30px);
-}
-</style>
+<style src="../styles/base.css"></style>
+<style></style>

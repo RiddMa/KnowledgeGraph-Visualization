@@ -181,14 +181,11 @@ export default {
   }),
   computed: {
     ...mapState({
-      translation: (state) => state.translation,
-      graphStats: (state) => state.graphStats,
-      graphStatsOrder: (state) => state.graphStatsOrder,
-      graphData: (state) => state.graphData,
-      overviewStats: (state) => state.graphStats,
-      // vulStats: (state) => state.graphStats.vul,
-      // assetStats: (state) => state.graphStats.asset,
-      // exploitStats: (state) => state.graphStats.exploit,
+      translation: (state) => state.graphStore.translation,
+      graphStats: (state) => state.graphStore.graphStats,
+      graphStatsOrder: (state) => state.graphStore.graphStatsOrder,
+      graphData: (state) => state.graphStore.graphData,
+      overviewStats: (state) => state.graphStore.graphStats,
     }),
   },
   methods: {

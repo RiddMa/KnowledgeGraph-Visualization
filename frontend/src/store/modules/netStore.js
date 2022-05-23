@@ -4,7 +4,7 @@ import {
   getGraphStats,
   getSampleData,
 } from "@/api/graph.api";
-const net = {
+const netStore = {
   state: {},
   getters: {},
   mutations: {},
@@ -26,10 +26,11 @@ const net = {
         console.log(e);
       }
     },
-    async fetchGraphSearch(context, keyword) {
+    async fetchGraphSearch(context, { name: name, keyword: keyword }) {
       try {
         const response = await getGraphSearch(keyword);
-        context.commit("setGraphData", response.data);
+        context.commit("setGraphData", { name: name, data: response.data });
+        return response.data;
       } catch (e) {
         console.log(e);
       }
@@ -45,4 +46,4 @@ const net = {
     },
   },
 };
-export default net;
+export default netStore;

@@ -463,14 +463,14 @@ def init_nodes(vuln_num=0, asset_num=0, exploit_num=0):
         '''
         Ensure Vulnerability, Asset, Exploit nodes exist.
         '''
-        # arr = [init_vuln_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-        #        range(0, vuln_num, get_step(vuln_num))]
-        # arr.extend([init_asset_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
-        #             range(0, asset_num, get_step(asset_num))])
-        # arr.extend([init_exploit_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
-        #             range(0, exploit_num, get_step(exploit_num))])
-        # mylogger_p('init_kg').info(arr)
-        # ray.get(arr)
+        arr = [init_vuln_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+               range(0, vuln_num, get_step(vuln_num))]
+        arr.extend([init_asset_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
+                    range(0, asset_num, get_step(asset_num))])
+        arr.extend([init_exploit_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
+                    range(0, exploit_num, get_step(exploit_num))])
+        mylogger_p('init_kg').info(arr)
+        ray.get(arr)
         '''
         Ensure Asset:Family nodes exist.
         '''
@@ -583,7 +583,7 @@ if __name__ == "__main__":
     mg_stats = get_node_stats()
     mylogger_p('init_kg').info(f"Mongo stat:\n{mg_stats}")
     try:
-        # init_nodes(vuln_num=mg_stats['Vuln'], asset_num=mg_stats['Asset'], exploit_num=mg_stats['Exploit'])
+        init_nodes(vuln_num=mg_stats['Vuln'], asset_num=mg_stats['Asset'], exploit_num=mg_stats['Exploit'])
         init_rels(vuln_num=mg_stats['Vuln'], exploit_num=mg_stats['Exploit'])
     except BaseException as err:
         mylogger_p('error').error(err, exc_info=True)

@@ -118,7 +118,7 @@ let localeCfg = {
       map: "地图",
       parallel: "平行坐标图",
       lines: "线图",
-      graph: "关系图",
+      graphStore: "关系图",
       sankey: "桑基图",
       funnel: "漏斗图",
       gauge: "仪表盘图",

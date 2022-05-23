@@ -1,4 +1,5 @@
 from math import sqrt
+from typing import Dict, Union
 
 from db import neo
 
@@ -151,13 +152,13 @@ def label_to_id_field(label) -> str:
     return _converter[label]
 
 
-def get_symbol_size(_type, cnt) -> int:
+def get_symbol_size(_type, cnt=0) -> int:
     if _type == 'v' or _type == 'e':
         base_size = 50
     elif _type == 'af':
         base_size = 30
     else:
-        base_size = 15
+        base_size = 20
     # _symbol_size_map = {
     #     'Vulnerability': 30,
     #     'Family': 20,
@@ -189,7 +190,7 @@ def get_node_category(type_list):
     return type_list
 
 
-vul_label_settings = {
+vul_label_settings: dict = {
     'show': True,
     'position': 'inside',
     'fontSize': 14,
@@ -198,7 +199,7 @@ vul_label_settings = {
     'textBorderColor': 'inherit',
     'textBorderWidth': '2',
 }
-af_label_settings = {
+af_label_settings: dict = {
     'show': True,
     'position': 'inside',
     'fontSize': 10,
@@ -207,7 +208,16 @@ af_label_settings = {
     'textBorderColor': 'inherit',
     'textBorderWidth': '2',
 }
-category_map = {
+e_label_settings = {
+    'show': True,
+    'position': 'inside',
+    'fontSize': 10,
+    'overflow': 'break',
+    'fontWeight': 'bold',
+    'textBorderColor': 'inherit',
+    'textBorderWidth': '2',
+}
+category_map: dict = {
     'Vulnerability': {'name': '漏洞'},
     'Family': {'name': '家族'},
     'Asset': {'name': '资产'},
@@ -255,10 +265,44 @@ def _retrieve_v_af(tx, cve_id):
         node_entry[1]['label'] = af_label_settings
         node_entry[1]['symbolSize'] = get_symbol_size('af', node_cnt)
 
-    # return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
-    #         "links": list(r_map.values())}
-    # return {'v': list(v_map.values()), "r": list(r_map.values()), "af": list(af_map.values())}
-    return list(v_map.values()), list(r_map.values()), list(af_map.values())
+    return v_map, r_map, af_map
+
+
+def _retrieve_v_af_a(tx, cve_id):
+    cql = 'MATCH (v:Vulnerability)-[r1]-(af:Asset:Family)-[r2]-(a:Asset) ' \
+          'WHERE v.cve_id=$cve_id ' \
+          'RETURN v,r1,af,r2,a'
+    _res = tx.run(cql, cve_id=cve_id)
+    v_map, r1_map, af_map, r2_map, a_map = {}, {}, {}, {}, {}
+    for entry in _res:
+        '''convert Vulnerability'''
+        _convert_node(entry, 0, v_map)
+        '''convert AssetFamily'''
+        _convert_node(entry, 2, af_map)
+        '''convert Asset'''
+        _convert_node(entry, 4, a_map)
+        '''convert Relationship'''
+        _convert_link(entry, 1, r1_map)
+        _convert_link(entry, 3, r2_map)
+
+    '''calculate size_cnt with asset_cnt'''
+    for _r in r1_map.values():
+        _key = _r['name'].split('->')[0]
+        if _key.startswith('CVE'):
+            v_map[_key]['size_cnt'] += _r['asset_cnt']
+        elif _key.startswith('cpe'):
+            af_map[_key]['size_cnt'] += _r['asset_cnt']
+    '''add label, calculate node size with size_cnt'''
+    for _v in v_map.values():
+        _v['label'] = vul_label_settings
+        _v['symbolSize'] = get_symbol_size('v', _v['size_cnt'])
+    for _af in af_map.values():
+        _af['label'] = af_label_settings
+        _af['symbolSize'] = get_symbol_size('af', _af['size_cnt'])
+    for _a in a_map.values():
+        _a['symbolSize'] = get_symbol_size('a')
+
+    return v_map, r1_map, af_map, r2_map, a_map
 
 
 def _convert_link(entry, i, rel_map):
@@ -281,6 +325,7 @@ def _convert_node(entry, i, node_map):
             node[_tuple[0]] = _tuple[1]
         '''graph related'''
         node['category'] = get_node_category(node['type'])
+        node['size_cnt'] = 0
         node_map[node['name']] = node
 
 
@@ -289,7 +334,7 @@ def _retrieve_af_a(tx, af23uri):
           'WHERE af.cpe23uri=$af23uri ' \
           'RETURN af,r,a'
     _res = tx.run(cql, af23uri=af23uri)
-    af_map, rel_map, a_map = {}, {}, {}
+    af_map, r_map, a_map = {}, {}, {}
     for entry in _res:
         '''convert AssetFamily'''
         for i in [0]:
@@ -297,15 +342,55 @@ def _retrieve_af_a(tx, af23uri):
         '''convert Asset'''
         for i in [2]:
             _convert_node(entry, i, a_map)
-
         '''part for relationship'''
         for i in [1]:
-            _convert_link(entry, i, rel_map)
+            _convert_link(entry, i, r_map)
 
-    # return {'categories': get_category_list(), "nodes": list(af_map.values()),
-    #         "links": list(rel_map.values())}
-    # return {'af': list(af_map.values()), "r": list(rel_map.values()), "a": list(a_map.values())}
-    return list(af_map.values()), list(rel_map.values()), list(a_map.values())
+    return af_map, r_map, a_map
+
+
+def _retrieve_af_e(tx, af23uri, cve_id):
+    cql = 'MATCH (af:Asset:Family)-[r]-(e:Exploit) ' \
+          'WHERE af.cpe23uri=$af23uri AND $cve_id IN e.cve_ids ' \
+          'RETURN af,r,e'
+    _res = tx.run(cql, af23uri=af23uri, cve_id=cve_id)
+    af_map, r_map, e_map = {}, {}, {}
+    for entry in _res:
+        '''convert AssetFamily'''
+        for i in [0]:
+            _convert_node(entry, i, af_map)
+        '''convert Asset'''
+        for i in [2]:
+            _convert_node(entry, i, e_map)
+        '''part for relationship'''
+        for i in [1]:
+            _convert_link(entry, i, r_map)
+
+    return af_map, r_map, e_map
+
+
+def _retrieve_v_e_af(tx, cve_id):
+    cql = 'MATCH (v:Vulnerability)-[r1]-(e:Exploit)-[r2]-(af:Asset:Family) ' \
+          'WHERE v.cve_id=$cve_id ' \
+          'RETURN v,r1,e,r2,af'
+    _res = tx.run(cql, cve_id=cve_id)
+    v_map, r1_map, e_map, r2_map, af_map = {}, {}, {}, {}, {}
+    for entry in _res:
+        '''convert Vulnerability'''
+        _convert_node(entry, 0, v_map)
+        '''convert AssetFamily'''
+        _convert_node(entry, 2, e_map)
+        '''convert Asset'''
+        _convert_node(entry, 4, af_map)
+        '''convert Relationship'''
+        _convert_link(entry, 1, r1_map)
+        _convert_link(entry, 3, r2_map)
+
+    for _e in e_map.values():
+        _e['label'] = e_label_settings
+        _e['symbolSize'] = get_symbol_size('e')
+
+    return v_map, r1_map, e_map, r2_map, af_map
 
 
 # def _retrieve_graph_w_limit(tx, _limit):
@@ -355,28 +440,42 @@ def _retrieve_af_a(tx, af23uri):
 #     return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
 #             "links": list(rel_map.values())}
 
+def _retrieve_cve(tx, cve_id):
+    n_map, r_map = {}, {}
+    v_map, r1_map, af_map, r2_map, a_map = _retrieve_v_af_a(tx, cve_id=cve_id)
+    n_map = {**v_map, **af_map, **a_map, **n_map}
+    r_map = {**r1_map, **r2_map, **r_map}
+    _, r1_map, e_map, r2_map, _ = _retrieve_v_e_af(tx, cve_id=cve_id)
+    n_map = {**e_map, **n_map}
+    r_map = {**r1_map, **r2_map, **r_map}
+    return {'categories': get_category_list(), "nodes": list(n_map.values()), "links": list(r_map.values())}
+
+
+def _retrieve_cpe(tx, cpe23uri):
+    return {}
+
+
 def _retrieve_graph_w_limit(tx, _limit):
     cql_vuln = "match (v:Vulnerability) return v.cve_id as cve_id limit $limit"
     result = tx.run(cql_vuln, limit=_limit).data()
-    cve_id_list, nodes, links = [item['cve_id'] for item in result], [], []
-    node_map, rel_map = {}, {}
-    for cve_id in cve_id_list:
-        v_list, r_list, af_list = _retrieve_v_af(tx, cve_id=cve_id)
-        nodes.extend(v_list)
-        nodes.extend(af_list)
-        links.extend(r_list)
-        for _dict in nodes:
-            if _dict['name'].startswith('cpe'):
-                _, r_list, a_list = _retrieve_af_a(tx, _dict['name'])
-                nodes.extend(a_list)
-                links.extend(r_list)
+    cve_ids, nodes, links = [item['cve_id'] for item in result], [], []
+    n_map, r_map = {}, {}
+    for cve_id in cve_ids:
+        v_map, r1_map, af_map, r2_map, a_map = _retrieve_v_af_a(tx, cve_id=cve_id)
+        n_map = {**v_map, **af_map, **a_map, **n_map}
+        r_map = {**r1_map, **r2_map, **r_map}
+        _, r1_map, e_map, r2_map, _ = _retrieve_v_e_af(tx, cve_id=cve_id)
+        n_map = {**e_map, **n_map}
+        r_map = {**r1_map, **r2_map, **r_map}
 
-    return {'categories': list(category_map.values()), "nodes": list(node_map.values()),
-            "links": list(rel_map.values())}
+    return {'categories': get_category_list(), "nodes": list(n_map.values()), "links": list(r_map.values())}
+    # return {'categories': get_category_list(), "nodes": nodes, "links": links}
 
 
 if __name__ == '__main__':
     # res = neo.get_session().read_transaction(_retrieve_v_af, cve_id='CVE-2015-4551')
     # res = neo.get_session().read_transaction(_retrieve_af_a, af23uri='cpe:2.3:o:redhat:linux:')
     res = neo.get_session().read_transaction(_retrieve_graph_w_limit, 10)
+    # res = neo.get_session().read_transaction(_retrieve_v_af_a, cve_id='CVE-2015-4551')
+    # res = neo.get_session().read_transaction(_retrieve_v_e_af, cve_id='CVE-1999-0002')
     print(res)

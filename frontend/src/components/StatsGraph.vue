@@ -33,7 +33,8 @@ export default {
   data: () => ({}),
   computed: {
     ...mapState({
-      graph: (state) => state.graph,
+      graph: (state) => state.graphStore.graph,
+      // option: (state) => state.options.stats,
     }),
   },
   methods: {
@@ -88,22 +89,24 @@ export default {
           },
         ],
       };
-
       if (update) {
         this.graph[this.graphId].setOption(option);
       } else {
         this.$store.commit("setGraph", {
           name: this.graphId,
-          graph: echarts.init(document.getElementById(this.graphId), null, {
-            locale: "ZH",
-          }),
+          graph: echarts.init(
+            document.getElementById(this.graphId),
+            null,
+            {
+              locale: "ZH",
+            }
+          ),
         });
         this.graph[this.graphId].setOption(option);
       }
     },
     onResize() {
-      // console.log(window.innerWidth, window.innerHeight);
-      if(this.graph[this.graphId]){
+      if (this.graph[this.graphId]) {
         this.graph[this.graphId].resize();
       }
     },

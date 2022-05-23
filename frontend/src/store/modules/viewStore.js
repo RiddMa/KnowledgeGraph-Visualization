@@ -1,4 +1,4 @@
-const view = {
+const viewStore = {
   state: {
     visSidePanelActive: true,
   },
@@ -10,4 +10,4 @@ const view = {
   },
   actions: {},
 };
-export default view;
+export default viewStore;

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid class="fill-height ma-0 pa-0">
     <div :id="graphId" class="vis-graph"></div>
     <!--    <v-card-->
     <!--      v-if="visSidePanelActive"-->
@@ -159,26 +159,24 @@
               <v-divider class="mt-2"></v-divider>
             </p>
             <p class="text-h6 sidePanelContent">基础信息</p>
-            <p class="text-body-1 sidePanelContent">
-              数据格式版本：CPE 2.3
-            </p>
+            <p class="text-body-1 sidePanelContent">数据格式版本：CPE 2.3</p>
             <p class="text-body-1 sidePanelContent">
               数据更新日期：{{ mmt(this.sideBarData["timestamp"]).format() }}
             </p>
             <p class="text-body-1 sidePanelContent">
-              资产名称：{{this.sideBarData['title']}}
+              资产名称：{{ this.sideBarData["title"] }}
             </p>
             <p class="text-body-1 sidePanelContent">
-              类型：{{this.sideBarData['field']['part']}}
+              类型：{{ this.sideBarData["field"]["part"] }}
             </p>
             <p class="text-body-1 sidePanelContent">
-              制造商：{{this.sideBarData['field']['vendor']}}
+              制造商：{{ this.sideBarData["field"]["vendor"] }}
             </p>
             <p class="text-body-1 sidePanelContent">
-              产品：{{this.sideBarData['field']['product']}}
+              产品：{{ this.sideBarData["field"]["product"] }}
             </p>
             <p class="text-body-1 sidePanelContent">
-              版本：{{this.sideBarData['field']['version']}}
+              版本：{{ this.sideBarData["field"]["version"] }}
             </p>
           </v-col>
         </v-row>
@@ -212,9 +210,10 @@ echarts.registerLocale("ZH", localeCfg);
 
 export default {
   name: "KnowledgeGraph",
-  props: {},
+  props: {
+    graphId: String,
+  },
   data: () => ({
-    graphId: "vis-graph",
     categories: [
       { name: "漏洞", tooltip: "CVE 漏洞条目" },
       { name: "家族", tooltip: "来自同一制造商同一软件名的 CPE 资产家族" },
@@ -230,10 +229,16 @@ export default {
   }),
   computed: {
     ...mapState({
-      graph: (state) => state.graph,
-      graphData: (state) => state.graphData,
-      visSidePanelActive: (state) => state.view.visSidePanelActive,
+      // graph: (state) => state.graphStore.graph,
+      // graphData: (state) => state.graphStore.graphData,
+      visSidePanelActive: (state) => state.viewStore.visSidePanelActive,
     }),
+    graph() {
+      return this.$store.state.graphStore.graph[this.graphId];
+    },
+    graphData() {
+      return this.$store.state.graphStore.graphData[this.graphId];
+    },
     cvssType() {
       if (!this.sideBarData) {
         return undefined;
@@ -253,7 +258,7 @@ export default {
     },
   },
   methods: {
-    async drawVisGraph() {
+    async drawVisGraph(update = false) {
       this.$store.commit("setGraph", {
         name: this.graphId,
         graph: echarts.init(document.getElementById(this.graphId), null, {
@@ -261,14 +266,23 @@ export default {
           locale: "ZH",
         }),
       });
-      this.graph[this.graphId].showLoading();
-      if (!this.graphData[this.graphId]) {
-        await this.$store.dispatch("fetchGraphData", {
-          name: this.graphId,
-          limit: 50,
-        });
+      this.graph.showLoading();
+      this.graph.hideLoading();
+      this.graph.setOption(this.getOption());
+      this.graph.on("selectchanged", (params) =>
+        this.forceDirectedGraphSelectHandler(params)
+      );
+    },
+    getOption() {
+      let nodes = [];
+      let categories = [];
+      let links = [];
+      if (this.graphData) {
+        nodes = this.graphData.nodes;
+        categories = this.graphData.categories;
+        links = this.graphData.links;
       }
-      let option = {
+      return {
         title: {
           text: "漏洞知识图谱 VulKG",
           subtext: "Default layout",
@@ -280,18 +294,13 @@ export default {
           confine: true,
         },
         legend: {
-          data: this.graphData[this.graphId].categories,
+          data: categories,
           top: 24,
           left: "center",
           tooltip: {
             show: true,
             confine: true,
             trigger: "item",
-            // renderMode: "richText",
-            // formatter: function (params) {
-            //   console.log(params);
-            //   return this.categories[params.legendIndex]["tooltip"];
-            // },
           },
         },
         animation: true,
@@ -304,14 +313,13 @@ export default {
         },
         series: [
           {
-            id: "vis-full-graph",
+            id: this.graphId,
             name: "VulKG",
             type: "graph",
             layout: "force",
-            // layout: "circular",
-            data: this.graphData[this.graphId].nodes,
-            links: this.graphData[this.graphId].links,
-            categories: this.categories,
+            data: nodes,
+            links: links,
+            categories: categories,
             roam: true,
             label: {
               show: false,
@@ -327,18 +335,11 @@ export default {
             },
             edgeSymbol: ["none", "arrow"],
             edgeSymbolSize: 5,
-            // edgeLabel: {
-            //   show: true,
-            //   formatter: function (params) {
-            //     return params.data.category;
-            //   },
-            // },
             lineStyle: {
               width: 2,
               color: "source",
             },
             emphasis: {
-              // focus: "adjacency",
               lineStyle: {
                 width: 10,
               },
@@ -358,11 +359,10 @@ export default {
           },
         ],
       };
-      this.graph[this.graphId].hideLoading();
-      this.graph[this.graphId].setOption(option);
-      this.graph[this.graphId].on("selectchanged", (params) =>
-        this.forceDirectedGraphSelectHandler(params)
-      );
+    },
+    updateVisGraph() {
+      console.log(this.getOption());
+      this.graph.setOption(this.getOption());
     },
     forceDirectedGraphSelectHandler(params) {
       // console.log(params);
@@ -378,9 +378,7 @@ export default {
     onNodeSelected(params) {
       this.$store.commit("setVisShowSideBar", true);
       this.sideBarData =
-        this.graphData[this.graphId].nodes[
-          params.fromActionPayload.dataIndexInside
-        ];
+        this.graphData.nodes[params.fromActionPayload.dataIndexInside];
       if (this.sideBarData.type.includes("Vulnerability")) {
         this.dataType = "Vulnerability";
         this.sideBarData = JSON.parse(this.sideBarData.props);
@@ -399,19 +397,16 @@ export default {
     },
     onEdgeSelected(params) {
       this.sideBarData =
-        this.graphData[this.graphId].links[
-          params.fromActionPayload.dataIndexInside
-        ];
+        this.graphData.links[params.fromActionPayload.dataIndexInside];
     },
     onResize() {
       // console.log(window.innerWidth, window.innerHeight);
-      this.graph[this.graphId].resize();
+      this.graph.resize();
     },
     onCloseSidePanel() {
       this.$store.commit("setVisShowSideBar", false);
     },
   },
-
   mounted() {
     this.drawVisGraph();
     window.addEventListener("resize", _.debounce(this.onResize, 300));
@@ -419,8 +414,14 @@ export default {
     this.mmt.defaultFormat = "L";
   },
   beforeDestroy() {
-    this.graph[this.graphId].dispose();
+    this.graph.dispose();
     window.removeEventListener("resize", _.debounce(this.onResize, 300));
+  },
+  watch: {
+    graphData() {
+      console.log("updated");
+      this.updateVisGraph();
+    },
   },
 };
 </script>

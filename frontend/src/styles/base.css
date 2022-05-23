@@ -8,3 +8,7 @@
   min-height: 95vh;
   margin-bottom: 48px;
 }
+
+.full-screen {
+  height: calc(100vh - 24px);
+}

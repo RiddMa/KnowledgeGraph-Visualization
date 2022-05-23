@@ -1,8 +1,12 @@
 <template>
-  <v-container fluid id="graph-container" class="ma-0" style="height: 96vh">
-    <v-row>
-      <v-col cols="4">
-        <v-card class="pa-6">
+  <v-container
+    fluid
+    id="graph-container"
+    class="full-screen ma-0 pa-0 grow d-flex flex-column flex-nowrap"
+  >
+    <v-row class="fill-height">
+      <v-col class="searchPanel mx-6 mt-10">
+        <v-card class="pa-6" outlined raised>
           <v-row no-gutters>
             <v-col>
               <h2>搜索</h2>
@@ -21,11 +25,11 @@
           </v-row>
         </v-card>
       </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <div id="2d-graph"></div>
-      </v-col>
+      <knowledge-graph
+        v-if="this.showGraph"
+        class="searchResult grow"
+        :graph-id="graphId"
+      ></knowledge-graph>
     </v-row>
   </v-container>
 </template>
@@ -34,15 +38,20 @@
 // @ is an alias to /src
 import { draw2DGraph } from "@/utils/graph";
 import { mapState } from "vuex";
+import KnowledgeGraph from "@/components/KnowledgeGraph";
 
 export default {
   name: "Search",
-  components: {},
+  components: { KnowledgeGraph },
   data: () => ({
-    keyword: "",
+    keyword: "CVE-1999-0002",
+    graphId: "search-graph",
+    // showGraph: false,
+    showGraph: true,
   }),
   computed: {
     ...mapState({
+      graphStore: (state) => state.graphStore,
       graphData: (state) => state.graphData,
     }),
   },
@@ -51,10 +60,25 @@ export default {
       draw2DGraph(this.graphData);
     },
     async search() {
-      await this.$store.dispatch("fetchGraphSearch", this.keyword);
-      draw2DGraph(this.graphData);
+      await this.$store.dispatch("fetchGraphSearch", {
+        name: this.graphId,
+        keyword: this.keyword,
+      });
+      this.showGraph = true;
     },
   },
   async mounted() {},
 };
 </script>
+
+<style src="../styles/base.css"></style>
+<style>
+.searchPanel {
+  position: absolute;
+  z-index: 100;
+  max-width: 480px;
+}
+.searchResult {
+  position: absolute;
+}
+</style>
