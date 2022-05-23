@@ -962,20 +962,56 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 获取知识图谱统计数据。调用持久化子系统的数据库控制器对象的 \lstinline|get_session().read_transaction()| 方法，向数据库提交一个读事务。读事务 \lstinline|work(tx)| 中定义查询的 CQL 语句，并调用 transaction 对象的 \lstinline|tx.run()| 方法运行查询。查询获得漏洞数量、受影响资产类型及数量、漏洞利用代码数量及类型等信息。调用绘图数据生成方法，生成结果数据，返回给前端。
 
-\subsubsection{知识图谱可视化数据 API 实现 /api/graph/<limit>}
+\subsubsection{知识图谱可视化数据 API 实现 /api/graph/<limit>\label{subsubsec:/api/graph/limit}}
 
 获取<limit>个漏洞结点及与之相关的结点与关系绘图数据。为防止数据量过大，实际查询将取<limit>与 200 间的较小值。根据经验数据，返回结点和关系数量不超过一万个。调用绘图数据生成方法，获得各类结点及关系绘图数据，返回给前端。
 
 需要返回的结点和关系有：漏洞结点、资产家族结点、资产结点、利用结点、漏洞 - 资产家族关系、漏洞 - 利用关系、资产 - 资产家族关系、漏洞 - 资产家族关系。由于长关系链可以拆解成三元组形式，因此对于任意查询，仅需要实现查询各种三元组的方法、将三元组融合的方法即可。
 
+如 \lstinline|_retrieve_v_af| 实现了漏洞 - 资产家族结点及关系的查询，伪代码如下：
+\begin{lstlisting}[style=lgeneral]
+def _retrieve_v_af(tx, cve_id):
+	cql = 'MATCH (v:Vulnerability)-[r]-(af:Asset:Family) ' \
+	      'WHERE v.cve_id=$cve_id ' \
+	      'RETURN v,r,af' # 查询所用 CQL 语句
+	_res = tx.run(cql, cve_id=cve_id) # 使用事务运行查询，使用参数防止 CQL 注入攻击
+	v_map, r_map, af_map = {}, {}, {}
+	for entry in _res: # 对于查询结果中的每一条
+		_convert_node(entry, i, v_map) # 转换漏洞结点
+		_convert_node(entry, i, af_map) # 转换资产家族结点
+		_convert_link(entry, i, r_map) # 转换关系
+
+	for _r in r1_map.values(): # 计算受影响资产数量
+		_key = _r['name'].split('->')[0]
+		if _key.startswith('CVE'):
+			v_map[_key]['size_cnt'] += _r['asset_cnt']
+		elif _key.startswith('cpe'):
+			af_map[_key]['size_cnt'] += _r['asset_cnt']
+	
+	for _v in v_map.values(): # 对于每个漏洞，根据受影响资产数量，计算绘图结点的大小
+		_v['label'] = vul_label_settings
+		_v['symbolSize'] = get_symbol_size('v', _v['size_cnt'])
+	for _af in af_map.values(): # 对于每个资产，根据子资产数量，计算绘图结点的大小
+		_af['label'] = af_label_settings
+		_af['symbolSize'] = get_symbol_size('af', _af['size_cnt'])
+	for _a in a_map.values():
+		_a['symbolSize'] = get_symbol_size('a')
+
+	return v_map, r_map, af_map # 返回存储三元组的三个字典
+\end{lstlisting}
+
+为了使可视化显示更加清晰，且能直观地从结点显示大小得知该结点的重要性，实现了计算绘图结点大小 \lstinline|get_symbol_size()|。该方法接受结点类型和受影响结点数量两个参数，计算结点应显示的大小。计算公式为 $size=base{\_}size+5*\sqrt{cnt}$，其中 $base{\_}size$ 为由一个字典预定义的数值，不同类型结点的 $base{\_}size$ 不同。$cnt$ 为受该结点影响的结点的数量，最终得到的 $size$ 即为结点显示大小，单位为像素。
+
+
 \subsubsection{知识图谱搜索 API 实现 /api/graph/search/<keyword>}
 
 根据关键字搜索知识图谱。根据关键字类型，判断搜索内容属于漏洞、资产、利用代码或是关系。将搜索到的结点/关系及其相关联（关系路径长度为 1）的结点或关系返回，调用绘图数据生成方法获得绘图所需数据，返回给前端。
 
-\buptfigure[width=0.8\textwidth]{pictures/Impl_Backend.png}{知识图谱搜索 API 流程图}{pictures/Impl_Backend.png}
+\buptfigure[width=0.7\textwidth]{pictures/Impl_Backend.png}{知识图谱搜索 API 流程图}{pictures/Impl_Backend.png}
 
-\ref{pictures/Impl_Backend.png}采用模块化设计，
+如图 \ref{pictures/Impl_Backend.png} 所示，查询系统采用模块化设计，将搜索服务独立为模块。支持扩展为微服务设计，在接口不变情况下可实现搜索提供服务的热更换。当前查询模块仅支持特定属性域的查询如 \lstinline|cve_id, cpe23uri, edb_id| 等。后续可将系统扩展为使用正则表达式进行匹配、使用 Elastic Search 进行自然语言属性域的搜索等。获取搜索结果后，其步骤与章节 \ref{subsubsec:/api/graph/limit} \nameref{subsubsec:/api/graph/limit} 所述过程类似。
 
+\clearpage
 \section{前端子系统}
 
 \subsection{项目结构}
@@ -1035,11 +1071,11 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 可视化视图使用 ECharts 呈现一个全屏的可视化力引导图，鼠标按住或手指拖拽可以移动视图，鼠标按住或手指拖拽图中结点可以移动结点位置。图示可见章节 \ref{可视化视图测试} \nameref{可视化视图测试}。
 
-可视化视图同样采用来自 Vuex Store 的计算属性作为数据源，实现动态数据更新。在切换视图时，为节省内存 ECharts 实例会被销毁，但绘图数据保留在 Vuex Store。再次切换回可视化视图时，会优先加载缓存的绘图数据，节省网络带宽、减轻后端压力、加快加载速度。
+可视化视图同样采用来自 Vuex Store 的计算属性作为数据源，实现动态数据更新。在切换视图时，为节省内存 ECharts 实例会被销毁，但绘图数据保留在 Vuex Store 中的 \lstinline|graphStore.graph| 对象中，由唯一的 \lstinline|graphId| 标识，因此可同时支持保存同一视图页面的多个可视化图、保存不同视图页面的可视化图。再次切换回可视化视图时，会优先加载缓存的绘图数据，节省网络带宽、减轻后端压力、加快加载速度。
 
 \subsection{搜索视图实现}
 
-搜索视图包含一个悬浮搜索框，显示在容器的左上角。在搜索框输入关键词并按下回车，发出异步 I/O 请求并等待返回绘图数据。可视化显示流程与上述章节 \ref{可视化视图实现} \nameref{可视化视图实现}相似。
+搜索视图包含一个悬浮搜索框，显示在容器的左上角。在搜索框输入关键词并按下回车，发出异步 I/O 请求并等待返回绘图数据。后端服务将搜索整个知识图谱查找关键字相关信息，并将绘图数据返回前端。 可视化显示流程与上述章节 \ref{可视化视图实现} \nameref{可视化视图实现}相似。
 
 \subsection{关于视图实现}
 
@@ -1196,6 +1232,8 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 图\ref{pictures/Vis_Dashboard_Info.png}所示为概览视图。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载概览界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
 
+前端子系统全部界面均采用类 App 设计，具备响应式显示功能，卡片行列数可根据当前设备屏幕分辨率动态流式调整，保证在各种设备上均能正常显示。
+
 \buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Info.png}{概览视图预览}{pictures/Vis_Dashboard_Info.png}
 
 \buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{概览视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
@@ -1208,25 +1246,23 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \buptfigure[width=\textwidth]{pictures/Vis_Waterfall.png}{可视化视图加载请求瀑布流}{pictures/Vis_Waterfall.png}
 
-图\ref{pictures/Vis_Detail.png}所示为知识图谱细节图。力引导图为有向图，因此结点间的无向边使用两条有向边表示。图中蓝色结点为漏洞结点，绿色结点为资产家族结点，红色结点为受影响资产结点。可以看到，通过将漏洞所影响的大量资产关系替换成漏洞到资产家族的一个关系，大幅简化了图的结构，在使视觉观感清晰的同时，将鼠标移至漏洞至资产家族的边上可显示受该漏洞影响的所有资产，保证图谱数据的详细精确。
+图\ref{pictures/Vis_Full_New.png}所示为知识图谱细节图。力引导图为有向图，因此结点间的无向边使用两条有向边表示。图中蓝色结点为漏洞结点，绿色结点为资产家族结点，红色结点为受影响资产结点。可以看到，通过将漏洞所影响的大量资产关系替换成漏洞到资产家族的一个关系，大幅简化了图的结构，在使视觉观感清晰的同时，将鼠标移至漏洞至资产家族的边上可显示受该漏洞影响的所有资产，保证图谱数据的详细精确。
 
-\buptfigure[width=\textwidth]{pictures/Vis_Detail.png}{可视化视图细节}{pictures/Vis_Detail.png}
+当鼠标移动至或触摸图中元素，包括各类结点和各类关系，会显示 Tooltip 指示，展现当前高亮元素的信息。点击结点或关系，将会弹出悬浮面板，展示结点或关系的更详细信息。
 
-图\ref{pictures/Vis_Info.png}所示为当鼠标移动至或触摸图中元素，包括各类结点和各类关系，会显示 tooltip 指示，展现当前高亮元素的详细信息。
-
-\buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+\buptfigure[width=\textwidth]{pictures/Vis_Full_New.png}{可视化视图 Tooltip 和弹出面板展示详细信息}{pictures/Vis_Full_New.png}
 
 \subsection{搜索视图测试}
 
-图\ref{}所示为搜索视图。搜索视图提供一个悬浮搜索框，允许用户对知识图谱进行精确查询。输入查询关键字并按下回车将发送异步 I/O 请求，后端服务将搜索整个知识图谱查找关键字相关信息，并将绘图数据返回前端。前端回调使用 ECharts 可视化库绘制力引导图展示数据。
+图\ref{pictures/Vis_Search.png}所示为搜索视图。搜索视图提供一个悬浮搜索框，允许用户对知识图谱进行精确查询。输入查询关键字并按下回车将发送异步 I/O 请求，后端服务将搜索整个知识图谱查找关键字相关信息，并将绘图数据返回前端。前端回调使用 ECharts 可视化库绘制力引导图展示数据。
 
-% \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+\buptfigure[width=\textwidth]{pictures/Vis_Search.png}{搜索视图使用关键字搜索，呈现结点及关系}{pictures/Vis_Search.png}
 
 \subsection{关于视图测试}
 
-图\ref{}所示为关于视图。关于视图清晰地展示了本系统名称、功能、作者、使用指南等信息。
+图\ref{pictures/Vis_About.png}所示为关于视图。关于视图清晰地展示了本系统名称、功能、作者、使用指南等信息。
 
-% \buptfigure[width=\textwidth]{pictures/Vis_Info.png}{可视化视图 tooltip 展示详细信息}{pictures/Vis_Info.png}
+\buptfigure[width=\textwidth]{pictures/Vis_About.png}{关于视图}{pictures/Vis_About.png}
 
 \chapter{结束语}
 

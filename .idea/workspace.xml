@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper, fixed a lot">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_KGCreation.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_KGCreation.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-flask/vuln_kg/init_kg_p.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-flask/vuln_kg/init_kg_p.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend-flask/web/data_converter.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-flask/web/data_converter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +50,7 @@
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
       <workItem from="1652364854856" duration="11129000" />
-      <workItem from="1653302224194" duration="4470000" />
+      <workItem from="1653302224194" duration="4970000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -154,7 +150,14 @@
       <option name="project" value="LOCAL" />
       <updated>1653303728134</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="update paper, fixed a lot">
+      <created>1653313583388</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1653313583388</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
