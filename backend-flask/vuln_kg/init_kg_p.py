@@ -460,20 +460,16 @@ def init_nodes(vuln_num=0, asset_num=0, exploit_num=0):
 
     if vuln_num and asset_num and exploit_num:
         mylogger_p('init_kg').info('Start Node init in parallel')
-        '''
-        Ensure Vulnerability, Asset, Exploit nodes exist.
-        '''
-        # arr = [init_vuln_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-        #        range(0, vuln_num, get_step(vuln_num))]
-        # arr.extend([init_asset_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
-        #             range(0, asset_num, get_step(asset_num))])
-        # arr.extend([init_exploit_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
-        #             range(0, exploit_num, get_step(exploit_num))])
-        # mylogger_p('init_kg').info(arr)
-        # ray.get(arr)
-        '''
-        Ensure Asset:Family nodes exist.
-        '''
+        '''Ensure Vulnerability, Asset, Exploit nodes exist'''
+        arr = [init_vuln_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+               range(0, vuln_num, get_step(vuln_num))]
+        arr.extend([init_asset_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
+                    range(0, asset_num, get_step(asset_num))])
+        arr.extend([init_exploit_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
+                    range(0, exploit_num, get_step(exploit_num))])
+        mylogger_p('init_kg').info(arr)
+        ray.get(arr)
+        '''Ensure Asset:Family nodes exist'''
         family_id = [init_asset_family_ray.remote(skip=i, _limit=get_step(asset_num) + 1) for i in
                      range(0, asset_num, get_step(asset_num))]
         ray.get(family_id)
@@ -546,13 +542,13 @@ def init_rels(vuln_num=0, exploit_num=0):
 
     if vuln_num and exploit_num:
         arr = []
-        # '''Ensure Vulnerability---Family relationships'''
-        # arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-        #             range(0, vuln_num, get_step(vuln_num))])
-        # '''Ensure Family---Asset relationships'''
-        # arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
-        #             range(0, vuln_num, get_step(vuln_num))])
-        # ray.get(arr)
+        '''Ensure Vulnerability---Family relationships'''
+        arr.extend([create_rel_vaf_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+                    range(0, vuln_num, get_step(vuln_num))])
+        '''Ensure Family---Asset relationships'''
+        arr.extend([create_rel_afa_ray.remote(skip=i, _limit=get_step(vuln_num) + 1) for i in
+                    range(0, vuln_num, get_step(vuln_num))])
+        ray.get(arr)
         arr = [create_rel_evaf_ray.remote(skip=i, _limit=get_step(exploit_num) + 1) for i in
                range(0, exploit_num, get_step(exploit_num))]
         ray.get(arr)
