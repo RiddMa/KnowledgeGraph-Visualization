@@ -7,9 +7,10 @@ def create_app(test_config=None):
     app = Flask(__name__)
     CORS(app)
 
-    from . import graph, auth
+    from . import graph, auth, aps
     app.register_blueprint(graph.bp)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(aps.bp)
 
     @app.route('/')
     def root():

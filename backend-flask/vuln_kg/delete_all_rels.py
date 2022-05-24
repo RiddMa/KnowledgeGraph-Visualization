@@ -5,4 +5,3 @@ if __name__ == "__main__":
     for doc in cursor:
         cve_id = doc['content']['vuln']['cve_id']
         neo.delete_rel(cve_id)
-

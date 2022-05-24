@@ -568,7 +568,7 @@ def init_rels(vuln_num=0, exploit_num=0):
         f'init_rels() runtime = {datetime.now() - rel_start_time}')
 
 
-if __name__ == "__main__":
+def init_kg_runner():
     global_start = datetime.now()
     mylogger_p('timer').info('Start init')
 
@@ -578,23 +578,50 @@ if __name__ == "__main__":
     n.check_rel_index()
     mylogger_p('db').info('Checked index, good to go')
 
-    # init_nodes()
-
     mg_stats = get_node_stats()
     mylogger_p('init_kg').info(f"Mongo stat:\n{mg_stats}")
     try:
         init_nodes(vuln_num=mg_stats['Vuln'], asset_num=mg_stats['Asset'], exploit_num=mg_stats['Exploit'])
-        init_rels(vuln_num=mg_stats['Vuln'], exploit_num=mg_stats['Exploit'])
+        # init_rels(vuln_num=mg_stats['Vuln'], exploit_num=mg_stats['Exploit'])
     except BaseException as err:
         mylogger_p('error').error(err, exc_info=True)
 
     neo_stats = get_node_stats_neo()
     mylogger_p('init_kg').info(f"Neo4j stat:\n{neo_stats}")
 
-    # init_rels(vuln_num=int(stats['Vuln']), exploit_num=int(stats['Exploit']), step=3000)
-    # create_rel_va()
-    # create_rel_eva()
-
     mylogger_p('timer').info(f'Runtime = {datetime.now() - global_start}')
     n.close_db()
     mylogger_p('root').info('\n\n\n\n\n\n')
+
+
+if __name__ == "__main__":
+    init_kg_runner()
+    # global_start = datetime.now()
+    # mylogger_p('timer').info('Start init')
+    #
+    # ray.init(ignore_reinit_error=True)
+    # n = MyNeo()
+    # n.check_node_index()
+    # n.check_rel_index()
+    # mylogger_p('db').info('Checked index, good to go')
+    #
+    # # init_nodes()
+    #
+    # mg_stats = get_node_stats()
+    # mylogger_p('init_kg').info(f"Mongo stat:\n{mg_stats}")
+    # try:
+    #     init_nodes(vuln_num=mg_stats['Vuln'], asset_num=mg_stats['Asset'], exploit_num=mg_stats['Exploit'])
+    #     # init_rels(vuln_num=mg_stats['Vuln'], exploit_num=mg_stats['Exploit'])
+    # except BaseException as err:
+    #     mylogger_p('error').error(err, exc_info=True)
+    #
+    # neo_stats = get_node_stats_neo()
+    # mylogger_p('init_kg').info(f"Neo4j stat:\n{neo_stats}")
+    #
+    # # init_rels(vuln_num=int(stats['Vuln']), exploit_num=int(stats['Exploit']), step=3000)
+    # # create_rel_va()
+    # # create_rel_eva()
+    #
+    # mylogger_p('timer').info(f'Runtime = {datetime.now() - global_start}')
+    # n.close_db()
+    # mylogger_p('root').info('\n\n\n\n\n\n')
