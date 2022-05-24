@@ -6,8 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper, fixed a lot">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-flask/web/data_converter.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend-flask/web/data_converter.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Class-Backend.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Class-Backend.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Sequence-UserSequence.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Sequence-UserSequence.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_DataCollection.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_DataCollection.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +57,7 @@
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
       <workItem from="1652364854856" duration="11129000" />
-      <workItem from="1653302224194" duration="4970000" />
+      <workItem from="1653302224194" duration="6970000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
