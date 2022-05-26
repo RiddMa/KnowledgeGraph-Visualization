@@ -119,7 +119,7 @@
 
 由于本项目为单人完成，且系统整体结构较为复杂，故采用原型开发与敏捷开发\cite{manifesto_agile_dev}相结合的方式，先开发最简可行产品\cite{minimum_viable_product}（Minimum Viable Product, MVP）验证核心概念，在此基础上不断细化细节、完善代码、扩展功能。同时，因为单人项目难以在前期进行完善的需求分析与系统设计，采用敏捷开发的方式可以增强灵活性。
 
-例如，本项目立项初期技术选型，计划使用较为成熟的 Java Springboot 框架搭建后端服务。在之后的开发中发现，由于该项目对数据库操作需求较高，其他子系统使用 Python 而后端使用 Springboot 意味着需要使用 Python 和 Java 分别编写两套代码用于控制数据库驱动，增加无意义的项目复杂度、拖慢开发进度。得益于敏捷开发思想“响应变化高于遵循计划”等方针，本项目在知识图谱构建子系统的原型开发完成时即更改后端使用 Python Flask 进行开发，从而保证软件质量的同时提升开发效率。
+例如，本项目立项初期技术选型，计划使用较为成熟的 Java Springboot 框架搭建后端服务。在之后的开发中发现，由于该项目对数据库操作需求较高，其他子系统使用 Python 而后端使用 Springboot 意味着需要使用 Python 和 Java 分别编写两套代码用于控制数据库驱动，增加无意义的项目复杂度、拖慢开发进度。得益于敏捷开发思想``响应变化高于遵循计划''等方针，本项目在知识图谱构建子系统的原型开发完成时即更改后端使用 Python Flask 进行开发，从而保证软件质量的同时提升开发效率。
 
 \section{授权与许可证}
 
@@ -135,7 +135,7 @@
 
 \subsection{Scrapy}
 
-Scrapy\footnote{https://scrapy.org/} 是自由且开源的协作式网络爬虫 Python 框架，用于从网站或 API 中提取需要的数据。Scrapy 基于 Twisted，具有快速、易用、可扩展等特性，主要优点是架构清晰、模块间的耦合程度低、通过 Middleware 钩子框架能灵活完成各种需求。Scrapy 项目围绕 Spider 类构建，并具有 Item Pipelines、Downloader、Scheduler 等多个模块，这些模块通过内置的 Scrapy Engine 进行管理与调度。Scrapy 设计理念遵循“一次且仅一次”（Once and only once, OAOO）原则，主张为每个爬虫任务只需要编写一个自包含（self-contained）的 Spider 类，没有更多，没有更少。
+Scrapy\footnote{https://scrapy.org/} 是自由且开源的协作式网络爬虫 Python 框架，用于从网站或 API 中提取需要的数据。Scrapy 基于 Twisted，具有快速、易用、可扩展等特性，主要优点是架构清晰、模块间的耦合程度低、通过 Middleware 钩子框架能灵活完成各种需求。Scrapy 项目围绕 Spider 类构建，并具有 Item Pipelines、Downloader、Scheduler 等多个模块，这些模块通过内置的 Scrapy Engine 进行管理与调度。Scrapy 设计理念遵循``一次且仅一次''（Once and only once, OAOO）原则，主张为每个爬虫任务只需要编写一个自包含（self-contained）的 Spider 类，没有更多，没有更少。
 
 相较于 urllib 或 Python Requests 等基础的库，Scrapy 提供任务日志、错误重试、并发控制，具备更灵活完善的机制以应对大型爬虫任务。而相较于 Selenium、Puppeteer、Playwright 等基于无头浏览器（Headless Browser）实现的爬虫功能，Scrapy 基于事件驱动的网络编程框架 Twisted，仅爬取 HTML 文档，默认不提供执行网页中的 JavaScript 代码功能，因此 CPU 与内存开销相较无头浏览器显著减小，是最适合本系统大量数据爬取需求的框架。
 
@@ -175,7 +175,7 @@ Ray\footnote{https://docs.ray.io/en/latest/} 是一个开源的通用分布式�
 
 相较传统的分布式框架（如 Hadoop、Spark 等），Ray 可直接通过 pip 进行安装，具备轻量级的特性。同时它通过共享内存实现了高效的数据存储和传输，通过全局状态存储服务实现了全局的状态维护、去中心化的高效调度、远程调用。相较基于线程的并行库  threading，Ray 通过进程级并行绕过了 Python 全局解释器锁的限制。相较轻量级的 Python 进程级并行库 multiprocessing，Ray 具备同样简单易用的接口以及更优秀的性能与机器学习框架整合能力。
 
-本项目通过使用 Ray 框架提供的通用分布式计算能力，对上层封装具体实现；将知识图谱构建过程抽象成创建结点、创建关系、关系融合三个操作，重点优化这三个步骤的代码实现，使“数据采集子系统得到的原始数据通过知识图谱构建子系统形成知识图谱”过程得以实现并行化计算，充分利用多核心处理器的计算能力。同时，得益于 Ray 框架对本地多进程与分布式多进程的统一抽象、Ray ML 框架与深度学习模型良好的整合能力，未来可以引入深度学习模型、将系统迁移扩展至分布式计算平台。
+本项目通过使用 Ray 框架提供的通用分布式计算能力，对上层封装具体实现；将知识图谱构建过程抽象成创建结点、创建关系、关系融合三个操作，重点优化这三个步骤的代码实现，使``数据采集子系统得到的原始数据通过知识图谱构建子系统形成知识图谱''过程得以实现并行化计算，充分利用多核心处理器的计算能力。同时，得益于 Ray 框架对本地多进程与分布式多进程的统一抽象、Ray ML 框架与深度学习模型良好的整合能力，未来可以引入深度学习模型、将系统迁移扩展至分布式计算平台。
 
 \section{持久化技术}
 
@@ -189,7 +189,7 @@ MongoDB\footnote{https://www.mongodb.com/} 是一个 C++ 语言编写的基于�
 
 \subsection{Neo4j}
 
-Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目前全球范围内最受欢迎、使用人数最多的图数据库，社区版本采用 GPL-3.0 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加“影响”、“具有”、“攻击”、“被攻击”、“父级”、“子级”等关系，形成知识网络图谱。
+Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目前全球范围内最受欢迎、使用人数最多的图数据库，社区版本采用 GPL-3.0 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加``影响''、``具有''、``攻击''、``被攻击''、``父级''、``子级''等关系，形成知识网络图谱。
 
 \section{后端技术}
 
@@ -199,11 +199,11 @@ Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目
 
 Flask\footnote{https://flask.palletsprojects.com/en/2.1.x/} 是一个使用 Python 编写的轻量级 Web 应用框架，具备微核心与高扩展性，使用 BSD 许可证授权发行。Flask 是在 Jinja2 模板引擎和 Werkzeug WSGI 工具箱的基础上构建的。Werkzeug 是一个语言网络服务器网关接口（Web Server Gateway Interface, WSGI），为请求、相应等功能实现软件对象；Jinja 是一个适用于 Python 的网页模板引擎。
 
-本项目主要使用 Flask 框架的 WSGI 功能，构建一个 RESTful 风格的 Web API 服务，为 Vue.js 编写的前端提供与数据库的交互功能。本着“高内聚，低耦合”的设计原则，同时兼具部署简洁、外部依赖较少、用户控制灵活的优点，本基于漏洞知识图谱的可视化系统将前述数据采集子系统、知识图谱构建子系统抽象成自包含的服务，仅通过持久化层的 MongoDB 及 Neo4j 数据库进行纯数据交换，最大程度上减少模块间逻辑耦合。
+本项目主要使用 Flask 框架的 WSGI 功能，构建一个 RESTful 风格的 Web API 服务，为 Vue.js 编写的前端提供与数据库的交互功能。本着``高内聚，低耦合''的设计原则，同时兼具部署简洁、外部依赖较少、用户控制灵活的优点，本基于漏洞知识图谱的可视化系统将前述数据采集子系统、知识图谱构建子系统抽象成自包含的服务，仅通过持久化层的 MongoDB 及 Neo4j 数据库进行纯数据交换，最大程度上减少模块间逻辑耦合。
 
 由于数据采集子系统、知识图谱构建子系统、持久化子系统、后端子系统均采用 Python 语言编写，此四个子系统得以共用一个高扇入的数据库驱动模块。这种设计将会导致单个数据库控制类非常庞大，在本项目开发后期该数据库控制类相关代码已接近千行，造成运行时实例化开销昂贵。并且，基于知识图谱数据量庞大的事实，本系统采用由加州大学伯克利分校牵头开发的开源分布式高性能计算库 Ray，实现知识图谱数据构建的并行计算并提供可能的分布式扩展性。为此，数据库控制类需要实现线程安全。
 
-为解决此问题，针对本系统将频繁进行数据库操作的预期，利用 Python 语言引入模块为单例的特性实现了一个“饿汉模式”的数据库控制类。在其他上级模块中引入数据库控制器类的实例化对象，使每个模块运行时在内存中只有一个实例，减少运行时频繁地创建和销毁类实例的开销。相较使用 Java Springboot 等其他语言框架编写后端服务，采用 Python Flask 并共用单例数据库控制模块的设计在减少重复编码工作的同时，极大增强了代码可维护性。
+为解决此问题，针对本系统将频繁进行数据库操作的预期，利用 Python 语言引入模块为单例的特性实现了一个``饿汉模式''的数据库控制类。在其他上级模块中引入数据库控制器类的实例化对象，使每个模块运行时在内存中只有一个实例，减少运行时频繁地创建和销毁类实例的开销。相较使用 Java Springboot 等其他语言框架编写后端服务，采用 Python Flask 并共用单例数据库控制模块的设计在减少重复编码工作的同时，极大增强了代码可维护性。
 
 \subsection{Advanced Python Scheduler}
 
@@ -225,7 +225,7 @@ Vue.js\footnote{https://v3.cn.vuejs.org/} 是一套用于构建用户界面的�
 
 Vuetify\footnote{https://vuetifyjs.com/zh-Hans/}是一个 Material 样式的 Vue UI 组件库，使用 MIT 许可证授权。它包含一系列预定义样式的 UI 组件，可用于构建前端应用程序的用户界面。
 
-本项目前端子系统采用 Vuetify 作为 UI 库，致力于搭建一个用户友好、信息密度大、界面简洁易用的前端应用。借助 Vuex 状态管理库及 Vue.js 计算属性，实现尽可能减少跨组件回调函数使用的“Single Source of Truth”模式单向数据流的前端应用。降低组件间逻辑耦合，实现快速开发、轻松扩展。
+本项目前端子系统采用 Vuetify 作为 UI 库，致力于搭建一个用户友好、信息密度大、界面简洁易用的前端应用。借助 Vuex 状态管理库及 Vue.js 计算属性，实现尽可能减少跨组件回调函数使用的``Single Source of Truth''模式单向数据流的前端应用。降低组件间逻辑耦合，实现快速开发、轻松扩展。
 
 \subsection{Apache ECharts}
 
@@ -315,7 +315,7 @@ Apache ECharts\footnote{https://echarts.apache.org/en/index.html}（下称 EChar
 
 \section{用户视角的需求分析}
 
-用户分为普通用户与管理员两类。由于本漏洞知识图谱数据为自动采集权威数据源生成，手动修改数据意义不显著。管理员主要特权为可以通过前端界面，控制后端服务子系统的 APScheduler 调度服务运行状态，从而实现手动开始或停止数据采集子系统、知识图谱构建子系统的运行。
+当前系统下，用户均为普通用户，由于本漏洞知识图谱数据来自自动采集的权威数据源，手动修改数据意义不显著。未来可向系统加入管理员角色，主要特权为可以通过前端界面，控制后端服务子系统的 APScheduler 调度服务运行状态，从而实现手动控制数据采集子系统、知识图谱构建子系统的运行或停止。
 
 \begin{itemize}
 	\item 查看概览视图
@@ -337,11 +337,11 @@ Apache ECharts\footnote{https://echarts.apache.org/en/index.html}（下称 EChar
 		      \item 搜索代码利用
 		      \item 搜索关系
 	      \end{itemize}
-	\item 查看控制台视图
-	      \begin{itemize}
-		      \item 查看系统运行状态
-		      \item 控制系统运行状态（仅管理员）
-	      \end{itemize}
+	      % \item 查看控制台视图
+	      %       \begin{itemize}
+	      % 	      \item 查看系统运行状态
+	      % 	      \item 控制系统运行状态（仅管理员）
+	      % \end{itemize}
 	\item 查看关于视图：获取系统说明、使用指南信息
 \end{itemize}
 
@@ -431,7 +431,7 @@ Neo4j 数据库在系统中主要发挥互联网安全信息漏洞知识图谱�
 
 请求生成器根据 csv 索引生成爬虫请求链接，交由 Scrapy Spider 进行并发爬虫。
 
-异构数据解析器负责使用对应解析器解析 Spider 爬虫返回的网络数据，传递给异构数据管线。此外，异构数据解析器中的 HTML 解析器应用在一些网站的爬虫任务时，还会解析页面上包含“下一页”等元素的 <a> 标签，通过 yield 将其中 href URL 交给请求生成器，生成新的爬虫请求。
+异构数据解析器负责使用对应解析器解析 Spider 爬虫返回的网络数据，传递给异构数据管线。此外，异构数据解析器中的 HTML 解析器应用在一些网站的爬虫任务时，还会解析页面上包含``下一页''等元素的 <a> 标签，通过 yield 将其中 href URL 交给请求生成器，生成新的爬虫请求。
 
 异构数据管线负责接收其对应的数据解析器传来的数据，提取其中需要的信息进行格式转换等处理，填充固定格式的 Python Dictionary，再调用持久化子系统中的数据库控制器对象，将请求原始数据与 Dictionary 分别存储至不同的 MongoDB 数据库集合（Collection）中持久化存储，形成原始数据，完成数据采集工作。
 
@@ -510,17 +510,18 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 前端子系统负责管理用户运行时相关数据、通过 UI 向用户展示信息。使用 Vue.js 的 MVVM 架构，主要包含视图与模型两个组成部分。
 
-视图包含概览、可视化、搜索、控制台、关于五部分。
+% 视图包含概览、可视化、搜索、控制台、关于五部分。
+视图包含概览、可视化、搜索、关于四部分。
 
 \begin{itemize}
 	\item 概览视图为用户提供知识图谱信息概览，包含列表形式的数据展现，以及统计图表形式的数据可视化。
 	\item 可视化视图是一个全屏视图，通过该视图用户可以一览知识图谱全貌。
 	\item 搜索视图支持用户在图谱中搜索感兴趣的内容，并将搜索结果以力引导图可视化的形式展示。
-	\item 控制台视图向用户展示当前系统运行状态，如数据更新日期、当前系统正在运行的任务、任务进度等。管理员用户可以手动控制各个任务的开始或停止。
+	      % \item 控制台视图向用户展示当前系统运行状态，如数据更新日期、当前系统正在运行的任务、任务进度等。管理员用户可以手动控制各个任务的开始或停止。
 	\item 关于视图展示本系统介绍信息及用户指南。
 \end{itemize}
 
-模型主要包含 Vuex 数据控制器、Axios 网络控制器两部分。Vuex 数据控制器统一管理前端子系统的数据与状态，是前端子系统的“Single Source of Truth”，为视图的响应式显示提供数据源，还包含在前端对数据进行简单处理功能。Axios 网络控制器封装一个 httpCliet 对象，以及若干与后端通信的方法。Vuex 数据控制器可以调用 Axios 网络控制器，从后端获取数据，更新 Vuex Store 中的状态。
+模型主要包含 Vuex 数据控制器、Axios 网络控制器两部分。Vuex 数据控制器统一管理前端子系统的数据与状态，是前端子系统的``Single Source of Truth''，为视图的响应式显示提供数据源，还包含在前端对数据进行简单处理功能。Axios 网络控制器封装一个 httpCliet 对象，以及若干与后端通信的方法。Vuex 数据控制器可以调用 Axios 网络控制器，从后端获取数据，更新 Vuex Store 中的状态。
 
 \subsection{数据库设计}
 
@@ -571,17 +572,50 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 \subsection{系统接口设计}
 
-表\ref{api_table}展示了系统接口设计。
-\begin{bupttable}{系统接口设计}{api_table}
-	\begin{tabularx}{\textwidth}{llX}
-		\toprule
-		\textbf{类别} & \textbf{路径}         & \textbf{描述}                                         \\ \midrule
-		              & /<path>               & 前端路由路径                                          \\ \cmidrule(l){2-3}
-		              & /api/graph/           & 获取知识图谱统计信息                                  \\ \cmidrule(l){2-3}
-		前端          & /api/graph/<limit>    & 获取与<limit>个漏洞结点相关联的结点或关系组成的子图谱 \\ \cmidrule(l){2-3}
-		              & /api/search/<keyword> & 搜索与<keyword>关键字相关的结点或关系                 \\ \bottomrule %\midrule
-	\end{tabularx}
-\end{bupttable}
+% 表\ref{api_table}展示了系统接口设计。
+% \begin{bupttable}{系统接口设计}{api_table}
+% 	\begin{tabularx}{\textwidth}{llX}
+% 		\toprule
+% 		\textbf{类别} & \textbf{路径}             & \textbf{描述}                                         & \textbf{返回值} \\ \midrule
+% 		              & /<path>                   & 前端路由路径                                          & 1               \\ \cmidrule(l){2-3}
+% 		              & GET /api/graph/           & 获取知识图谱统计信息                                  & 2               \\ \cmidrule(l){2-3}
+% 		前端          & GET /api/graph/<limit>    & 获取与<limit>个漏洞结点相关联的结点或关系组成的子图谱 & 3               \\ \cmidrule(l){2-3}
+% 		              & GET /api/search/<keyword> & 搜索与<keyword>关键字相关的结点或关系                 & 4               \\ \bottomrule %\midrule
+% 	\end{tabularx}
+% \end{bupttable}
+类别：前端路由
+\begin{itemize}
+	\item \lstinline|/welcome|：欢迎页面
+	\item \lstinline|/overview|：概览页面
+	\item \lstinline|/vis|：可视化页面
+	\item \lstinline|/search|：搜索页面
+	\item \lstinline|/about|：关于页面
+\end{itemize}
+
+类别：后端接口
+\begin{itemize}
+	\item \lstinline|/api/graph/|
+	      \begin{itemize}
+		      \item 方法：GET
+		      \item 参数：无
+		      \item 描述：获取知识图谱统计信息，包含漏洞数量、各类别资产数量、利用数量等
+		      \item 返回值：含 \lstinline|vul, asset, exploit| 三个键的 JSON，每个键对应的值为实体相关数据 JSON
+	      \end{itemize}
+	\item \lstinline|/api/graph/<limit>|
+	      \begin{itemize}
+		      \item 方法：GET
+		      \item 参数：\lstinline|limit|，整数字符串
+		      \item 描述：获取与<limit>个漏洞结点相关联的结点或关系组成的子图谱
+		      \item 返回值：含 \lstinline|categories, nodes, links| 三个键的 JSON，每个键对应的值为一个列表，列表中的每个元素代表一个类别、一个结点或一个关系
+	      \end{itemize}
+	\item \lstinline|/api/search/<keyword>|
+	      \begin{itemize}
+		      \item 方法：GET
+		      \item 参数：\lstinline|keyword|，搜索关键字，字符串
+		      \item 描述：搜索关键字相关的漏洞、资产、利用结点或关系
+		      \item 返回值：同 \lstinline|GET /api/graph/<limit>|
+	      \end{itemize}
+\end{itemize}
 
 \section{系统详细设计}
 
@@ -674,7 +708,7 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 \lstinline[style = python]|mylogger()| 实现 logger 对象的单例模式\cite{singleton_design_pattern}。利用 Python 模块引入为单例的特性，使得在同一模块内多次调用相同 \lstinline[style = python]|<name>| 的 \lstinline[style = python]|mylogger()| 会返回相同的 Logger 对象。当第一次调用 \lstinline|mylogger(<name>)| 时，会调用 \lstinline|setup_logger()| 创建一个新的 Logger 对象，并且将其保存在全局变量 loggers 字典内。之后调用同样的 \lstinline|mylogger(<name>)| 时，会根据 \lstinline|<name>| 从 loggers 字典查找对应的 Logger 对象并返回。
 
-在一个模块内首次调用 \lstinline[style = python]|mylogger(<name>)| 会初始化日志，添加日志的文件控制器与标准输出控制器，并且设定输出日志文件位置，以“本模块名 + 当前时分秒”命名。后续再次调用 \lstinline[style = python]|mylogger(<name>).log()| 会使用首次创建的 logger 对象进行日志记录。
+在一个模块内首次调用 \lstinline[style = python]|mylogger(<name>)| 会初始化日志，添加日志的文件控制器与标准输出控制器，并且设定输出日志文件位置，以``本模块名 + 当前时分秒''命名。后续再次调用 \lstinline[style = python]|mylogger(<name>).log()| 会使用首次创建的 logger 对象进行日志记录。
 
 \subsection{环境配置文件 secret.py}
 
@@ -866,9 +900,9 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	neo.close_db() # 释放数据库连接
 \end{lstlisting}
 
-根据漏洞实体结点属性中存储的受影响资产正则匹配信息，若按照“对于每个正则表达式，匹配知识图谱中符合规则的资产实体结点，为漏洞实体结点与资产实体结点添加两条关系边”的最细粒度做法，知识图谱中的 120 万个结点将生成超过 1 亿条边，且全图正则匹配无法有效利用建立在属性域上的索引，本项目的性能需求是无法接受的。
+根据漏洞实体结点属性中存储的受影响资产正则匹配信息，若按照``对于每个正则表达式，匹配知识图谱中符合规则的资产实体结点，为漏洞实体结点与资产实体结点添加两条关系边''的最细粒度做法，知识图谱中的 120 万个结点将生成超过 1 亿条边，且全图正则匹配无法有效利用建立在属性域上的索引，本项目的性能需求是无法接受的。
 
-因此，采用“对于每个正则表达式，匹配知识图谱中符合规则的资产家族实体结点，为漏洞实体结点与资产家族实体结点添加两条关系边，并把真实受影响资产列表存储在关系边属性上”的方法，可以在不改变使用效果的前提下，将构建图谱所需的边数从亿级降低到百万级，提升运行效率、减小数据库体积。
+因此，采用``对于每个正则表达式，匹配知识图谱中符合规则的资产家族实体结点，为漏洞实体结点与资产家族实体结点添加两条关系边，并把真实受影响资产列表存储在关系边属性上''的方法，可以在不改变使用效果的前提下，将构建图谱所需的边数从亿级降低到百万级，提升运行效率、减小数据库体积。
 
 为了进一步加速匹配，把正则表达式中 \lstinline|.*| 之前的固定模式串切割成子串，使用该固定模式串向数据库进行 \lstinline|STARTS WITH| 查询，将返回的查询结果在 Python 中进行正则匹配进一步精确筛选。由于 Neo4j 数据库查询时支持 \lstinline|STARTS WITH| 子句使用属性域索引，采用此种方法查询，使得查询速度提高了 100 倍以上。
 
@@ -876,7 +910,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 \lstinline|afa| 表示 AssetFamily 和 Asset。\lstinline|create_rel_afa_ray(skip, _limit)| 方法用于生成资产实体结点与资产家族实体结点之间的关系边。\lstinline|skip| 参数指定跳过数据库查询结果中的前多少个记录，\lstinline|_limit| 参数指定最多处理多少个数据库查询结果。两个参数配合使用，可以实现从第 \lstinline|<skip>| 个记录开始，处理 \lstinline|_limit| 个记录。从而实现并行化处理。伪代码与章节 \ref{subsubsec:rel_vaf} \nameref{subsubsec:rel_vaf} 类似。
 
-对于每个漏洞实体结点，遍历其受影响资产正则匹配表达式列表，对每个正则匹配表达式，通过寻找其前缀获得其属于的资产家族，调用持久化子系统数据库控制器对象的 \lstinline|add_rel_cql_afa()| 方法，为该资产结点和资产家族结点之间添加“资产家族结点是资产结点父级”、“资产结点是资产家族结点子级”两个关系。
+对于每个漏洞实体结点，遍历其受影响资产正则匹配表达式列表，对每个正则匹配表达式，通过寻找其前缀获得其属于的资产家族，调用持久化子系统数据库控制器对象的 \lstinline|add_rel_cql_afa()| 方法，为该资产结点和资产家族结点之间添加``资产家族结点是资产结点父级''、``资产结点是资产家族结点子级''两个关系。
 
 \subsubsection{利用 - 漏洞 - 资产家族关系生成的实现 create{\_}rel{\_}evaf{\_}ray()}
 
@@ -897,7 +931,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	neo.close_db() # 释放数据库连接
 \end{lstlisting}
 
-遍历漏洞利用代码结点，对于带有 cve id 属性的结点，从图谱中查询对应 cve id 的漏洞实体结点。为漏洞利用结点与漏洞实体结点之间添加“漏洞利用利用漏洞”、“漏洞被漏洞利用利用”两个关系。再从漏洞实体结点出发，寻找所有受影响的资产家族结点。根据“漏洞影响资产家族”关系边上的属性，为漏洞利用结点与资产家族结点添加“漏洞利用针对资产家族”、“资产家族被漏洞利用针对”两个关系，属性继承自前述关系边属性。
+遍历漏洞利用代码结点，对于带有 cve id 属性的结点，从图谱中查询对应 cve id 的漏洞实体结点。为漏洞利用结点与漏洞实体结点之间添加``漏洞利用利用漏洞''、``漏洞被漏洞利用利用''两个关系。再从漏洞实体结点出发，寻找所有受影响的资产家族结点。根据``漏洞影响资产家族''关系边上的属性，为漏洞利用结点与资产家族结点添加``漏洞利用针对资产家族''、``资产家族被漏洞利用针对''两个关系，属性继承自前述关系边属性。
 
 \subsection{关系融合实现}
 
@@ -1054,7 +1088,7 @@ def _retrieve_v_af(tx, cve_id):
 	.3 views\DTcomment{视图目录}.
 	.4 Welcome.vue\DTcomment{登录首屏欢迎界面视图}.
 	.4 Overview.vue\DTcomment{概览视图}.
-	.4 Dashboard.vue\DTcomment{控制台视图}.
+	% .4 Dashboard.vue\DTcomment{控制台视图}.
 	.4 Visualization.vue\DTcomment{可视化视图}.
 	.4 Search.vue\DTcomment{搜索视图}.
 	.4 About.vue\DTcomment{关于视图}.
@@ -1089,9 +1123,9 @@ def _retrieve_v_af(tx, cve_id):
 
 搜索视图包含一个悬浮搜索框，显示在容器的左上角。在搜索框输入关键词并按下回车，发出异步 I/O 请求并等待返回绘图数据。后端服务将搜索整个知识图谱查找关键字相关信息，并将绘图数据返回前端。 可视化显示流程与上述章节 \ref{可视化视图实现} \nameref{可视化视图实现}相似。
 
-\subsection{控制台视图实现}
+% \subsection{控制台视图实现}
 
-//todo
+% //todo
 
 \subsection{关于视图实现}
 
@@ -1176,7 +1210,7 @@ def _retrieve_v_af(tx, cve_id):
 
 使用 Ray 库提供的 @ray.remote 装饰器与 ray.get() 方法，将全部漏洞数据根据并行度参数进行分割，开辟多进程对分块漏洞数据进行生成操作。
 
-% 开辟 32 个进程生成“资产$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产；资产$-[$是子级$]->$资产家族，资产家族$-[$是父级$]->$资产；利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码；利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码”等关系，由于资产关系生成涉及正则匹配运算，无法有效利用数据库索引，且 CPU 性能消耗较大，因此生成时间较长。对总计约 120 万个结点共生成约 45 万条边（更多详细信息存储在边属性中），耗时约 1 小时 50 分钟，如图\ref{pictures/Gen_Rels.png}与图\ref{pictures/DB_Rels.png}所示。
+% 开辟 32 个进程生成``资产$-[$具有$]->$漏洞，漏洞$-[$影响$]->$资产；资产$-[$是子级$]->$资产家族，资产家族$-[$是父级$]->$资产；利用代码$-[$攻击$]->$资产，资产$-[$被攻击$]->$利用代码；利用代码$-[$利用$]->$漏洞，漏洞$-[$被利用$]->$漏洞代码''等关系，由于资产关系生成涉及正则匹配运算，无法有效利用数据库索引，且 CPU 性能消耗较大，因此生成时间较长。对总计约 120 万个结点共生成约 45 万条边（更多详细信息存储在边属性中），耗时约 1 小时 50 分钟，如图\ref{pictures/Gen_Rels.png}与图\ref{pictures/DB_Rels.png}所示。
 开辟 32 个进程并行执行关系生成，由于资产关系生成涉及正则匹配运算，无法有效利用数据库索引，且 CPU 性能消耗较大，因此生成时间较长。对总计约 120 万个结点共生成约 45 万条边（更多详细信息存储在边属性中），耗时约 1 小时 50 分钟，如图\ref{pictures/Gen_Rels.png}所示。
 
 \buptfigure[width=\textwidth]{pictures/Gen_Rels.png}{关系生成模块运行日志}{pictures/Gen_Rels.png}
@@ -1246,17 +1280,17 @@ def _retrieve_v_af(tx, cve_id):
 
 \subsection{概览视图测试\label{概览视图测试}}
 
-图\ref{pictures/Vis_Dashboard_Info.png}所示为概览视图。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载概览界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据“0”填充而非显示空白，用户体验较好。如图\ref{pictures/Dashboard_Waterfall.png}所示。
+图\ref{pictures/Vis_Dashboard_Info.png}所示为概览视图。从 localhost 后端 /api/graph/ 端口加载数据，实际返回，根据瀑布流图可看出，通过刷新页面冷加载概览界面及各种网络请求耗时约 850ms，且加载过程中可视化图表有加载指示器提示正在加载、数据列表有默认数据``0''填充而非显示空白，用户体验较好。如图\ref{pictures/Vis_Dashboard_Waterfall.png}所示。
 
 前端子系统全部界面均采用类 App 设计，具备响应式显示功能，卡片行列数可根据当前设备屏幕分辨率动态流式调整，保证在各种设备上均能正常显示。
 
 \buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Info.png}{概览视图预览}{pictures/Vis_Dashboard_Info.png}
 
-\buptfigure[width=\textwidth]{pictures/Dashboard_Waterfall.png}{概览视图加载请求瀑布流}{pictures/Dashboard_Waterfall.png}
+\buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Waterfall.png}{概览视图加载请求瀑布流}{pictures/Vis_Dashboard_Waterfall.png}
 
 \subsection{可视化视图测试\label{可视化视图测试}}
 
-图\ref{pictures/Vis_Full.png}所示为知识图谱概览。从 localhost 后端 /api/graph/100 端口加载数据，实际返回 1070 个结点、2035 条关系边，根据瀑布流图可看出，通过刷新页面冷加载可视化力引导图耗时约 1300ms，且加载过程中有加载指示器提示正在加载，用户体验较好。如图\ref{pictures/Vis_Waterfall.png}所示。
+图\ref{pictures/Vis_Full.png}所示为知识图谱概览。从 localhost 后端 /api/graph/30 端口加载数据，实际返回 1684 个结点、3368 条关系边，根据瀑布流图可看出，通过刷新页面冷加载可视化力引导图耗时约 1800ms，且加载过程中有加载指示器提示正在加载，用户体验较好。如图\ref{pictures/Vis_Waterfall.png}所示。
 
 \buptfigure[width=\textwidth]{pictures/Vis_Full.png}{可视化视图概览}{pictures/Vis_Full.png}
 
@@ -1274,9 +1308,10 @@ def _retrieve_v_af(tx, cve_id):
 
 \buptfigure[width=\textwidth]{pictures/Vis_Search.png}{搜索视图使用关键字搜索，呈现结点及关系}{pictures/Vis_Search.png}
 
-\subsection{控制台视图测试}
+% \subsection{控制台视图测试}
 
-//todo
+% 图\ref{pictures/Vis_Dashboard_Control.png}所示为控制台视图。
+% \buptfigure[width=\textwidth]{pictures/Vis_Dashboard_Control.png}{关于视图}{pictures/Vis_Dashboard_Control.png}
 
 \subsection{关于视图测试}
 
@@ -1288,9 +1323,9 @@ def _retrieve_v_af(tx, cve_id):
 
 \section{项目工作总结}
 
-本文介绍了“基于漏洞知识图谱的可视化系统”的设计与实现。由于漏洞信息的收集与发布工作分散在互联网各处，且通常以纯文本的形式发布共享，这造成网络安全工作者及软硬件开发者，难以轻松直观地获知相关项目或资产的漏洞风险情况。而提供类似可视化漏洞知识图谱服务的多为商业公司、其系统不公开且收费高昂。
+本文介绍了``基于漏洞知识图谱的可视化系统''的设计与实现。由于漏洞信息的收集与发布工作分散在互联网各处，且通常以纯文本的形式发布共享，这造成网络安全工作者及软硬件开发者，难以轻松直观地获知相关项目或资产的漏洞风险情况。而提供类似可视化漏洞知识图谱服务的多为商业公司、其系统不公开且收费高昂。
 
-基于此背景，本文设计并实现了使用 GPL-3.0 自由软件许可证授权的“基于漏洞知识图谱的可视化系统”，全部代码在 \href{https://github.com/RiddMa/KnowledgeGraph-Visualization}{GitHub}\footnote{https://github.com/RiddMa/KnowledgeGraph-Visualization} 开源。其由数据采集子系统、知识图谱构建子系统、持久化子系统、后端服务子系统、前端子系统五部分组成。
+基于此背景，本文设计并实现了使用 GPL-3.0 自由软件许可证授权的``基于漏洞知识图谱的可视化系统''，全部代码在 \href{https://github.com/RiddMa/KnowledgeGraph-Visualization}{GitHub}\footnote{https://github.com/RiddMa/KnowledgeGraph-Visualization} 开源。其由数据采集子系统、知识图谱构建子系统、持久化子系统、后端服务子系统、前端子系统五部分组成。
 
 针对五个子系统，本文第二章分别介绍了其相关技术调研与实现理论基础，分析并确定了开发本系统采用的技术栈，主要为：\lstinline|Python, Scrapy, MongoDB, Neo4j, Flask, HTML, CSS, JavaScript, Vue.js, Vuetify, ECharts|。
 
@@ -1302,6 +1337,8 @@ def _retrieve_v_af(tx, cve_id):
 
 第六章系统测试对系统运行速度与运行结果进行简单测试，以截图形式展示可视化系统的实现效果。
 
+本系统具备并行数据采集能力、并行知识图谱构建能力、后端 API 及 Cron 风格定时控制能力、前端数据可视化展示与交互能力。能够在无人为干预情况下定时采集数据并更新知识图谱，且每次更新花费时间可以接受（爬虫时间依网络情况而定，小于一天；知识图谱更新时间约为两小时）。前端具备友好的响应式界面、清晰的图表展现知识图谱相关数据，通过力引导图实现的知识图谱可视化功能，允许用户拖拽、缩放、选中结点或关系弹出侧边栏显示详细数据。
+
 \section{未来工作展望}
 
 本系统借鉴微服务设计思想，将构建信息安全漏洞知识图谱任务分解成若干小任务的数据加工流。模块化设计使得系统具备强大的鲁棒性和扩展性。未来系统功能扩展主要在于智能化技术即各类机器学习及深度学习模型的引入方向。
@@ -1312,7 +1349,7 @@ def _retrieve_v_af(tx, cve_id):
 
 针对持久化子系统，随着知识图谱不断增大，Neo4j Community 单机版性能不足以支撑大数据量，可将知识图谱迁移至其他开源分布式图数据库如 Nebula Graph。由于本系统设计时尽量采用通用的 CQL 语句进行数据库操作而非使用 Neo4j 特定 ORM 对象，迁移工作可以较平滑进行。
 
-针对后端服务子系统，为了应对未来可能增长的用户量，可以引入 Redis 等内存数据库技术，引入 Celer、RabbitMQ 等消息队列技术，提高系统并发性能。
+针对后端服务子系统，为了应对未来可能增长的用户量，可以引入 Redis 内存数据库技术，引入 Celery 等消息队列技术，提高系统并发性能。同时，为了满足更多用户的需要，可以加入完善的用户系统，引入会话认证、权限管理等功能。为了方便管理员查看 APScheduler 服务运行状态，可在前端加入``控制台''视图，允许管理员手动控制后端微服务运行。
 
 针对前端子系统，可以完善 UI 设计、增加更多可视化选项；优化移动端上的展示功能。
 
