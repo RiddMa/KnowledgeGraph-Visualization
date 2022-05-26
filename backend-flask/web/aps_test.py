@@ -7,7 +7,10 @@ from flask_apscheduler import APScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # aps = APScheduler()
+from vuln_kg.init_kg_p import init_kg_runner
+
 scheduler = BackgroundScheduler()
+ct = None
 
 
 def fun1():
@@ -18,19 +21,41 @@ def fun1():
 
 
 def fun2():
-    print("From Func2")
+    print(datetime.datetime.now())
 
 
 def fun3():
-    print("From Func3")
+    
+
+
+def _start_kg():
+    global ct
+    # ct = CronTrigger(second='*', timezone=datetime.datetime.now().astimezone().tzinfo)
+    ct = CronTrigger(hour=22, minute=30, timezone=datetime.datetime.now().astimezone().tzinfo)
+    scheduler.add_job(id='init_kg_runner', func=init_kg_runner, trigger=ct)
+    scheduler.start()
+    return ct
+
+
+def _start_crawl():
+    global ct
+    # ct = CronTrigger(second='*', timezone=datetime.datetime.now().astimezone().tzinfo)
+    ct = CronTrigger(hour=22, minute=30, timezone=datetime.datetime.now().astimezone().tzinfo)
+    scheduler.add_job(id='init_kg_runner', func=fun3, trigger=ct)
+    scheduler.start()
+    return ct
+
+
+def stop_job():
+    pass
+
+
+def retrieve_progress():
+    pass
 
 
 if __name__ == '__main__':
     CronTrigger(hour=4, timezone=datetime.datetime.now().astimezone().tzinfo)
-    ct = CronTrigger(second=30, timezone=datetime.datetime.now().astimezone().tzinfo)
-
-    # print('{:.0f}%'.format(133/244*100))
-    scheduler.add_job(id='Scheduled task 2', func=fun2, trigger=ct)
-    scheduler.start()
+    _start_kg()
     while True:
         sleep(1)
