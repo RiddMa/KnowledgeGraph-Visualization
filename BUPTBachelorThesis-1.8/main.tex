@@ -18,16 +18,16 @@
 \includepdf[pages=-]{docs/cover.pdf}
 
 % 任务书
-% \blankmatter
-% \includepdf[pages=-]{docs/task.pdf}
+\blankmatter
+\includepdf[pages=-]{docs/task.pdf}
 
 % 成绩评定表
-% \blankmatter
-% \includepdf[pages=-]{docs/scoreTable.pdf}
+\blankmatter
+\includepdf[pages=-]{docs/scoreTable.pdf}
 
 % 诚信声明
-% \blankmatter
-% \includepdf[pages=-]{docs/statement.pdf}
+\blankmatter
+\includepdf[pages=-]{docs/statement.pdf}
 
 \input{main.cfg}    % Main items 
 \include{abstract}  % Abstract
@@ -49,11 +49,6 @@
 \section{项目背景及意义}
 
 \subsection{选题背景}
-% 这段先放着
-% \begin{definition}
-% 	计算机安全、互联网信息安全，或信息安全技术意指对计算机系统及计算机网络施加保护手段，以使其不受信息披露、信息盗取、软硬件或电子信息损坏等危害，使其\cite{wilson_fundamental_2014}
-% \end{definition}
-% 这段先放着
 
 近年来，随着互联网产业迅速发展，互联网安全漏洞问题的显著性也急剧增加。根据公共漏洞和暴露\footnote{Common Vulnerabilities and Exposures, CVE}、国家信息安全漏洞库\footnote{China National Vulnerability Database of Information Security, CNNVD}等业内权威的漏洞数据档案库的数据\cite{download_cve_list}\cite{nvd_cpe_statistics}，自 1999 年 CVE 漏洞库首次披露安全漏洞以来，互联网安全漏洞年新增数量呈增长趋势。2019 年全年，新增漏洞两万余个；2020 年全年，新增漏洞三万五千余个。随着现代软件系统复杂度提升、互联网加速漏洞信息传播，对攻击者而言，不仅漏洞攻击的学习成本和实施难度下降，其可以利用的漏洞数量也明显增多\cite{vuldb_stats}；对企业与开发者而言，随着开源化逐渐成为一种潮流趋势，各类计算机软硬件与互联网产品对开源项目的依赖性随之提高。正如近期 Java Log4j 日志组件漏洞造成全球互联网范围的大规模信息安全问题，计算机与互联网产业在快速发展的同时，也面临着与日俱增的信息安全挑战。
 
@@ -147,16 +142,25 @@ Pandas\footnote{https://pandas.pydata.org/} 是适用于 Python 语言的数据�
 
 \section{知识图谱构建技术}
 
-采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。实体构建与关系生成技术将在章节 \ref{知识图谱构建子系统} \nameref{知识图谱构建子系统}展开。
+采用的技术或工具：基于规则的实体构建、基于规则的关系生成、Ray。
 
 \subsection{知识图谱概念}
 
 近年来，使用知识图谱表达人类知识结构受到了学术界与工业界的极大关注。知识图谱是事实、实体构成、关系和语义的结构化表达，是一种用图表示的数据结构。知识图谱存储实体结点、结点之间的关系，旨在积累并表达现实世界的知识。\cite{ji_survey_2022}
 
+\begin{definition}
+	知识图谱获取并将信息整合到本体中，并应用推理器来推导新的知识。\cite{DBLP:conf/i-semantics/EhrlingerW16}
+\end{definition}
+\begin{definition}
+	知识图谱是由实体和关系组成的多关系图谱，它们分别被视为节点和不同类型的边。\cite{8047276}
+\end{definition}
+
 知识图谱的图结点代表被研究的实体，实体可以是现实世界的对象或抽象的概念。实体结点之间的边代表实体之间的关系，以及实体的语义描述，它们的关系具有类型和明确定义的属性。\cite{ji_survey_2022}用于存储知识图谱数据的图遵从基于图结构的数据模型，如有向的边标记图或属性图。\cite{hogan_knowledge_2022}
 
-通常以三元组的形式表达知识图谱结构，即
-$$G=(Entity_{head}, Relation, Entity_{tail})$$
+知识图谱结构可以有向边标记图的结点与关系表达，亦可以使用 RDF（Resource Description Framework，资源描述框架）三元组的形式表达，即
+\begin{equation}
+	G=(Entity_{head}, Relation, Entity_{tail})
+\end{equation}
 $Entity_{head}$为三元组$G$的头实体，是关系的起点。$Entity_{tail}$为三元组$G$的尾实体，是关系的终点。实体表示被建模的现实的对象或抽象的概念。$Relation$则表示$Entity_{head}$到$Entity_{tail}$的语义化关系。\cite{hogan_knowledge_2022}
 
 知识图谱在信息检索中的应用价值主要在于，它能通过推理实现概念检索，以图形化的方式，向用户展示经过分类整理的结构化知识，从而使人从人工筛选、过滤数据寻找答案的模式中解放出来。在漏洞数据库的基础上，构建漏洞知识图谱，挖掘互联网信息安全漏洞内在特性、关联关系等价值，有助于多维度、全方位地理解安全漏洞关系。
@@ -165,9 +169,36 @@ $Entity_{head}$为三元组$G$的头实体，是关系的起点。$Entity_{tail}
 
 知识图谱主要包含开放知识图谱和领域知识图谱。开放知识图谱如 Wikipedia、Freebase、DBpedia 等，往往采用自底向上方法构建。而互联网信息安全漏洞知识图谱属于领域知识图谱，适宜采用自顶向下构建方法，即通过人工整理出领域知识图谱的实体及关系模型图，进行实体和关系的抽取与知识图谱的构建。在安全漏洞领域中，预先定义的实体与关系模型能极大提高知识图谱的构建质量及应用效率。\cite{zhang_survey_2021}
 
-实体抽取：又称命名实体识别（Named Entity Recognition, NER），主要分为基于规则的方法、基于传统机器学习的方法、基于深度学习的方法\cite{zhou_survey_2020}，后两者主要用于解决从自然语言文本中抽取未预定义格式信息的问题。本项目相关安全漏洞领域实体具有明确名称与格式，适宜采用基于规则的方法提取。未来系统扩展如博客、新闻等小部分自然语言数据源，可采用基于深度学习的方法如 CNN-Bi-LSTM-CRF 等模型进行命名实体识别。
+实体抽取：又称命名实体识别（Named Entity Recognition, NER），主要分为基于规则的方法、基于传统机器学习的方法、基于深度学习的方法\cite{zhou_survey_2020}，后两者主要用于解决从自然语言文本中抽取未预定义格式信息的问题。
 
-关系抽取（Relationship Extraction, RE）：主要分为基于传统规则和模板的方法、基于传统机器学习的方法、基于深度学习的方法\cite{zhou_survey_2020}。安全漏洞领域实体如漏洞、资产、利用等类别较少且具备明确语义关系，因此采用基于传统规则的关系抽取方法。
+本项目相关安全漏洞领域实体具有明确名称与格式，适宜采用基于规则的方法提取。未来系统扩展如博客、新闻等小部分自然语言数据源，可采用基于深度学习的方法如 CNN-Bi-LSTM-CRF 等模型进行命名实体识别。
+
+关系抽取（Relationship Extraction, RE）：主要分为基于传统规则和模板的方法、基于传统机器学习的方法、基于深度学习的方法。周园春等人提出，科技文献中蕴含着大量的科技实体，借助科技关系抽取在科技实体之间建立的关联链接，进而构建科技知识图谱，有助于解释科技实体之间的联系、结构、交叉、演化、合作等科技关系。在机构化和半结构化的科技数据中，科技关系的抽取往往伴随着科技实体抽取通过规则匹配的方法而自动生成。\cite{zhou_survey_2020}
+
+安全漏洞领域实体如漏洞、资产、利用等类别较少且具备明确语义关系，因此采用基于传统规则的关系抽取方法，给定一个实体集合$E=\{e_1,e_2,\dots ,e_{|E|}\}$ 与实体间对应的关系集合 $R=\{r_1, r_2, \dots ,r_{|R|}\}$，关系抽取任务可抽象为建立一个函数$f$，使得
+\begin{equation}
+	\label{eq6}
+	f(e_i, e_j)=\left\{
+	\begin{aligned}
+		r_k       & ,\qquad \text{if } e_i, e_j \text{ are related by relation } r_k \text{ and } e_i, e_j \in E, \\
+		\emptyset & ,\qquad \text{otherwise.}
+	\end{aligned}
+	\right.
+\end{equation}
+
+贾焰等人提出了一种构建网络安全知识图谱的实用方法，提出了一种基于网络安全知识库五元组的网络安全本体，包含概念、实例、关系、属性、规则，包含资产、漏洞、攻击三个本体。\cite{JIA201853} 在此之上，采用 Stanford NER 提供的线性链条件随机场序列模型（CRF）对自然语言文本中的实体与关系三元组进行抽取。随后使用属性推演与关系推演方法对三元组进行推演扩展，构成知识图谱。其使用的属性推演公式如下：
+\begin{equation}
+	\text{Value}_{ik}=\sum_{j=1}^m \lambda_j \cdot f_{ij}(\text{key}_j, \text{value}_j) + \sum_{t=1}^l \sigma_t \cdot \sum_{j=1}^m \lambda_j \cdot f_{ij}(\text{key}_j + \text{value}_j)
+\end{equation}
+
+其使用路径排序算法进行关系推演，即使用连接两个实体的路径作为特征预测两个实体之间关系。对于三个实例 $N_i, N_j, N_l$ 进行关系推演的预测公式是：
+\begin{equation}
+	\text{Score}(l,j)=\sum_{\pi \in Q} \text{Path}[e_l,e_j;\text{length}(\pi) \le n] \cdot \omega_{\pi}
+\end{equation}
+
+$\pi$ 是 $l$ 到 $j$ 所有的长度权值小于 $n$ 的可达路径。在进行关系推演时对这些路径评分，如果 $Score(l,j)$ 大于一个特定阈值，则认为这个关系（边）成立。如此可以得到实例之间新的关系。
+
+参考上述工作的思想，可对漏洞、代码利用等实体进行属性推演及关系推演。实体构建与关系生成的模块设计与代码实现将在章节 \ref{知识图谱构建子系统} \nameref{知识图谱构建子系统} 和 \ref{知识图谱构建子系统实现} \nameref{知识图谱构建子系统实现} 展开。
 
 \subsection{Ray}
 
@@ -189,7 +220,9 @@ MongoDB\footnote{https://www.mongodb.com/} 是一个 C++ 语言编写的基于�
 
 \subsection{Neo4j}
 
-Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目前全球范围内最受欢迎、使用人数最多的图数据库，社区版本采用 GPL-3.0 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加``影响''、``具有''、``攻击''、``被攻击''、``父级''、``子级''等关系，形成知识网络图谱。
+Neo4j\footnote{https://neo4j.com/} 是一个高性能的图形数据库，是目前全球范围内最受欢迎、使用人数最多的图数据库，社区版本采用 GPL-3.0 许可证授权。其特点是将结构化数据存储在网状结构上，使得长程、广范围关系查询变得更加容易实现，Neo4j 是目前使用最多的图数据库。
+
+本项目的知识图谱构建子系统使用 Neo4j 存储图谱数据，将漏洞、资产、利用代码等实体作为结点，为结点之间添加``影响''、``具有''、``攻击''、``被攻击''、``父级''、``子级''等关系，形成知识网络图谱。使用图数据库的主要意义除了将数据结构与被建模对象建立直观的联系之外，还在于优化搜索性能。若使用关系型数据库或文档数据库，每次关系匹配都将产生庞大的笛卡尔积，对于大数据量的长程查询，是完全不现实的。而知识图谱为结点之间的关系建模，并且明确地反映在数据结构中，这种设计使得长程查询效率大大提高，因此表示和推理结点之间的关系更加容易。
 
 \section{后端技术}
 
@@ -714,7 +747,7 @@ APScheduler 调度模块：通过调用数据采集子系统和知识图谱构�
 
 以 Python 变量的形式存储 MongoDB 与 Neo4j 数据库的用户名、密码、数据库名、连接 URL 等信息，和一些私有 API 的密钥等信息。此文件被 \lstinline|.gitignore|，不会同步到远程仓库。
 
-\section{数据采集子系统}
+\section{数据采集子系统实现}
 
 数据采集子系统工作流程如 \ref{pictures/Impl_DataCollection.png} 所示。
 
@@ -773,13 +806,13 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	\item \lstinline|crawl_runner| 目录：包含 \lstinline|crawl_cpe.py, crawl_nvd.py, crawl_edb.py| 等。使用\linebreak \lstinline|scrapy.cmdline.execute()| 方法运行爬虫程序。可以被调度模块调用，实现全自动爬虫。
 \end{itemize}
 
-\section{知识图谱构建子系统}
+\section{知识图谱构建子系统实现\label{知识图谱构建子系统实现}}
 
 数据采集子系统工作流程如 \ref{pictures/Impl_KGCreation.png} 所示。
 
 \buptfigure[width=\textwidth]{pictures/Impl_KGCreation.png}{知识图谱构建子系统工作流程图}{pictures/Impl_KGCreation.png}
 
-\subsection{实体生成}
+\subsection{实体生成模块实现}
 
 % 实体生成模块主要包含 \lstinline|init_nodes(vul_num=0, asset_num=0, exploit_num=0)|，\lstinline|init_vul_ray(skip, _limit)|，\lstinline|init_asset_ray(skip, _limit)|，\lstinline|init_exploit_ray(skip, _limit)|，\lstinline|init_asset_family_ray(skip, _limit)|，\lstinline|get_step(num)| 几个方法。
 实体生成模块主要包含
@@ -852,7 +885,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 	neo.close_db() # 释放数据库连接
 \end{lstlisting}
 
-\subsection{关系生成}
+\subsection{关系生成模块实现}
 
 关系生成模块主要包含
 \begin{lstlisting}[style=lgeneral]
@@ -933,7 +966,7 @@ NvdPipeline 负责处理 NVD API 提供的 JSON，提取数据并调用持久化
 
 遍历漏洞利用代码结点，对于带有 cve id 属性的结点，从图谱中查询对应 cve id 的漏洞实体结点。为漏洞利用结点与漏洞实体结点之间添加``漏洞利用利用漏洞''、``漏洞被漏洞利用利用''两个关系。再从漏洞实体结点出发，寻找所有受影响的资产家族结点。根据``漏洞影响资产家族''关系边上的属性，为漏洞利用结点与资产家族结点添加``漏洞利用针对资产家族''、``资产家族被漏洞利用针对''两个关系，属性继承自前述关系边属性。
 
-\subsection{关系融合实现}
+\subsection{关系融合模块实现}
 
 关系融合模块作为适配使用深度学习模型进行命名实体识别结点生成与关系抽取方案的模块，当前仅在系统数据加工管线中留有接口，以备未来扩展需要。当前系统的结构化数据实体与关系生成已经实现实体结点和关系的消除二义性，因此关系融合模块暂未实现。
 
@@ -1046,7 +1079,12 @@ def _retrieve_v_af(tx, cve_id):
 	return v_map, r_map, af_map # 返回存储三元组的三个字典
 \end{lstlisting}
 
-为了使可视化显示更加清晰，且能直观地从结点显示大小得知该结点的重要性，实现了计算绘图结点大小 \lstinline|get_symbol_size()|。该方法接受结点类型和受影响结点数量两个参数，计算结点应显示的大小。计算公式为 $size=base{\_}size+5*\sqrt{cnt}$，其中 $base{\_}size$ 为由一个字典预定义的数值，不同类型结点的 $base{\_}size$ 不同。$cnt$ 为受该结点影响的结点的数量，最终得到的 $size$ 即为结点显示大小，单位为像素。
+为了使可视化显示更加清晰，且能直观地从结点显示大小得知该结点的重要性，实现了计算绘图结点大小 \lstinline|get_symbol_size()|。该方法接受结点类型和受影响结点数量两个参数，计算结点应显示的大小。计算公式为：
+\begin{equation}
+	size=base{\_}size+5*\sqrt{cnt}
+\end{equation}
+
+其中 $base{\_}size$ 为由一个字典预定义的数值，不同类型结点的 $base{\_}size$ 不同。$cnt$ 为受该结点影响的结点的数量，最终得到的 $size$ 即为结点显示大小，单位为像素。
 
 
 \subsubsection{知识图谱搜索 API 实现 /api/graph/search/<keyword>}
@@ -1058,7 +1096,7 @@ def _retrieve_v_af(tx, cve_id):
 如图 \ref{pictures/Impl_Backend.png} 所示，查询系统采用模块化设计，将搜索服务独立为模块。支持扩展为微服务设计，在接口不变情况下可实现搜索提供服务的热更换。当前查询模块仅支持特定属性域的查询如 \lstinline|cve_id, cpe23uri, edb_id| 等。后续可将系统扩展为使用正则表达式进行匹配、使用 Elastic Search 进行自然语言属性域的搜索等。获取搜索结果后，其步骤与章节 \ref{subsubsec:/api/graph/limit} \nameref{subsubsec:/api/graph/limit} 所述过程类似。
 
 % \clearpage
-\section{前端子系统}
+\section{前端子系统实现}
 
 \subsection{项目结构}
 
@@ -1102,6 +1140,14 @@ def _retrieve_v_af(tx, cve_id):
 	.2 eslintrc.js\DTcomment{eslint 配置文件}.
 	.2 browserslistrc\DTcomment{支持的浏览器配置文件}.
 }
+
+\subsection{工作流程图}
+
+\buptfigure[width=\textwidth]{pictures/Impl_Frontend.png}{前端工作流程图}{pictures/Impl_Frontend.png}
+
+前端子系统的工作流程图如图 \ref{pictures/Impl_Frontend.png} 所示。用户打开页面后，首先加载根组件，根组件会初始化 Vuex 和 Axios。随后加载默认的首屏路由 Welcome，发送心跳包、设定系统时间、设置刷新定时器。
+
+用户点击其他路由页面，会懒加载对应的视图组件。这里以可视化页面为例，页面挂载后通过 Vuex Action 调用 Axios HTTP Client 向后端发送请求。收到请求后更新 Vuex 状态，由于其他组件内设置了计算属性或侦听属性，组件的数据会实时刷新。调用 ECharts 绘制或更新图标，绘制 Canvas，最终呈现给用户。
 
 \subsection{概览视图实现\label{概览视图实现}}
 
@@ -1370,13 +1416,13 @@ def _retrieve_v_af(tx, cve_id):
 \end{nopagenumber}
 
 % 开题报告
-% \blankmatter
-% \includepdf[pages=-]{docs/openingReport.pdf}
+\blankmatter
+\includepdf[pages=-]{docs/openingReport.pdf}
 
 
 % 中期检查表
-% \blankmatter
-% \includepdf[pages=-]{docs/interimReport.pdf}
+\blankmatter
+\includepdf[pages=-]{docs/interimReport.pdf}
 
 
 \end{document}
