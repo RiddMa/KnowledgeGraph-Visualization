@@ -4,17 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper, fixed a lot">
+    <list default="true" id="a106feec-c27c-4ac0-a5dd-88354a1f63bc" name="Changes" comment="update paper maybe final">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.cfg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/abstract.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/scoreTable.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/scoreTable.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/statement.docx" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/statement.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/statement.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/docs/statement.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main-converted/main 10-73.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.cfg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/main.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Class-Backend.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Class-Backend.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Sequence-UserSequence.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/CyKG_Sequence-UserSequence.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_DataCollection.png" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/pictures/Impl_DataCollection.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" beforeDir="false" afterPath="$PROJECT_DIR$/BUPTBachelorThesis-1.8/ref.bib" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +21,12 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/backend-flask/web/data_converter.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend-flask/vuln_kg/init_kg_p.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/backend-flask/web/graph.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/frontend/src/App.vue" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -57,7 +61,9 @@
       <workItem from="1651713074514" duration="7000" />
       <workItem from="1651713094650" duration="35000" />
       <workItem from="1652364854856" duration="11129000" />
-      <workItem from="1653302224194" duration="6970000" />
+      <workItem from="1653302224194" duration="7946000" />
+      <workItem from="1653655641804" duration="1034000" />
+      <workItem from="1654402491913" duration="583000" />
     </task>
     <task id="LOCAL-00001" summary="add paper">
       <created>1652366968240</created>
@@ -164,7 +170,28 @@
       <option name="project" value="LOCAL" />
       <updated>1653313583388</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="update paper">
+      <created>1653399948019</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1653399948019</updated>
+    </task>
+    <task id="LOCAL-00017" summary="update paper maybe final">
+      <created>1653547140939</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1653547140939</updated>
+    </task>
+    <task id="LOCAL-00018" summary="update paper maybe final">
+      <created>1654007998683</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1654007998683</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -193,6 +220,8 @@
     <MESSAGE value="polished paper" />
     <MESSAGE value="good to go!" />
     <MESSAGE value="update paper, fixed a lot" />
-    <option name="LAST_COMMIT_MESSAGE" value="update paper, fixed a lot" />
+    <MESSAGE value="update paper" />
+    <MESSAGE value="update paper maybe final" />
+    <option name="LAST_COMMIT_MESSAGE" value="update paper maybe final" />
   </component>
 </project>
