@@ -101,6 +101,7 @@ export default {
     this.timer = setInterval(() => {
       this.$store.commit("setDatetime");
     }, 1000);
+    this.$store.dispatch("sendHeartbeat");
   },
 };
 </script>

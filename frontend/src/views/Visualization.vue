@@ -30,7 +30,7 @@ export default {
     console.log("fetch");
     this.$store.dispatch("fetchGraphData", {
       name: this.graphId,
-      limit: 20,
+      limit: 30,
     });
   },
 };

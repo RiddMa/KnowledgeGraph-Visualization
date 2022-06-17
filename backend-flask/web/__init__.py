@@ -16,6 +16,10 @@ def create_app(test_config=None):
     def root():
         return 'Hello!'
 
+    @app.route('/api/heartbeat')
+    def heartbeat():
+        return '扑通。'
+
     return app
 
 

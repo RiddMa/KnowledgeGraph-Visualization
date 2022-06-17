@@ -4,6 +4,7 @@ import {
   getGraphStats,
   getSampleData,
 } from "@/api/graph.api";
+import { sendHeartBeat } from "@/api/base.api";
 const netStore = {
   state: {},
   getters: {},
@@ -38,6 +39,15 @@ const netStore = {
     async getSampleData(context, url) {
       try {
         const response = await getSampleData(url);
+        return response.data;
+        // context.commit("setGraphData", response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async sendHeartbeat(context) {
+      try {
+        const response = await sendHeartBeat();
         return response.data;
         // context.commit("setGraphData", response.data);
       } catch (e) {
